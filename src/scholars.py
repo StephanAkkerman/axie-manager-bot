@@ -8,8 +8,7 @@ gc = gspread.service_account(filename="authentication.json")
 def getScholar(discordID):
     """ Simple function to read the "Scholars" worksheet and return the dataframe """
 
-    # Open Scholar Stats and read the Scholars worksheet
-    # For more info on how to set this up check out my other repos https://github.com/stephanAkkerman/
+    # Open Scholars worksheet
     ws = gc.open("Scholar Stats").worksheet("Scholars")
 
     # Convert to DataFrames
@@ -28,11 +27,3 @@ def getScholar(discordID):
 
         # Return nothing
         return None
-
-
-# Put Your Discord Bot Token Here
-TOKEN = "Your Discord bot token"
-
-KEY = "Your fernet encryption / decryption key"
-
-GUILD = "Your Guild Name"

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 ##> Imports
-#> Standar library
+#> Standard library
 import os
 from datetime import datetime
+import json
 
 #> 3rd Party Dependencies
 import discord
@@ -12,11 +13,14 @@ from cryptography.fernet import Fernet
 import uuid
 
 #> Local Dependencies
-from SecretStorage import *
+from scholars import getScholar
 from QRCodeBot import *
 
-# Get encryption key
-fernet = Fernet(KEY)
+# Get vars from .json
+with open('authentication.json') as f:
+    data = json.load(f)
+
+fernet = Fernet(data['KEY'].encode("utf_8"))
 
 # Bot prefix is !
 bot = commands.Bot(command_prefix='!',  intents=discord.Intents.all())
@@ -25,7 +29,7 @@ bot = commands.Bot(command_prefix='!',  intents=discord.Intents.all())
 async def on_ready():
     """ This gets printed on boot up"""
 
-    guild = discord.utils.get(bot.guilds, name=GUILD)
+    guild = discord.utils.get(bot.guilds, name=data['TEST'])
     print(
         f"{bot.user} is connected to the following guild:\n"
         f"{guild.name}(id: {guild.id})"
@@ -139,4 +143,4 @@ async def encrypt(ctx, message=None):
         )
         return
 
-bot.run(TOKEN)
+bot.run(data['TOKEN'])
