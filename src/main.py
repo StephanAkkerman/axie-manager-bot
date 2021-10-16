@@ -77,8 +77,8 @@ async def on_message(message):
                     encrypted_key.encode("utf_8")
                 ).decode()[2:]
 
-                # discordID's Ronin wallet from the database
-                accountAddress = scholar_info[0]
+                # discordID's Ronin wallet from the database, replace ronin: with 0x
+                accountAddress = scholar_info[0].replace("ronin:", "0x")
 
                 # Get a message from AxieInfinty
                 rawMessage = getRawMessage()
@@ -88,6 +88,7 @@ async def on_message(message):
 
                 # Get an accessToken by submitting the signature to AxieInfinty
                 accessToken = submitSignature(signedMessage, rawMessage, accountAddress)
+
                 # Create a QrCode with that accessToken
                 qrCodePath = f"QRCode_{message.author.id}_{str(uuid.uuid4())[0:8]}.png"
                 qrcode.make(accessToken).save(qrCodePath)
