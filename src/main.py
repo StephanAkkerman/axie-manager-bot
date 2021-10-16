@@ -13,7 +13,7 @@ from discord.ext import commands
 
 # Bot prefix is !
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
-
+bot.remove_command("help")
 
 @bot.event
 async def on_ready():
@@ -25,10 +25,9 @@ async def on_ready():
         f"{guild.name}(id: {guild.id})"
     )
 
-
 if __name__ == "__main__":
     # Load all commands
-    for filename in os.listdir("./cogs"):
+    for filename in os.listdir("./src/cogs"):
         if filename.endswith(".py"):
             print("Loading:", filename)
             bot.load_extension(f"cogs.{filename[:-3]}")
@@ -39,7 +38,7 @@ if __name__ == "__main__":
 
     # Main event loop
     try:
-        bot.loop.run_until_complete(bot.run(data["TOKEN"]))
+        bot.loop.run_until_complete(bot.run(data["TEST_TOKEN"]))
     except KeyboardInterrupt:
         print("Caught interrupt signal.")
         print("exiting...")

@@ -16,16 +16,15 @@ from discord.ext import commands
 from scholars import getScholar
 from cogs.encrypt import fernet
 
-
 class QR(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     async def qr(self, ctx):
-        """ 
-        Give users their qr code if they request it in the correct channel.
-        Discord ID needs to be linked to Ronin Address and fernet encrypted privte key
+        """ Give users their qr code if they request it in the correct channel.
+        
+            Discord ID needs to be linked to Ronin Address and fernet encrypted private key
         """
 
         # If the user writes !qr in the correct channel
