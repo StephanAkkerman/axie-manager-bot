@@ -25,7 +25,6 @@ async def on_ready():
         f"{guild.name}(id: {guild.id})"
     )
 
-
 if __name__ == "__main__":
     # Load all commands
     for filename in os.listdir("./src/cogs"):
@@ -39,7 +38,7 @@ if __name__ == "__main__":
 
     # Main event loop
     try:
-        bot.loop.run_until_complete(bot.run(data["TOKEN"]))
+        bot.loop.run_until_complete(bot.run(data["TEST_TOKEN"]))
     except KeyboardInterrupt:
         print("Caught interrupt signal.")
         print("exiting...")

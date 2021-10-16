@@ -12,7 +12,7 @@ class Help(commands.Cog):
         """
         # List all commands
         if not input: 
-            e = discord.Embed(title="Available commands", color=0x00ffff, description="A list of available commands. Use `!help <function>` to get more information about a command!")
+            e = discord.Embed(title="Available commands", color=0x00ffff, description="A list of available commands. Use `!help <function>` to get more information about a command!", )
             
             # Iterate through all commands
             for command in self.bot.walk_commands():
@@ -36,6 +36,8 @@ class Help(commands.Cog):
         else:
             e = discord.Embed(title="Help", color=0x00ffff, description="Too many arguments given. Try `!help` to list all available commands.")
         
+        e.set_author(name="Axie Manager")
+        e.set_thumbnail(url=self.bot.user.avatar_url)
         await ctx.send(embed=e)
 
 def setup(bot):
