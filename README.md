@@ -1,6 +1,6 @@
 # Axie Manager Bot
 This is a simple python bot, with the purpose of helping our guild manage the scholars in our Discord server.
-The purpose of this bot is that it can be used for guilds with multiple scholars, who each have their own scholars and wallets.
+The purpose of this bot is that it can be used for guilds with multiple scholars, who each have their own scholars and wallets. 
 
 ## QR Code
 The code of QRCodeBot.py and part of main.py was written by [ZracheSs | xyZ](https://github.com/ZracheSs-xyZ), check out their repo for the original code.
