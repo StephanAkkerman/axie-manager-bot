@@ -3,7 +3,7 @@ This is a simple python bot, with the purpose of helping our guild manage the sc
 The purpose of this bot is that it can be used for guilds with multiple scholars, who each have their own scholars and wallets.
 
 ## QR Code
-The code of QRCodeBot.py and part of main.py was written by [ZracheSs | xyZ] (https://github.com/ZracheSs-xyZ), check out their repo for the original code.
+The code of QRCodeBot.py and part of main.py was written by [ZracheSs | xyZ](https://github.com/ZracheSs-xyZ), check out their repo for the original code.
 
 ## Features
 - Send qr code if a scholar types !qr in the 🤖┃login channel
@@ -22,7 +22,7 @@ $ pip install <package>
 
 ## How to run
 - Clone the repository
-- Optional: Setup your own Discord bot, following this [tutorial] (https://realpython.com/how-to-make-a-discord-bot-python/)
+- Optional: Setup your own Discord bot, following this [tutorial](https://realpython.com/how-to-make-a-discord-bot-python/)
 - Add your Discord bot token and your server name to the secret file
 - Add your fernet key to the secret file
 - Setup Scholar Stats, so that the data can be read from sheets
