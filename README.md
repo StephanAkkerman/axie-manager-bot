@@ -8,7 +8,7 @@ The code of QRCodeBot.py and part of main.py was written by [ZracheSs | xyZ](htt
 ## Features
 - Send qr code if a scholar types !qr in the 🤖┃login channel
 - Encrypt private keys using your own fernet key, for extra protection
-- Give new scholars automatically a role, currenlty disabled
+- Give new scholars automatically a role, currently disabled
 
 ## Dependencies
 The required packages to run this code can be found in the `requirements.txt` file. To run this file, execute the following code block:
