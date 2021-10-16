@@ -13,7 +13,7 @@ from discord.ext import commands
 
 # Bot prefix is !
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
-
+bot.remove_command("help")
 
 @bot.event
 async def on_ready():
@@ -28,7 +28,7 @@ async def on_ready():
 
 if __name__ == "__main__":
     # Load all commands
-    for filename in os.listdir("./cogs"):
+    for filename in os.listdir("./src/cogs"):
         if filename.endswith(".py"):
             print("Loading:", filename)
             bot.load_extension(f"cogs.{filename[:-3]}")

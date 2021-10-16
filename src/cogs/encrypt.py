@@ -3,7 +3,7 @@ from cryptography.fernet import Fernet
 from discord.ext import commands
 
 #  Get vars from .json
-with open("authentication.json") as f:
+with open("./authentication.json") as f:
     data = json.load(f)
 
 fernet = Fernet(data["KEY"].encode("utf_8"))
@@ -15,9 +15,9 @@ class Encrypt(commands.Cog):
 
     @commands.command()
     async def encrypt(self, ctx, message=None):
-        """
-        Encrypts a user's message using your personal fernet key
-        Message following !encrypt should not be empty
+        """ Encrypts a user's message using your personal fernet key
+        
+            Message following !encrypt should not be empty
         """
 
         # If the user writes !encrypt followed by something else
