@@ -19,7 +19,7 @@ bot.remove_command("help")
 async def on_ready():
     """ This gets printed on boot up"""
 
-    guild = discord.utils.get(bot.guilds, name=data["TEST"])
+    guild = discord.utils.get(bot.guilds, name=data["TEST"] if len(sys.argv) > 1 and sys.argv[1] == "-test" else data["GUILD"])
     print(
         f"{bot.user} is connected to the following guild:\n"
         f"{guild.name}(id: {guild.id})"
@@ -36,9 +36,11 @@ if __name__ == "__main__":
     with open("authentication.json") as f:
         data = json.load(f)
 
+    TOKEN = data["TEST_TOKEN"] if len(sys.argv) > 1 and sys.argv[1] == "-test" else data["TOKEN"]
+
     # Main event loop
     try:
-        bot.loop.run_until_complete(bot.run(data["TEST_TOKEN"]))
+        bot.loop.run_until_complete(bot.run(TOKEN))
     except KeyboardInterrupt:
         print("Caught interrupt signal.")
         print("exiting...")
