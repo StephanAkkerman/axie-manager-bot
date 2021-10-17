@@ -1,5 +1,6 @@
 import json
 from cryptography.fernet import Fernet
+import discord
 from discord.ext import commands
 
 #  Get vars from .json
@@ -14,6 +15,7 @@ class Encrypt(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.has_role("Verified")
     async def encrypt(self, ctx, message=None):
         """ Encrypts a user's message using your personal fernet key
         
@@ -42,6 +44,16 @@ class Encrypt(commands.Cog):
                 + str(encMessage)
             )
             return
+
+    @encrypt.error
+    async def encrypt_error(self, ctx, error):
+        # Delete this message, to remove clutter
+        await ctx.message.delete()
+        
+        if isinstance(error, commands.MissingRole):
+            channel = discord.utils.get(ctx.guild.channels, name="👋┃welcome")
+            channel_id = channel.id
+            await ctx.message.author.send(f'Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel.')
 
 
 def setup(bot):
