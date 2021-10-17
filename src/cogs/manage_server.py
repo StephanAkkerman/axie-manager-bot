@@ -6,11 +6,20 @@ class ManageServer(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    #@commands.has_role("Manager")
+    @commands.has_role("Manager")
     async def announce(self, ctx, *input):
         """ Make an announcement to a channel
         
+            Usage: `!announce <channel>`
+            Link the channel as the first argument. After this, the bot will ask you what message you want to relay to that channel.
+            The first line is the title of the announcement. Everything after that will be put in the body.
+            Confirm or deny using the emoji reactions.
         """
+
+        if (len(input) == 0 or len(input) > 1):
+            await ctx.send('Incorrect usage. Use `!announce <channel>`. For more help, see `!help announce`.')
+            return
+
         # Confirm command used
         create_msg = await ctx.send(f'Creating announcement in channel {input[0]}... What should the announcement be?')
 
