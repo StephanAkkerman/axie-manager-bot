@@ -1,4 +1,5 @@
 # Standard library
+from discord.ext.commands.core import has_role
 import requests
 import json
 from datetime import datetime
@@ -21,18 +22,18 @@ class QR(commands.Cog):
         self.bot = bot
 
     @commands.command()
+    @commands.has_role("Verified")
     async def qr(self, ctx):
         """ Give users their qr code if they request it in the correct channel.
         
             Discord ID needs to be linked to Ronin Address and fernet encrypted private key
         """
 
+        # Delete this message, to remove clutter
+        await ctx.message.delete()
+
         # If the user writes !qr in the correct channel
         if ctx.channel.name == "🤖┃login":
-
-            # Delete this message, to remove clutter
-            await ctx.message.delete()
-
             # For logs
             current_time = datetime.now().strftime("%H:%M:%S")
             print("\n")
@@ -93,6 +94,16 @@ class QR(commands.Cog):
 
                 await ctx.message.author.send("Sorry, something went wrong when trying to load your personal QR code. Please contact a manager.")
                 return
+
+    @qr.error
+    async def qr_error(self, ctx, error):
+        # Delete this message, to remove clutter
+        await ctx.message.delete()
+        
+        if isinstance(error, commands.MissingRole):
+            channel = discord.utils.get(ctx.guild.channels, name="👋┃welcome")
+            channel_id = channel.id
+            await ctx.message.author.send(f'Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel.')
 
 
 def getRawMessage():
