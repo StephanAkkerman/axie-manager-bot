@@ -25,6 +25,6 @@ $ pip install <package>
 - Optional: Setup your own Discord bot, following this [tutorial](https://realpython.com/how-to-make-a-discord-bot-python/)
 - Add your Discord bot token and your server name to the secret file
 - Add your fernet key to the secret file
-- Setup Scholar Stats, so that the data can be read from sheets
+- Setup [Scholar Stats](https://github.com/StephanAkkerman/Scholar_Stats), so that the data can be read from Google spreadsheets
 - Run `$ python src/main.py`
 - See result
