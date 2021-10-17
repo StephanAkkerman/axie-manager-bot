@@ -7,7 +7,7 @@ The code of QRCodeBot.py and part of main.py was written by [ZracheSs | xyZ](htt
 
 ## Features
 - Send qr code if a scholar types !qr in the 🤖┃login channel
-- Encrypt private keys using your own fernet key, for extra protection
+- Encrypt test, such as your private key, using the `!encrypt <your private key>` command
 - Give new scholars automatically a role, currently disabled
 
 ## Dependencies
@@ -24,7 +24,7 @@ $ pip install <package>
 - Clone the repository
 - Optional: Setup your own Discord bot, following this [tutorial](https://realpython.com/how-to-make-a-discord-bot-python/)
 - Add your Discord bot token and your server name to the secret file
-- Add your fernet key to the secret file
+- Add your fernet key to the secret file, so you can encrypt text
 - Setup [Scholar Stats](https://github.com/StephanAkkerman/Scholar_Stats), so that the data can be read from Google spreadsheets
 - Run `$ python src/main.py`
 - See result
