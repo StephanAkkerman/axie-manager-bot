@@ -90,6 +90,8 @@ class QR(commands.Cog):
                 print("This user didn't receive a QR Code : " + ctx.message.author.name)
                 print("Discord ID : " + str(ctx.message.author.id))
                 print("Current time : ", current_time)
+
+                await ctx.message.author.send("Sorry, something went wrong when trying to load your personal QR code. Please contact a manager.")
                 return
 
 
