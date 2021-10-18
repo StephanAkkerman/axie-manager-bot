@@ -58,7 +58,23 @@ class ManageServer(commands.Cog):
     async def announce_error(self,ctx,error):
         if isinstance(error, commands.MissingRole):
             await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
+
+    @commands.command()
+    @commands.has_role("Manager")
+    async def clear(self, ctx, *input):
+        # Clear x amount of messages from channel
+        if (len(input) == 1):
+            try:
+                await ctx.channel.purge(limit=int(input[0]) + 1)
+            except:
+                raise
         
+    @clear.error
+    async def clear_error(self,ctx,error):
+        if isinstance(error, commands.MissingRole):
+            await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
+        else:
+            await ctx.send('This command was not used correctly. Please see `!help clear` for a more detailed explanation on how to use this command.')
 
 def setup(bot):
     bot.add_cog(ManageServer(bot))
