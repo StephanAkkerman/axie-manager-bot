@@ -67,7 +67,7 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def clear(self, ctx, *input):
-        """ Clear an amount of messages from a user (if specified)
+        """ Clear an amount of messages [from a user if specified]
 
             Usage: `!clear <amount> [user]`
             Specify the amount of messages you want to delete. If you want to delete a certain amount of messages by a specific user,
@@ -247,9 +247,7 @@ class ManageServer(commands.Cog):
         if isinstance(error, commands.MissingRole):
             await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
         else:
-            await ctx.send(f'Something went wrong... For information of how to use this function, see `!help tryout`')
-        
-
+            await ctx.send(f'Something went wrong... For information on how to use this function, see `!help tryout`')
         
 
 def setup(bot):
