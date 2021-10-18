@@ -1,3 +1,5 @@
+from itertools import islice
+
 import discord
 from discord.ext import commands
 
@@ -64,11 +66,26 @@ class ManageServer(commands.Cog):
     async def clear(self, ctx, *input):
         # Clear x amount of messages from channel
         if (len(input) == 1):
-            try:
-                await ctx.channel.purge(limit=int(input[0]) + 1)
-            except:
-                raise
-        
+            await ctx.channel.purge(limit=int(input[0]) + 1)
+
+        # Clear x amount of messages from user from channel
+        elif (len(input) == 2):
+            user = self.bot.get_user(int(input[1][3:-1]))
+            msgs = []
+            counter = 0
+            async for message in ctx.channel.history(limit=None):
+                if message.author == user:
+                    if (counter < int(input[0])):
+                        msgs.append(message)
+                        counter += 1
+                    else:
+                        break
+
+            await ctx.channel.delete_messages(msgs)
+
+        else:
+            raise
+
     @clear.error
     async def clear_error(self,ctx,error):
         if isinstance(error, commands.MissingRole):
