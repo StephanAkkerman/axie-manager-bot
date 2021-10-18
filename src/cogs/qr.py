@@ -17,6 +17,7 @@ from discord.ext import commands
 from scholars import getScholar
 from cogs.encrypt import fernet
 
+
 class QR(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -92,18 +93,22 @@ class QR(commands.Cog):
                 print("Discord ID : " + str(ctx.message.author.id))
                 print("Current time : ", current_time)
 
-                await ctx.message.author.send("Sorry, something went wrong when trying to load your personal QR code. Please contact a manager.")
+                await ctx.message.author.send(
+                    "Sorry, something went wrong when trying to load your personal QR code. Please contact a manager."
+                )
                 return
 
     @qr.error
     async def qr_error(self, ctx, error):
         # Delete this message, to remove clutter
         await ctx.message.delete()
-        
+
         if isinstance(error, commands.MissingRole):
             channel = discord.utils.get(ctx.guild.channels, name="👋┃welcome")
             channel_id = channel.id
-            await ctx.message.author.send(f'Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel.')
+            await ctx.message.author.send(
+                f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
+            )
 
 
 def getRawMessage():

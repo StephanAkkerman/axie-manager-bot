@@ -49,11 +49,13 @@ class Encrypt(commands.Cog):
     async def encrypt_error(self, ctx, error):
         # Delete this message, to remove clutter
         await ctx.message.delete()
-        
+
         if isinstance(error, commands.MissingRole):
             channel = discord.utils.get(ctx.guild.channels, name="👋┃welcome")
             channel_id = channel.id
-            await ctx.message.author.send(f'Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel.')
+            await ctx.message.author.send(
+                f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
+            )
 
 
 def setup(bot):

@@ -4,6 +4,7 @@ import gspread_dataframe as gd
 
 gc = gspread.service_account(filename="authentication.json")
 
+
 def getScholar(discordID):
     """ Simple function to read the "Scholars" worksheet and return the dataframe """
 

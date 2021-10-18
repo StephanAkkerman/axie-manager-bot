@@ -15,15 +15,22 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 bot.remove_command("help")
 
+
 @bot.event
 async def on_ready():
     """ This gets printed on boot up"""
 
-    guild = discord.utils.get(bot.guilds, name=data["TEST"] if len(sys.argv) > 1 and sys.argv[1] == "-test" else data["GUILD"])
+    guild = discord.utils.get(
+        bot.guilds,
+        name=data["TEST"]
+        if len(sys.argv) > 1 and sys.argv[1] == "-test"
+        else data["GUILD"],
+    )
     print(
         f"{bot.user} is connected to the following guild:\n"
         f"{guild.name}(id: {guild.id})"
     )
+
 
 if __name__ == "__main__":
     # Load all commands
@@ -36,7 +43,11 @@ if __name__ == "__main__":
     with open("authentication.json") as f:
         data = json.load(f)
 
-    TOKEN = data["TEST_TOKEN"] if len(sys.argv) > 1 and sys.argv[1] == "-test" else data["TOKEN"]
+    TOKEN = (
+        data["TEST_TOKEN"]
+        if len(sys.argv) > 1 and sys.argv[1] == "-test"
+        else data["TOKEN"]
+    )
 
     # Main event loop
     try:
