@@ -1,4 +1,5 @@
-from itertools import islice
+from random import randrange
+import math
 
 import discord
 from discord.ext import commands
@@ -17,10 +18,6 @@ class ManageServer(commands.Cog):
             The first line is the title of the announcement. Everything after that will be put in the body.
             Confirm or deny using the emoji reactions.
         """
-
-        if (len(input) == 0 or len(input) > 1):
-            await ctx.send('Incorrect usage. Use `!announce <channel>`. For more help, see `!help announce`.')
-            return
 
         # Confirm command used
         create_msg = await ctx.send(f'Creating announcement in channel {input[0]}... What should the announcement be?')
@@ -60,6 +57,8 @@ class ManageServer(commands.Cog):
     async def announce_error(self,ctx,error):
         if isinstance(error, commands.MissingRole):
             await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
+        else:
+            await ctx.send('Incorrect usage. Use `!announce <channel>`. For more help, see `!help announce`.')
 
     ###################
     ### NEW COMMAND ###
@@ -114,15 +113,16 @@ class ManageServer(commands.Cog):
         """ Assign the '[mute]' role to a user
 
             Usage: `!mute <user>`
-            Specify to which user you want to assign the [mute] role. This only works when your server has a role named '[mute]' exactly!
-            To unmute a user, use `!unmute <user>`. For more info, see `!help unmute`
+            Specify to which user you want to assign the '[mute]' role. This only works when your server has a role named '[mute]' exactly! 
+            The '[mute]' role should be listed above the role of the mentioned user and the assigned bot role should be listed above the user's.
+            To unmute a user, use `!unmute <user>`. For more info, see `!help unmute`.
         """
         # Add role [mute] to mentioned user
         if (len(input) == 1):
             user = ctx.guild.get_member(int(input[0][3:-1]))
             role = discord.utils.get(ctx.guild.roles, name='[mute]')
             await user.add_roles(role)
-            await ctx.send(f'User has been muted.')
+            await ctx.send(f'User **{user.display_name}** has been muted.')
         else:
             raise
     
@@ -150,7 +150,7 @@ class ManageServer(commands.Cog):
             user = ctx.guild.get_member(int(input[0][3:-1]))
             role = discord.utils.get(ctx.guild.roles, name='[mute]')
             await user.remove_roles(role)
-            await ctx.send(f'User has been unmuted.')
+            await ctx.send(f'User **{user.display_name}** has been unmuted.')
         else:
             raise
    
@@ -160,6 +160,97 @@ class ManageServer(commands.Cog):
             await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
         else:
             await ctx.send(f'This command was not used correctly or the role "[mute]" does not exist. Please see `!help unmute` for a more detailed explanation on how to use this command.')
+
+    ###################
+    ### NEW COMMAND ###
+    ###################
+
+    @commands.command()
+    @commands.has_role("Manager")
+    async def tryout(self, ctx, *input):
+        """ Start tryouts
+        
+            Usage: `!tryout [number of groups]`
+            Specify the number of tryout groups. If no argument given, all tryout groups will be used. Bot will ask for tryout settings confirmation.
+            After confirmation tryouts will start.
+        """
+        if (len(input) <= 1):
+            # Get everyone that has the "Tryout" role
+            role = discord.utils.get(ctx.guild.roles, name='Tryout')
+            tryouts = role.members
+
+            # Place tryouts in roles at random
+            roles = [r for r in ctx.guild.roles if r.name.startswith('Group')]
+            roles.reverse()
+
+            # Decide the amount of tryouts per group
+            group_amount = len(roles) if len(input) == 0 else int(input[0])
+            group_size = math.ceil(len(tryouts)/group_amount)
+            groups = roles[:group_amount] 
+
+            # Assign role to tryout
+            tryouts_dict = {}
+            for group in groups:
+                tryouts_dict[group] = []
+            
+            for tryout in tryouts:
+                # Continue until succesful
+                while 1:
+                    group = randrange(group_amount)
+                    if (len(tryouts_dict[groups[group]]) + 1 <= group_size):
+                        tryouts_dict[groups[group]].append(tryout)
+                        break
+
+            # Ask for confirmation
+            e = discord.Embed(title="Confirm Tryout", description="", color=0x00ffff)
+            e.add_field(name='No. tryouts', value=len(tryouts), inline=True)
+            e.add_field(name='Amount of groups', value=group_amount, inline=True)
+            e.add_field(name='Max no. tryouts per group', value=group_size, inline=True)
+
+            # Add all tryouts to correct group in confirmation
+            for k,v in tryouts_dict.items():
+                value = ""
+                for tryout in v:
+                    value += f'{tryout.name}\n'
+                
+                e.add_field(name=k.name, value=value, inline=True)
+
+            e.set_author(name="Axie Manager")
+            e.set_thumbnail(url=self.bot.user.avatar_url)
+            e.set_footer(text='Confirm that these are the correct tryout settings.')
+
+            # Send confirmation request
+            confirm_msg = await ctx.send(embed=e)
+            await confirm_msg.add_reaction('\N{WHITE HEAVY CHECK MARK}')
+            await confirm_msg.add_reaction('\N{CROSS MARK}')
+
+            # Handle preview accept/deny using reactions
+            reaction = await self.bot.wait_for('reaction_add', check=lambda r,u: (str(r.emoji) == '\N{WHITE HEAVY CHECK MARK}' or str(r.emoji) == '\N{CROSS MARK}') and u == ctx.author)
+
+            if (reaction[0].emoji == '\N{WHITE HEAVY CHECK MARK}'):
+                # Add tryouts to roles
+                for k,v in tryouts_dict.items():
+                    for tryout in v:
+                        await tryout.add_roles(k)
+                await ctx.send(f'**STARTING TRYOUTS!**')
+
+            # Cancel tryouts
+            elif(reaction[0].emoji == '\N{CROSS MARK}'):
+                await confirm_msg.delete()
+                await ctx.send(f'Cancelled tryouts. To start a tryout use `!tryout [number of groups]` or see `!help tryout`.')
+
+        else:
+            raise
+
+    @tryout.error
+    async def tryout_error(self,ctx,error):
+        if isinstance(error, commands.MissingRole):
+            await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
+        else:
+            await ctx.send(f'Something went wrong... For information of how to use this function, see `!help tryout`')
+        
+
+        
 
 def setup(bot):
     bot.add_cog(ManageServer(bot))
