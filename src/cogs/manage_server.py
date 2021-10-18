@@ -61,9 +61,20 @@ class ManageServer(commands.Cog):
         if isinstance(error, commands.MissingRole):
             await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
 
+    ###################
+    ### NEW COMMAND ###
+    ###################
+
     @commands.command()
     @commands.has_role("Manager")
     async def clear(self, ctx, *input):
+        """ Clear an amount of messages from a user (if specified)
+
+            Usage: `!clear <amount> [user]`
+            Specify the amount of messages you want to delete. If you want to delete a certain amount of messages by a specific user,
+            also specify the user by adding @<username>.
+        """
+
         # Clear x amount of messages from channel
         if (len(input) == 1):
             await ctx.channel.purge(limit=int(input[0]) + 1)
@@ -91,7 +102,36 @@ class ManageServer(commands.Cog):
         if isinstance(error, commands.MissingRole):
             await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
         else:
-            await ctx.send('This command was not used correctly. Please see `!help clear` for a more detailed explanation on how to use this command.')
+            await ctx.send(f'This command was not used correctly. Please see `!help clear` for a more detailed explanation on how to use this command.')
+
+    ###################
+    ### NEW COMMAND ###
+    ###################
+
+    @commands.command()
+    @commands.has_role("Manager")
+    async def mute(self, ctx, *input):
+        """ Assign the '[mute]' role to a user
+
+            Usage: `!mute <user>`
+            Specify to which user you want to assign the [mute] role. This only works when your server has a role named '[mute]' exactly!
+        """
+        # Add role [mute] to mentioned user
+        if (len(input) == 1):
+            user = ctx.guild.get_member(int(input[0][3:-1]))
+            role = discord.utils.get(ctx.guild.roles, name='[mute]')
+            await user.add_roles(role)
+        else:
+            raise
+    
+    @mute.error
+    async def mute_error(self,ctx,error):
+        print(error)
+        if isinstance(error, commands.MissingRole):
+            await ctx.message.author.send(f'Sorry, you do not have permission to use this command. Please contact a manager if you think that you should.')
+        else:
+            await ctx.send(f'This command was not used correctly or the role "[mute]" does not exist. Please see `!help mute` for a more detailed explanation on how to use this command.')
+
 
 def setup(bot):
     bot.add_cog(ManageServer(bot))
