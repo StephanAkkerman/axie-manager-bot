@@ -2,6 +2,7 @@
 from discord.ext.commands.core import has_role
 import requests
 import json
+import os
 import uuid
 from datetime import datetime
 
