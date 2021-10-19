@@ -20,6 +20,13 @@ class ManageServer(commands.Cog):
             Confirm or deny using the emoji reactions.
         """
 
+        channel = discord.utils.get(
+                self.bot.get_all_channels(), id=int(input[0][2:-1])
+            )
+
+        if (channel == None):
+            raise
+
         # Confirm command used
         create_msg = await ctx.send(
             f"Creating announcement in channel {input[0]}... What should the announcement be?"
@@ -65,9 +72,6 @@ class ManageServer(commands.Cog):
         if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
             e.remove_field(index=0)
             e.set_footer(text="This is an official announcement by the Axie Managers")
-            channel = discord.utils.get(
-                self.bot.get_all_channels(), id=int(input[0][2:-1])
-            )
             await ctx.send(f"Anouncement made in {input[0]}!")
             await channel.send(embed=e)
         elif reaction[0].emoji == "\N{CROSS MARK}":
@@ -151,7 +155,8 @@ class ManageServer(commands.Cog):
         """
         # Add role [mute] to mentioned user
         if len(input) == 1:
-            user = ctx.guild.get_member(int(input[0][3:-1]))
+            user_id = int(input[0][3:-1]) if '!' in input[0] else int(input[0][2:-1])
+            user = ctx.guild.get_member(user_id)
             role = discord.utils.get(ctx.guild.roles, name="[mute]")
             await user.add_roles(role)
             await ctx.send(f"User **{user.display_name}** has been muted.")

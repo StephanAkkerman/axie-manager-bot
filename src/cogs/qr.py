@@ -31,12 +31,13 @@ class QR(commands.Cog):
         
             Discord ID needs to be linked to Ronin Address and fernet encrypted private key
         """
-
-        # Delete this message, to remove clutter
-        await ctx.message.delete()
-
+        
         # If the user writes !qr in the correct channel
         if ctx.channel.name == "🤖┃login":
+            
+            # Delete this message, to remove clutter
+            await ctx.message.delete()
+
             # For logs
             current_time = datetime.now().strftime("%H:%M:%S")
             print("\n")
