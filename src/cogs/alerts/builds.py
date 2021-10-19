@@ -23,7 +23,7 @@ def get_parts(axie_id, specify):
 def get_builds():
     """ Simple function to read the "Axie Builds" spreadsheet and return the dataframe """
 
-    gc = gspread.service_account(filename="../../authentication.json")
+    gc = gspread.service_account(filename="authentication.json")
 
     ws = gc.open("Axie Builds").worksheet("main")
     builds = (

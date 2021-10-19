@@ -12,9 +12,9 @@ from discord.ext import commands
 import pandas as pd     # For parsing data
 
 # Local files
-from alerts.graphql import *
-from alerts.builds import get_builds
-from alerts.genes import get_genes
+from cogs.alerts.graphql import *
+from cogs.alerts.builds import get_builds
+from cogs.alerts.genes import get_genes
 
 class Alert(commands.Cog):
     def __init__(self, bot):
