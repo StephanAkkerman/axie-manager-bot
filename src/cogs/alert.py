@@ -5,15 +5,16 @@ import json
 import traceback
 
 # Discord imports
+import discord
 from discord.ext import commands
 
 # 3rd party dependencies
 import pandas as pd     # For parsing data
 
 # Local files
-from alert.graphql import *
-from alert.builds import get_builds
-from alert.genes import get_genes
+from alerts.graphql import *
+from alerts.builds import get_builds
+from alerts.genes import get_genes
 
 class Alert(commands.Cog):
     def __init__(self, bot):
@@ -178,7 +179,6 @@ class Alert(commands.Cog):
 
         # Check every 5 minutes
         threading.Timer(300, self.old_listings).start()
-
 
 def setup(bot):
     bot.add_cog(Alert(bot))
