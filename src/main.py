@@ -18,7 +18,7 @@ bot.remove_command("help")
 
 @bot.event
 async def on_ready():
-    """ This gets printed on boot up"""
+    """This gets printed on boot up"""
 
     guild = discord.utils.get(
         bot.guilds,

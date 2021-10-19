@@ -27,14 +27,14 @@ class QR(commands.Cog):
     @commands.command()
     @commands.has_role("Verified")
     async def qr(self, ctx):
-        """ Give users their qr code if they request it in the correct channel.
-        
-            Discord ID needs to be linked to Ronin Address and fernet encrypted private key
+        """Give users their qr code if they request it in the correct channel.
+
+        Discord ID needs to be linked to Ronin Address and fernet encrypted private key
         """
-        
+
         # If the user writes !qr in the correct channel
         if ctx.channel.name == "🤖┃login":
-            
+
             # Delete this message, to remove clutter
             await ctx.message.delete()
 

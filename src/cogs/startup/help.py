@@ -8,9 +8,7 @@ class Help(commands.Cog):
 
     @commands.command()
     async def help(self, ctx, *input):
-        """ Receive information about a command or list all commands
-        
-        """
+        """Receive information about a command or list all commands"""
         # List all commands
         if not input:
             e = discord.Embed(
