@@ -31,13 +31,19 @@ async def on_ready():
         f"{guild.name}(id: {guild.id})"
     )
 
+    # Load all commands
+    for filename in os.listdir("./src/cogs/after"):
+        if filename.endswith(".py"):
+            print("Loading:", filename)
+            bot.load_extension(f"cogs.after.{filename[:-3]}")
+
 
 if __name__ == "__main__":
     # Load all commands
-    for filename in os.listdir("./src/cogs"):
+    for filename in os.listdir("./src/cogs/startup"):
         if filename.endswith(".py"):
             print("Loading:", filename)
-            bot.load_extension(f"cogs.{filename[:-3]}")
+            bot.load_extension(f"cogs.startup.{filename[:-3]}")
 
     # Get vars from .json
     with open("authentication.json") as f:

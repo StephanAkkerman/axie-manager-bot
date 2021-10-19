@@ -23,8 +23,8 @@ class Alert(commands.Cog):
         self.specifications = get_builds()
 
         # Start functions
-        self.new_listings()
-        self.old_listings()
+        self.bot.loop.create_task(self.new_listings())
+        self.bot.loop.create_task(self.old_listings())
 
     async def send_alert(self, axie_df, build=None):
         """
@@ -37,13 +37,13 @@ class Alert(commands.Cog):
                     link = 'https://marketplace.axieinfinity.com/axie/' + row['id']  + '/'
 
                     # Send message in discord channel
-                    channel = self.bot.get_channel(900026024618754148) 
+                    channel = discord.utils.get(self.bot.get_all_channels(), guild__name='Bot Test Server', name="💎┃bot-alerts")
                     await channel.send(link)
 
                     self.send.append(row['id'])
                     print(f"Sent {link} in channel")
 
-    def new_listings(self):
+    async def new_listings(self):
         """
         Uses GetAxieLatest to get the newly listed axies that fit our criteria
         """
@@ -89,10 +89,10 @@ class Alert(commands.Cog):
 
                 # Only do this if it is not empty
                 if not search.empty:
-                    self.send_alert(get_genes(search, build['R1 deviation'], build['R2 deviation']), build)
+                    await self.send_alert(get_genes(search, build['R1 deviation'], build['R2 deviation']), build)
 
             # Send alert if there are axies with price less than 50$
-            self.send_alert(df.loc[df['auction'] < 50])
+            await self.send_alert(df.loc[df['auction'] < 50])
 
             # IMPLEMENT!
             # Add axies where startingPrice == endingPrice to seen
@@ -107,7 +107,7 @@ class Alert(commands.Cog):
         # Check every 10 sec
         threading.Timer(10, self.new_listings).start()
 
-    def old_listings(self):
+    async def old_listings(self):
         """
         Uses getAxieBriefList to get the listed axies that fit our criteria
         """
@@ -158,7 +158,7 @@ class Alert(commands.Cog):
 
                     # Only do this if it is not empty
                     if not search.empty:
-                        self.send_alert(get_genes(search, build['R1 deviation'], build['R2 deviation']), build)
+                        await self.send_alert(get_genes(search, build['R1 deviation'], build['R2 deviation']), build)
 
                         # If there are enough axies fitting our search criteria
                         if len(search) == 100:

@@ -17,7 +17,7 @@ from discord.ext import commands
 
 # Local files
 from scholars import getScholar
-from cogs.encrypt import fernet
+from cogs.startup.encrypt import fernet
 
 
 class QR(commands.Cog):
