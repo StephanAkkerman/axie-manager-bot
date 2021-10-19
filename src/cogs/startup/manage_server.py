@@ -12,19 +12,17 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def announce(self, ctx, *input):
-        """ Make an announcement to a channel
-        
-            Usage: `!announce <channel>`
-            Link the channel as the first argument. After this, the bot will ask you what message you want to relay to that channel.
-            The first line is the title of the announcement. Everything after that will be put in the body.
-            Confirm or deny using the emoji reactions.
+        """Make an announcement to a channel
+
+        Usage: `!announce <channel>`
+        Link the channel as the first argument. After this, the bot will ask you what message you want to relay to that channel.
+        The first line is the title of the announcement. Everything after that will be put in the body.
+        Confirm or deny using the emoji reactions.
         """
 
-        channel = discord.utils.get(
-                self.bot.get_all_channels(), id=int(input[0][2:-1])
-            )
+        channel = discord.utils.get(self.bot.get_all_channels(), id=int(input[0][2:-1]))
 
-        if (channel == None):
+        if channel == None:
             raise
 
         # Confirm command used
@@ -99,11 +97,11 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def clear(self, ctx, *input):
-        """ Clear an amount of messages [from a user if specified]
+        """Clear an amount of messages [from a user if specified]
 
-            Usage: `!clear <amount> [user]`
-            Specify the amount of messages you want to delete. If you want to delete a certain amount of messages by a specific user,
-            also specify the user by adding @<username>.
+        Usage: `!clear <amount> [user]`
+        Specify the amount of messages you want to delete. If you want to delete a certain amount of messages by a specific user,
+        also specify the user by adding @<username>.
         """
 
         # Clear x amount of messages from channel
@@ -146,16 +144,16 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def mute(self, ctx, *input):
-        """ Assign the '[mute]' role to a user
+        """Assign the '[mute]' role to a user
 
-            Usage: `!mute <user>`
-            Specify to which user you want to assign the '[mute]' role. This only works when your server has a role named '[mute]' exactly! 
-            The '[mute]' role should be listed above the role of the mentioned user and the assigned bot role should be listed above the user's.
-            To unmute a user, use `!unmute <user>`. For more info, see `!help unmute`.
+        Usage: `!mute <user>`
+        Specify to which user you want to assign the '[mute]' role. This only works when your server has a role named '[mute]' exactly!
+        The '[mute]' role should be listed above the role of the mentioned user and the assigned bot role should be listed above the user's.
+        To unmute a user, use `!unmute <user>`. For more info, see `!help unmute`.
         """
         # Add role [mute] to mentioned user
         if len(input) == 1:
-            user_id = int(input[0][3:-1]) if '!' in input[0] else int(input[0][2:-1])
+            user_id = int(input[0][3:-1]) if "!" in input[0] else int(input[0][2:-1])
             user = ctx.guild.get_member(user_id)
             role = discord.utils.get(ctx.guild.roles, name="[mute]")
             await user.add_roles(role)
@@ -181,10 +179,10 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def unmute(self, ctx, *input):
-        """ Remove the '[mute]' role from a user
+        """Remove the '[mute]' role from a user
 
-            Usage: `!unmute <user>`
-            Specify from which user you want to remove the [mute] role.
+        Usage: `!unmute <user>`
+        Specify from which user you want to remove the [mute] role.
         """
         # Remove role [mute] from mentioned user
         if len(input) == 1:
@@ -213,11 +211,11 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def tryout(self, ctx, *input):
-        """ Start tryouts
-        
-            Usage: `!tryout [number of groups]`
-            Specify the number of tryout groups. If no argument given, all tryout groups will be used. Bot will ask for tryout settings confirmation.
-            After confirmation tryouts will start.
+        """Start tryouts
+
+        Usage: `!tryout [number of groups]`
+        Specify the number of tryout groups. If no argument given, all tryout groups will be used. Bot will ask for tryout settings confirmation.
+        After confirmation tryouts will start.
         """
         if len(input) <= 1:
             # Get everyone that has the "Tryout" role
