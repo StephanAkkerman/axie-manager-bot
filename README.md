@@ -3,12 +3,16 @@ This is a simple python bot, with the purpose of helping our guild manage the sc
 The purpose of this bot is that it can be used for guilds with multiple scholars, who each have their own scholars and wallets. 
 
 ## QR Code
-The code of QRCodeBot.py and part of main.py was written by [ZracheSs | xyZ](https://github.com/ZracheSs-xyZ), check out their repo for the original code.
+The code of QRCodeBot.py and part of qr.py was written by [ZracheSs | xyZ](https://github.com/ZracheSs-xyZ), check out their repo for the original code.
 
 ## Features
-- Send qr code if a scholar types !qr in the 🤖┃login channel
-- Encrypt test, such as your private key, using the `!encrypt <your private key>` command
-- Give new scholars automatically a role, currently disabled
+- Send qr code, using the !qr command
+- Mute and unmute users, using the !mute and !unmute commmands
+- Encrypt messages, using the !encrypt command
+- Start tryouts, using the !tryouts command
+- Make announcements, using the !announce command
+- Clear a number of messages, using the !clear command
+- Custom !help command
 
 ## Dependencies
 The required packages to run this code can be found in the `requirements.txt` file. To run this file, execute the following code block:
