@@ -3,6 +3,7 @@ import requests  # Python module for http request
 import json
 import traceback
 import asyncio
+from datetime import datetime
 
 # Discord imports
 import discord
@@ -10,6 +11,9 @@ from discord.ext import commands
 
 # 3rd party dependencies
 import pandas as pd  # For parsing data
+from urllib.request import urlopen
+from PIL import Image
+from io import BytesIO
 
 # Local files
 from alerts.graphql import *
@@ -48,17 +52,37 @@ class Alert(commands.Cog):
 
                     e = discord.Embed(
                         title=build["Name"],
-                        description="",
+                        description="",#"This Axie was found on the marketplace and satisfies all conditions. Click the link to go to the marketplace auction directly.",
                         url=link,
                         color=0x00FFFF,
                     )
 
                     e.add_field(name='Price', value='$'+str(row['auction']), inline=False)
-                    e.add_field(name='Stats', value=f":eggplant: {str(row['breedCount'])} {str(row['stats'])[1:-28]}", inline=False)
-                    e.add_field(name='Class', value=row['class'], inline=False)
-                    e.set_thumbnail(url=row["image"])
 
-                    await channel.send(embed=e)
+                    e.set_author(name="Axie Sniper", icon_url=self.bot.user.avatar_url)
+                    e.add_field(name=':eggplant:', value=str(row['breedCount']), inline=True)
+                    e.add_field(name='Class', value=row['class'], inline=True)
+                    [e.add_field(name=stat[1:-5].capitalize(), value=stat[-2:], inline=True) for stat in str(row['stats'])[1:-28].split(", ")]
+
+
+                    e.add_field(name="D", value="Sleepless\nNimo\nRisky Fish\nShoal Star\nTimber\nNavaga", inline=True)
+                    e.add_field(name="R1", value="Clear\nBubblemaker\nToothless Bite\nTeal Shell\nAnemone\nKoi", inline=True)
+                    e.add_field(name="R2", value="Nerdy\nEar Breathing\nSerious\nPliers\nGoldfish\nKoi", inline=True)
+                    
+                    # Create cropped image for thumbnail
+                    img = Image.open(urlopen(row["image"]))
+                    width, height = img.size
+                    img_cropped = img.crop((300,220,width-300,height-220))
+                    temp = BytesIO()
+                    img_cropped.save(temp, img.format)
+                    temp.seek(0)
+
+                    file = discord.File(temp, filename="a.png")
+                    e.set_thumbnail(url="attachment://a.png")
+
+                    e.set_footer(text=f"Listing started at: {datetime.fromtimestamp(int(row['auction_info']['startingTimestamp']))}")
+
+                    await channel.send(file=file,embed=e)
 
                     self.send.append(row["id"])
 
