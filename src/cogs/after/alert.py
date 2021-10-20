@@ -1,5 +1,4 @@
 # Standard libraries
-import requests  # Python module for http request
 import json
 import traceback
 import asyncio
@@ -14,6 +13,7 @@ import pandas as pd  # For parsing data
 from urllib.request import urlopen
 from PIL import Image
 from io import BytesIO
+import aiohttp
 
 # Local files
 from alerts.graphql import *
@@ -28,7 +28,7 @@ class Alert(commands.Cog):
         self.specifications = get_builds()
 
         # Start functions
-        self.bot.loop.create_task(self.new_listings())
+        #self.bot.loop.create_task(self.new_listings())
         self.bot.loop.create_task(self.old_listings())
 
     async def send_alert(self, axie_df, build=None):
@@ -80,7 +80,7 @@ class Alert(commands.Cog):
                     file = discord.File(temp, filename="a.png")
                     e.set_thumbnail(url="attachment://a.png")
 
-                    e.set_footer(text=f"Listing started at: {datetime.fromtimestamp(int(row['auction_info']['startingTimestamp']))}")
+                    #e.set_footer(text=f"Listing started at: {datetime.fromtimestamp(int(row['auction_info']['startingTimestamp']))}")
 
                     await channel.send(file=file,embed=e)
 
@@ -95,14 +95,10 @@ class Alert(commands.Cog):
         try:
             # Use the GraphQL query specified above, nly results section is important
             try:
-                data = requests.post(
-                    url,
-                    json={
-                        "query": axie_query,
-                        "operationName": axie_operationName,
-                        "variables": axie_variables,
-                    },
-                ).json()["data"]["axies"]["results"]
+                async with aiohttp.ClientSession() as session:
+                    async with session.post(url, json={"query": axie_query, "operationName": axie_operationName, "variables": axie_variables,}) as r:
+                        response = await r.json()
+                        data = response["data"]["axies"]["results"]
             except Exception as e:
                 print(e)
                 print(
@@ -145,7 +141,7 @@ class Alert(commands.Cog):
                 # Only do this if it is not empty
                 if not search.empty:
                     await self.send_alert(
-                        get_genes(search, build["R1 deviation"], build["R2 deviation"]),
+                        await get_genes(search, build["R1 deviation"], build["R2 deviation"]),
                         build,
                     )
 
@@ -191,16 +187,10 @@ class Alert(commands.Cog):
 
                     # https://axie-graphql.web.app/operations/getAxieBriefList
                     try:
-                        data = requests.post(
-                            url,
-                            json={
-                                "query": old_axies_query,
-                                "operationName": old_axie_operationName,
-                                "variables": old_axie_variables(
-                                    from_var, classes, breedCount, parts
-                                ),
-                            },
-                        ).json()["data"]["axies"]["results"]
+                        async with aiohttp.ClientSession() as session:
+                            async with session.post(url, json={"query": old_axies_query, "operationName": old_axie_operationName, "variables": old_axie_variables(from_var, classes, breedCount, parts)}) as r:
+                                response = await r.json()
+                                data = response["data"]["axies"]["results"]
                     except Exception as e:
                         print(e)
                         print(
@@ -228,7 +218,7 @@ class Alert(commands.Cog):
                     # Only do this if it is not empty
                     if not search.empty:
                         await self.send_alert(
-                            get_genes(
+                            await get_genes(
                                 search, build["R1 deviation"], build["R2 deviation"], True
                             ),
                             build,

@@ -1,8 +1,8 @@
-import requests
 import pandas as pd
+import aiohttp
 
 
-def get_genes(axie_df, r1, r2, add_info=False):
+async def get_genes(axie_df, r1, r2, add_info=False):
 
     # Get all axie ids and add them together
     ids = ",".join(axie_df["id"].tolist())
@@ -10,9 +10,13 @@ def get_genes(axie_df, r1, r2, add_info=False):
     try:
         if add_info:
             # If we need to add stats and auction info
-            response = requests.get("https://api.axie.technology/getgenes/" + ids + "/all").json()
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://api.axie.technology/getgenes/" + ids + "/all") as r:
+                    response = await r.json()
         else:
-            response = requests.get("https://api.axie.technology/getgenes/" + ids).json()
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://api.axie.technology/getgenes/" + ids) as r:
+                    response = await r.json()
 
     except Exception as e:
         print(e)
