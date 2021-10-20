@@ -46,7 +46,7 @@ class Alert(commands.Cog):
                     # Send message in discord channel
                     channel = discord.utils.get(
                         self.bot.get_all_channels(),
-                        guild__name="Axie Manager Scholar Group",
+                        guild__name="Axie Manager Scholar Group" if self.bot.user.id == 892855262124326932 else "Bot Test Server",
                         name="💎┃bot-alerts",
                     )
 
