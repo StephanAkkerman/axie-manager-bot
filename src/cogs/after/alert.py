@@ -28,7 +28,7 @@ class Alert(commands.Cog):
         self.specifications = get_builds()
 
         # Start functions
-        #self.bot.loop.create_task(self.new_listings())
+        self.bot.loop.create_task(self.new_listings())
         self.bot.loop.create_task(self.old_listings())
 
     async def send_alert(self, axie_df, build=None):
@@ -37,7 +37,7 @@ class Alert(commands.Cog):
         """
 
         if not axie_df.empty:
-            for index, row in axie_df.iterrows():
+            for _, row in axie_df.iterrows():
                 if row["id"] not in self.send:
                     link = (
                         "https://marketplace.axieinfinity.com/axie/" + row["id"] + "/"
@@ -46,28 +46,38 @@ class Alert(commands.Cog):
                     # Send message in discord channel
                     channel = discord.utils.get(
                         self.bot.get_all_channels(),
-                        guild__name="Bot Test Server",
+                        guild__name="Axie Manager Scholar Group",
                         name="💎┃bot-alerts",
                     )
 
                     e = discord.Embed(
                         title=build["Name"],
-                        description="",#"This Axie was found on the marketplace and satisfies all conditions. Click the link to go to the marketplace auction directly.",
+                        description="",
                         url=link,
                         color=0x00FFFF,
                     )
+                    
+                    e.set_author(name="Axie Manager", icon_url=self.bot.user.avatar_url)
 
-                    e.add_field(name='Price', value='$'+str(row['auction']), inline=False)
-
-                    e.set_author(name="Axie Sniper", icon_url=self.bot.user.avatar_url)
+                    e.add_field(name='Current Price', value=f"${str(row['auction'])}\n", inline=True)
+                    e.add_field(name='Starting price', value=f"Ξ{round(int(row['auction_info']['startingPrice']) * 0.000000000000000001, 2)}\n", inline=True)
+                    e.add_field(name='Ending price', value=f"Ξ{round(int(row['auction_info']['endingPrice']) * 0.000000000000000001, 2)}\n", inline=True)
+                    
                     e.add_field(name=':eggplant:', value=str(row['breedCount']), inline=True)
                     e.add_field(name='Class', value=row['class'], inline=True)
                     [e.add_field(name=stat[1:-5].capitalize(), value=stat[-2:], inline=True) for stat in str(row['stats'])[1:-28].split(", ")]
 
+                    d = ""
+                    r1 = ""
+                    r2 = ""
+                    for part in ['eyes', 'ears', "mouth", "horn", "back", "tail"]:
+                        d += f"{(row[part]['d']['name'])}\n"
+                        r1 += f"{(row[part]['r1']['name'])}\n"
+                        r2 += f"{(row[part]['r2']['name'])}\n"
 
-                    e.add_field(name="D", value="Sleepless\nNimo\nRisky Fish\nShoal Star\nTimber\nNavaga", inline=True)
-                    e.add_field(name="R1", value="Clear\nBubblemaker\nToothless Bite\nTeal Shell\nAnemone\nKoi", inline=True)
-                    e.add_field(name="R2", value="Nerdy\nEar Breathing\nSerious\nPliers\nGoldfish\nKoi", inline=True)
+                    e.add_field(name="D", value=d, inline=True)
+                    e.add_field(name="R1", value=r1, inline=True)
+                    e.add_field(name="R2", value=r2, inline=True)
                     
                     # Create cropped image for thumbnail
                     img = Image.open(urlopen(row["image"]))
@@ -80,7 +90,7 @@ class Alert(commands.Cog):
                     file = discord.File(temp, filename="a.png")
                     e.set_thumbnail(url="attachment://a.png")
 
-                    #e.set_footer(text=f"Listing started at: {datetime.fromtimestamp(int(row['auction_info']['startingTimestamp']))}")
+                    e.set_footer(text=f"Listing started at: {datetime.fromtimestamp(int(row['auction_info']['startingTimestamp']))}\nListing ending at: {datetime.fromtimestamp(int(row['auction_info']['endingTimestamp']))}")
 
                     await channel.send(file=file,embed=e)
 
