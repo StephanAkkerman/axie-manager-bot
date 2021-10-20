@@ -15,7 +15,6 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 bot.remove_command("help")
 
-
 @bot.event
 async def on_ready():
     """This gets printed on boot up"""
@@ -26,6 +25,7 @@ async def on_ready():
         if len(sys.argv) > 1 and sys.argv[1] == "-test"
         else data["GUILD"],
     )
+
     print(
         f"{bot.user} is connected to the following guild:\n"
         f"{guild.name}(id: {guild.id})"
