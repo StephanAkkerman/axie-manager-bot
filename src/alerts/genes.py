@@ -7,6 +7,8 @@ async def get_genes(axie_df, r1, r2, add_info=False):
     # Get all axie ids and add them together
     ids = ",".join(axie_df["id"].tolist())
 
+    ret_axie_df = axie_df.copy()
+
     try:
         if add_info:
             # If we need to add stats and auction info
@@ -28,17 +30,27 @@ async def get_genes(axie_df, r1, r2, add_info=False):
 
     if add_info:
         
-        # Add stats and auction info to axie_df, has the same order as axie_df
-        # Does this cause this warning: A value is trying to be set on a copy of a slice from a DataFrame.??
-        axie_df[['stats','auction_info']] = genes[['stats', 'auction']].to_numpy()
-
         # Add columns for parts
-        for part in ["mouth", "horn", "back", "tail"]:
+        for part in ['eyes', 'ears', "mouth", "horn", "back", "tail"]:
             genes[part] = genes["traits"].apply(lambda x: x[part])
+            
+        # Add stats and auction info to axie_df, has the same order as axie_df
+        ret_axie_df[['stats','auction_info', 'eyes', 'ears', 'mouth', 'horn', 'back', 'tail']] = genes[['stats', 'auction', 'eyes', 'ears', 'mouth',  'horn', 'back', 'tail']].to_numpy()
 
     # Count deviations for every part
     for part in ["mouth", "horn", "back", "tail"]:
         if len(axie_df) == 1:
+            # iloc[0] is d, r1 is [1], r2 is [2]
+            genes[f"{part} r1"] = 0 if genes.iloc[0][part] == genes.iloc[1][part] else 1
+            genes[f"{part} r2"] = 0 if genes.iloc[0][part] == genes.iloc[2][part] else 1
+
+        else:
+            genes[f"{part} r1"] = [0 if x["d"] == x["r1"] else 1 for x in genes[part]]
+            genes[f"{part} r2"] = [0 if x["d"] == x["r2"] else 1 for x in genes[part]]
+
+    # Count deviations for every part
+    for part in ["mouth", "horn", "back", "tail"]:
+        if len(ret_axie_df) == 1:
             # iloc[0] is d, r1 is [1], r2 is [2]
             genes[f"{part} r1"] = 0 if genes.iloc[0][part] == genes.iloc[1][part] else 1
             genes[f"{part} r2"] = 0 if genes.iloc[0][part] == genes.iloc[2][part] else 1
@@ -70,6 +82,6 @@ async def get_genes(axie_df, r1, r2, add_info=False):
         ids = genes["axieId"].tolist()
 
     # Trim the axie_df based on those ids
-    axie_df = axie_df.loc[axie_df["id"].isin(ids)]
+    ret_axie_df = ret_axie_df.loc[axie_df["id"].isin(ids)]
 
-    return axie_df
+    return ret_axie_df
