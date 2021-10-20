@@ -53,8 +53,8 @@ class Alert(commands.Cog):
                         color=0x00FFFF,
                     )
 
-                    e.add_field(name='Price', value='$'+str(row['auction']), inline=False)                    
-                    e.add_field(name='Stats', value=':eggplant: ' + str(row['breedCount'] + stats), inline=False)
+                    e.add_field(name='Price', value='$'+str(row['auction']), inline=False)
+                    e.add_field(name='Stats', value=f":eggplant: {str(row['breedCount'])} {str(row['stats'])[1:-28]}", inline=False)
                     e.add_field(name='Class', value=row['class'], inline=False)
                     e.set_thumbnail(url=row["image"])
 
@@ -82,9 +82,9 @@ class Alert(commands.Cog):
             except Exception as e:
                 print(e)
                 print(
-                    "Error with fetching new listings using GraphQL, trying again in 2 min"
+                    "Error with fetching new listings using GraphQL, trying again in 30 sec"
                 )
-                await asyncio.sleep(120)
+                await asyncio.sleep(30)
                 return
 
             # convert list to pandas DataFrame
@@ -92,7 +92,6 @@ class Alert(commands.Cog):
 
             # Specify columns
             df = df[["id", "auction", "class", "stage", "breedCount", "parts", "image", "stats"]]
-            return
 
             # Replace parts by their part name
             df["parts"] = [[d.get("name") for d in x] for x in df["parts"]]
@@ -181,9 +180,9 @@ class Alert(commands.Cog):
                     except Exception as e:
                         print(e)
                         print(
-                            "Error with fetching old listings using GraphQL, trying again in 2 min"
+                            "Error with fetching old listings using GraphQL, trying again in 30 sec"
                         )
-                        await asyncio.sleep(120)
+                        await asyncio.sleep(30)
                         return
 
                     df = pd.DataFrame(data)
@@ -206,7 +205,7 @@ class Alert(commands.Cog):
                     if not search.empty:
                         await self.send_alert(
                             get_genes(
-                                search, build["R1 deviation"], build["R2 deviation"]
+                                search, build["R1 deviation"], build["R2 deviation"], True
                             ),
                             build,
                         )
