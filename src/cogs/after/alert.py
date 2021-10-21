@@ -86,14 +86,15 @@ class Alert(commands.Cog):
                     )
                     e.add_field(
                         name="Starting price",
-                        value=f"Ξ{round(int(row['auction_info']['startingPrice']) * 0.000000000000000001, 2)}\n"
+                        value=f"Ξ{round(int(row['auction_info']['startingPrice']) * 0.000000000000000001, 3)}\n"
+                        # TypeError: 'NoneType' object is not subscriptable
                         if "auction_info" in row.index
                         else "Unknown",
                         inline=True,
                     )
                     e.add_field(
                         name="Ending price",
-                        value=f"Ξ{round(int(row['auction_info']['endingPrice']) * 0.000000000000000001, 2)}\n"
+                        value=f"Ξ{round(int(row['auction_info']['endingPrice']) * 0.000000000000000001, 3)}\n"
                         if "auction_info" in row.index
                         else "Unknown",
                         inline=True,
