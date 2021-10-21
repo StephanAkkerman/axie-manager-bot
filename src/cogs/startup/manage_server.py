@@ -1,6 +1,10 @@
+##> Imports
+# > Standard library
 from random import randrange
 import math
+import datetime
 
+# > 3rd Party Dependencies
 import discord
 from discord.ext import commands
 
@@ -69,11 +73,15 @@ class ManageServer(commands.Cog):
 
         if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
             e.remove_field(index=0)
+            e.timestamp = datetime.datetime.utcnow()
             e.set_footer(text="This is an official announcement by the Axie Managers")
+            await create_msg.delete()
+            await msg.delete()
             await ctx.send(f"Anouncement made in {input[0]}!")
             await channel.send(embed=e)
         elif reaction[0].emoji == "\N{CROSS MARK}":
             await create_msg.delete()
+            await msg.delete()
             await preview_msg.delete()
             await ctx.send(
                 f"Make a new announcement using `!announce <channel>` and follow the instructions."
