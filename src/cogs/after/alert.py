@@ -31,6 +31,24 @@ class Alert(commands.Cog):
         self.bot.loop.create_task(self.new_listings())
         self.bot.loop.create_task(self.old_listings())
 
+        # Helper functions
+        self.bot.loop.create_task(self.clear_send())
+        self.bot.loop.create_task(self.new_builds())
+        
+    async def clear_send(self):
+        """ Clears the send list every 5 hours"""
+        
+        # Wait 5 hours and then clear send list
+        await asyncio.sleep(18000)
+        self.send = []
+        
+    async def new_builds(self):
+        """ Gets the new builds every hour"""
+        
+        # Wait 1 hour and then get the new builds
+        await asyncio.sleep(3600)
+        self.specifications = get_builds()
+
     async def send_alert(self, axie_df, build=None):
         """
         Takes an axie dataframe and build and sends a message in the discord channel for each of them
