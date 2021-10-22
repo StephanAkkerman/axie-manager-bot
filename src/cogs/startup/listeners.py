@@ -10,6 +10,10 @@ class Listeners(commands.Cog):
     async def print(self, ctx):
         print(f"{ctx.author} used !{ctx.command} in channel {ctx.message.channel}")
 
+    ###################
+    ###  REACTIONS  ###
+    ###################
+
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
         # Load necessary variables
@@ -43,7 +47,68 @@ class Listeners(commands.Cog):
             await reaction.member.send(embed=msg.embeds[0])
             await msg.delete()
             
+    ###################
+    # MEMBER  UPDATES #
+    ###################
 
+    @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        if len(before.roles) < len(after.roles):
+            await self.new_role(before, after)
+
+    async def new_role(self, before, after):
+        new_role = next(role for role in after.roles if role not in before.roles)
+        if (new_role.name == "Tryout"):
+            e = discord.Embed(
+                title="Congratulations on passing the selection!",
+                description=f"""Hello {after.mention},
+                Congratulations on passing the selection! You will now be given the chance to compete for a limited scholarship!
+                Here are the rules:
+                - You will each be seperated in a group
+                - You will then receive a time slot to play on the axie account
+                - You can then play ONLY 10 games
+                - After finishing 10 games please send us a screenshot and tell us you're done.
+
+                Please note these important rules:
+                - If you play more than 10 games YOU WILL BE INSTANTLY BANNED
+                - if you play longer than your time frame YOU WILL BE INSTANTLY BANNED
+                - if you do not update us once you are done with a screenshot YOU WILL BE INSTANTLY BANNED
+
+                Best of luck!""",
+                color=0x00FFFF,
+            )
+            e.set_author(name="Axie Manager")
+            e.set_thumbnail(url=self.bot.user.avatar_url)
+            e.set_footer("This is an automatically-generated message. Please do not reply here.")
+
+            await after.send(embed=e)
+            await after.send("https://youtu.be/2uG2lOfhe6s")
+
+        elif (new_role.name == "Scholar"):
+            e = discord.Embed(
+                title="Congratulations on passing the selection!",
+                description=f"""Hello {after.mention},
+                Congratulations on passing the selection! You will now be given the chance to compete for a limited scholarship!
+                Here are the rules:
+                - You will each be seperated in a group
+                - You will then receive a time slot to play on the axie account
+                - You can then play ONLY 10 games
+                - After finishing 10 games please send us a screenshot and tell us you're done.
+
+                Please note these important rules:
+                - If you play more than 10 games YOU WILL BE INSTANTLY BANNED
+                - if you play longer than your time frame YOU WILL BE INSTANTLY BANNED
+                - if you do not update us once you are done with a screenshot YOU WILL BE INSTANTLY BANNED
+
+                Best of luck!""",
+                color=0x00FFFF,
+            )
+            e.set_author(name="Axie Manager")
+            e.set_thumbnail(url=self.bot.user.avatar_url)
+            e.set_footer("This is an automatically-generated message. Please do not reply here.")
+
+            await after.send(embed=e)
+            await after.send("https://youtu.be/J2h_tOdMwoA")
 
 def setup(bot):
     bot.add_cog(Listeners(bot))
