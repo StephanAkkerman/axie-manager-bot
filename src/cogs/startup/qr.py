@@ -24,7 +24,7 @@ class QR(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases=["code", "login"])
     @commands.has_role("Verified")
     async def qr(self, ctx):
         """Give users their qr code if they request it in the correct channel.
