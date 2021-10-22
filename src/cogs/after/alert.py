@@ -138,7 +138,8 @@ class Alert(commands.Cog):
                         text=f"Listing started at: {datetime.fromtimestamp(int(row['auction_info']['startingTimestamp']))}\nListing ending at: {datetime.fromtimestamp(int(row['auction_info']['endingTimestamp']))}"
                     )
 
-                    await channel.send(file=file, embed=e)
+                    msg = await channel.send(file=file, embed=e)
+                    await msg.add_reaction("\N{GEM STONE}")
 
                     self.send.append(row["id"])
 

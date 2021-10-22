@@ -15,6 +15,14 @@ class Listeners(commands.Cog):
         # Load necessary variables
         channel = self.bot.get_channel(reaction.channel_id)
         guild = self.bot.get_guild(reaction.guild_id)
+
+        if (reaction.member.id != self.bot.user.id):
+            if (channel.name == "👋┃welcome"):
+                await self.verification_check(reaction, channel, guild)
+            elif (channel.name == "💎┃bot-alerts"):
+                await self.claim_axie(reaction, channel)
+
+    async def verification_check(self, reaction, channel, guild):
         original_msg = (await channel.history(oldest_first=True, limit=1).flatten())[0]
         role = discord.utils.get(guild.roles, name="Verified")
 
@@ -26,6 +34,15 @@ class Listeners(commands.Cog):
             else:
                 r = discord.utils.get(original_msg.reactions, emoji=reaction.emoji.name)
                 await r.remove(reaction.member)
+
+    async def claim_axie(self, reaction, channel):
+        msg = discord.utils.get(await channel.history(limit=None).flatten(), author=self.bot.user)
+
+        # Check that the message is an embed, and the reaction is the gem stone emoji
+        if (len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}"):
+            await reaction.member.send(embed=msg.embeds[0])
+            await msg.delete()
+            
 
 
 def setup(bot):
