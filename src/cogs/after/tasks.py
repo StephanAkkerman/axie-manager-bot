@@ -27,16 +27,12 @@ class Tasks(commands.Cog):
         now = datetime.utcnow()
         history = await channel.history(limit=None).flatten()
         for msg in history:
-            if (msg.created_at <= now-timedelta(hours=24)):
+            if msg.created_at <= now - timedelta(hours=24):
                 await msg.delete()
                 count += 1
 
         print(f"Removed {count} messages from 💎┃bot-alerts!")
 
-        
-
 
 def setup(bot):
     bot.add_cog(Tasks(bot))
-
-

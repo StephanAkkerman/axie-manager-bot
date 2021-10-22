@@ -7,6 +7,7 @@ from datetime import datetime
 # Discord imports
 import discord
 from discord.ext import commands
+from discord.ext.tasks import loop
 
 # 3rd party dependencies
 import pandas as pd  # For parsing data
@@ -28,28 +29,30 @@ class Alert(commands.Cog):
         self.specifications = get_builds()
 
         # Start functions
-        self.bot.loop.create_task(self.new_listings())
-        self.bot.loop.create_task(self.old_listings())
+        self.new_listings.start()
+        self.old_listings.start()
 
         # Helper functions
-        self.bot.loop.create_task(self.clear_send())
-        self.bot.loop.create_task(self.new_builds())
-        
+        self.clear_send.start()
+        self.new_builds.start()
+
+    @loop(hours=5)
     async def clear_send(self):
-        """ Clears the send list every 5 hours"""
-        
+        """Clears the send list every 5 hours"""
+
         # Wait 5 hours and then clear send list
         await asyncio.sleep(18000)
         self.send = []
-        
+
+    @loop(hours=1)
     async def new_builds(self):
-        """ Gets the new builds every hour"""
-        
+        """Gets the new builds every hour"""
+
         # Wait 1 hour and then get the new builds
         await asyncio.sleep(3600)
         self.specifications = get_builds()
 
-    async def send_alert(self, axie_df, build=None):
+    async def send_alert(self, axie_df, build="Cheap!"):
         """
         Takes an axie dataframe and build and sends a message in the discord channel for each of them
         """
@@ -77,26 +80,37 @@ class Alert(commands.Cog):
                         color=0x00FFFF,
                     )
 
+                    # Maybe improve this
+                    if row["auction"] == None:
+                        start_price = row["price"]
+                        end_price = row["price"]
+                        start_time = datetime.now().strftime("%Y-%m-%d")
+                        end_time = datetime.now().strftime("%Y-%m-%d")
+                    else:
+                        start_price = int(row["auction"]["startingPrice"])
+                        end_price = int(row["auction"]["endingPrice"])
+                        start_time = datetime.fromtimestamp(
+                            int(row["auction"]["startingTimestamp"])
+                        )
+                        end_time = datetime.fromtimestamp(
+                            int(row["auction"]["endingTimestamp"])
+                        )
+
                     e.set_author(name="Axie Manager", icon_url=self.bot.user.avatar_url)
 
                     e.add_field(
                         name="Current Price",
-                        value=f"${str(row['auction'])}\n",
+                        value=f"${str(row['price'])}\n",
                         inline=True,
                     )
                     e.add_field(
                         name="Starting price",
-                        value=f"Ξ{round(int(row['auction_info']['startingPrice']) * 0.000000000000000001, 3)}\n"
-                        # TypeError: 'NoneType' object is not subscriptable
-                        if "auction_info" in row.index
-                        else "Unknown",
+                        value=f"Ξ{round(start_price * 0.000000000000000001, 3)}\n",
                         inline=True,
                     )
                     e.add_field(
                         name="Ending price",
-                        value=f"Ξ{round(int(row['auction_info']['endingPrice']) * 0.000000000000000001, 3)}\n"
-                        if "auction_info" in row.index
-                        else "Unknown",
+                        value=f"Ξ{round(end_price * 0.000000000000000001, 3)}\n",
                         inline=True,
                     )
 
@@ -135,7 +149,7 @@ class Alert(commands.Cog):
                     e.set_thumbnail(url="attachment://a.png")
 
                     e.set_footer(
-                        text=f"Listing started at: {datetime.fromtimestamp(int(row['auction_info']['startingTimestamp']))}\nListing ending at: {datetime.fromtimestamp(int(row['auction_info']['endingTimestamp']))}"
+                        text=f"Listing started at: {start_time}\nListing ending at: {end_time}"
                     )
 
                     msg = await channel.send(file=file, embed=e)
@@ -143,6 +157,7 @@ class Alert(commands.Cog):
 
                     self.send.append(row["id"])
 
+    @loop(seconds=10)
     async def new_listings(self):
         """
         Uses GetAxieLatest to get the newly listed axies that fit our criteria
@@ -168,7 +183,6 @@ class Alert(commands.Cog):
                 print(
                     "Error with fetching new listings using GraphQL, trying again in 30 sec"
                 )
-                await asyncio.sleep(30)
                 return
 
             # convert list to pandas DataFrame
@@ -194,12 +208,9 @@ class Alert(commands.Cog):
             # Convert the parts to a set
             df["parts"] = df["parts"].apply(set)
 
-            # This could be improved lol
-            df["auction_info"] = df["auction"]
-
             # Replace auction dict by current price in USD and convert it to numeric
             try:
-                df["auction"] = pd.to_numeric(
+                df["price"] = pd.to_numeric(
                     df["auction"].apply(lambda x: x["currentPriceUSD"])
                 )
             except Exception as e:
@@ -212,7 +223,7 @@ class Alert(commands.Cog):
                 search = df.loc[
                     (df["class"].isin(build["Class"]))
                     & (df["breedCount"] <= build["Max Breedcount"])
-                    & (df["auction"] < build["Max Price"])
+                    & (df["price"] < build["Max Price"])
                     & (set(build["Parts"]) <= df["parts"])
                 ]
 
@@ -226,7 +237,7 @@ class Alert(commands.Cog):
                     )
 
             # Send alert if there are axies with price less than 50$
-            await self.send_alert(df.loc[df["auction"] < 50])
+            await self.send_alert(df.loc[df["price"] < 50])
 
             # IMPLEMENT!
             # Add axies where startingPrice == endingPrice to seen
@@ -238,9 +249,7 @@ class Alert(commands.Cog):
             print(traceback.format_exc())
             print("Error at new_listings")
 
-        # Check every 10 sec
-        await asyncio.sleep(10)
-
+    @loop(seconds=300)
     async def old_listings(self):
         """
         Uses getAxieBriefList to get the listed axies that fit our criteria
@@ -285,7 +294,7 @@ class Alert(commands.Cog):
                         print(
                             "Error with fetching old listings using GraphQL, trying again in 30 sec"
                         )
-                        await asyncio.sleep(30)
+                        # Return because otherwise the rest does not work
                         return
 
                     df = pd.DataFrame(data)
@@ -295,14 +304,14 @@ class Alert(commands.Cog):
 
                     # Replace auction dict by current price in USD and convert it to numeric
                     try:
-                        df["auction"] = pd.to_numeric(
+                        df["price"] = pd.to_numeric(
                             df["auction"].apply(lambda x: x["currentPriceUSD"])
                         )
                     except Exception as e:
                         print(e)
 
                     # Only keep the ones with price less than max
-                    search = df.loc[df["auction"] < build["Max Price"]]
+                    search = df.loc[df["price"] < build["Max Price"]]
 
                     # Only do this if it is not empty
                     if not search.empty:
@@ -329,11 +338,6 @@ class Alert(commands.Cog):
         except Exception as e:
             print(e)
             print(traceback.format_exc())
-            await asyncio.sleep(120)
-            return
-
-        # Check every 5 minutes
-        await asyncio.sleep(300)
 
 
 def setup(bot):

@@ -23,7 +23,14 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
 
     # Reponse returns columns ['cls', 'region', 'pattern', 'color', 'eyes', 'mouth', 'ears', 'horn', 'back', 'tail', 'axieId']
     # Eyes and ears not important
-    genes = pd.DataFrame(response)
+    if not get_auction_info:
+        if type(response) == dict:
+            df = pd.DataFrame.from_dict(response, orient="index")
+            genes = df.transpose()
+        else:
+            genes = pd.DataFrame([pd.Series(value) for value in response])
+    else:
+        genes = pd.DataFrame(response)
 
     # Add columns for parts
     for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
@@ -32,25 +39,20 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
     # Add stats and auction info to axie_df, has the same order as axie_df
     if get_auction_info:
         ret_axie_df[
-            ["stats", "auction_info", "eyes", "ears", "mouth", "horn", "back", "tail"]
+            ["stats", "auction", "eyes", "ears", "mouth", "horn", "back", "tail"]
         ] = genes[
             ["stats", "auction", "eyes", "ears", "mouth", "horn", "back", "tail"]
         ].to_numpy()
     else:
+        # Do not add auction info to new_listing, since it already has that
         ret_axie_df[["stats", "eyes", "ears", "mouth", "horn", "back", "tail"]] = genes[
             ["stats", "eyes", "ears", "mouth", "horn", "back", "tail"]
         ].to_numpy()
 
     # Count deviations for every part
     for part in ["mouth", "horn", "back", "tail"]:
-        if len(axie_df) == 1:
-            # iloc[0] is d, r1 is [1], r2 is [2]
-            genes[f"{part} r1"] = 0 if genes.iloc[0][part] == genes.iloc[1][part] else 1
-            genes[f"{part} r2"] = 0 if genes.iloc[0][part] == genes.iloc[2][part] else 1
-
-        else:
-            genes[f"{part} r1"] = [0 if x["d"] == x["r1"] else 1 for x in genes[part]]
-            genes[f"{part} r2"] = [0 if x["d"] == x["r2"] else 1 for x in genes[part]]
+        genes[f"{part} r1"] = [0 if x["d"] == x["r1"] else 1 for x in genes[part]]
+        genes[f"{part} r2"] = [0 if x["d"] == x["r2"] else 1 for x in genes[part]]
 
     # Sum all the deviations
     genes["r1 deviation"] = (
