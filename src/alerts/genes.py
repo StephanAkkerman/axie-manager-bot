@@ -22,7 +22,6 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
         print("Error at get_genes")
 
     # Reponse returns columns ['cls', 'region', 'pattern', 'color', 'eyes', 'mouth', 'ears', 'horn', 'back', 'tail', 'axieId']
-    # Eyes and ears not important
     if not get_auction_info:
         if type(response) == dict:
             df = pd.DataFrame.from_dict(response, orient="index")
@@ -30,7 +29,18 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
         else:
             genes = pd.DataFrame([pd.Series(value) for value in response])
     else:
-        genes = pd.DataFrame(response)
+        if len(axie_df) == 1:
+            df = pd.DataFrame.from_dict(response, orient="index")
+            genes = df.transpose()
+        else:
+            genes = pd.DataFrame(response)
+            
+    # Filter these ids
+    egg_ids = genes[genes.stage == 1]["story_id"].tolist()
+    
+    # Remove them from the df
+    genes = genes.loc[~genes.story_id.isin(egg_ids)]
+    ret_axie_df = ret_axie_df.loc[~ret_axie_df.id.isin(egg_ids)]
 
     # Add columns for parts
     for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:

@@ -52,7 +52,7 @@ class Alert(commands.Cog):
         await asyncio.sleep(3600)
         self.specifications = get_builds()
 
-    async def send_alert(self, axie_df, build="Cheap!"):
+    async def send_alert(self, axie_df, build={"Name": "Cheap"}):
         """
         Takes an axie dataframe and build and sends a message in the discord channel for each of them
         """
