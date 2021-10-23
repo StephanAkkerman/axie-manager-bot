@@ -52,7 +52,7 @@ class Alert(commands.Cog):
         await asyncio.sleep(3600)
         self.specifications = get_builds()
 
-    async def send_alert(self, axie_df, build={"Name": "Cheap"}):
+    async def send_alert(self, axie_df, build):
         """
         Takes an axie dataframe and build and sends a message in the discord channel for each of them
         """
@@ -79,7 +79,7 @@ class Alert(commands.Cog):
                         url=link,
                         color=0x00FFFF,
                     )
-
+                    
                     # Maybe improve this
                     if row["auction"] == None:
                         start_price = row["price"]
@@ -125,13 +125,21 @@ class Alert(commands.Cog):
                         for stat in str(row["stats"])[1:-28].split(", ")
                     ]
 
-                    d = ""
-                    r1 = ""
-                    r2 = ""
-                    for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
-                        d += f"{(row[part]['d']['name'])}\n"
-                        r1 += f"{(row[part]['r1']['name'])}\n"
-                        r2 += f"{(row[part]['r2']['name'])}\n"
+                    # Could call the get_genes to fix this
+                    if build['Name'] == "Cheap":
+                        d = "Unknown"
+                        r1 = "Unknown"
+                        r2 = "Unknown"
+                    
+                    else:
+                        d = ""
+                        r1 = ""
+                        r2 = ""
+                        
+                        for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
+                            d += f"{(row[part]['d']['name'])}\n"
+                            r1 += f"{(row[part]['r1']['name'])}\n"
+                            r2 += f"{(row[part]['r2']['name'])}\n"
 
                     e.add_field(name="D", value=d, inline=True)
                     e.add_field(name="R1", value=r1, inline=True)
@@ -237,7 +245,7 @@ class Alert(commands.Cog):
                     )
 
             # Send alert if there are axies with price less than 50$
-            await self.send_alert(df.loc[df["price"] < 50])
+            await self.send_alert(df.loc[df["price"] < 50], {"Name":"Cheap"})
 
             # IMPLEMENT!
             # Add axies where startingPrice == endingPrice to seen
