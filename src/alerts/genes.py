@@ -34,30 +34,13 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
             genes = df.transpose()
         else:
             genes = pd.DataFrame(response)
-            
-    # Filter these ids
-    egg_ids = genes[genes.stage == 1]["story_id"].tolist()
-    
-    # Remove them from the df
-    genes = genes.loc[~genes.story_id.isin(egg_ids)]
-    ret_axie_df = ret_axie_df.loc[~ret_axie_df.id.isin(egg_ids)]
+
+    # Remove ids of axies that are currently in the API as eggs
+    genes = genes.loc[~genes.story_id.isin(genes[genes.stage == 1]["story_id"].tolist())]
 
     # Add columns for parts
     for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
         genes[part] = genes["traits"].apply(lambda x: x[part])
-
-    # Add stats and auction info to axie_df, has the same order as axie_df
-    if get_auction_info:
-        ret_axie_df[
-            ["stats", "auction", "eyes", "ears", "mouth", "horn", "back", "tail"]
-        ] = genes[
-            ["stats", "auction", "eyes", "ears", "mouth", "horn", "back", "tail"]
-        ].to_numpy()
-    else:
-        # Do not add auction info to new_listing, since it already has that
-        ret_axie_df[["stats", "eyes", "ears", "mouth", "horn", "back", "tail"]] = genes[
-            ["stats", "eyes", "ears", "mouth", "horn", "back", "tail"]
-        ].to_numpy()
 
     # Count deviations for every part
     for part in ["mouth", "horn", "back", "tail"]:
@@ -75,10 +58,64 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
     # Only get the axies where deviations are lower than what we asked for
     genes = genes.loc[(genes["r1 deviation"] <= r1) & (genes["r2 deviation"] <= r2)]
 
-    # Get the corresponding ids
-    ids = genes["story_id"].tolist()
+    # Trim the axie_df based on ids in genes
+    ret_axie_df = ret_axie_df.loc[axie_df["id"].isin(genes["story_id"].tolist())]
 
-    # Trim the axie_df based on those ids
-    ret_axie_df = ret_axie_df.loc[axie_df["id"].isin(ids)]
+    # Add stats and auction info to axie_df, has the same order as axie_df
+    if get_auction_info:
+        ret_axie_df[
+            [
+                "stats",
+                "auction",
+                "eyes",
+                "ears",
+                "mouth",
+                "horn",
+                "back",
+                "tail",
+                "r1 deviation",
+                "r2 deviation",
+            ]
+        ] = genes[
+            [
+                "stats",
+                "auction",
+                "eyes",
+                "ears",
+                "mouth",
+                "horn",
+                "back",
+                "tail",
+                "r1 deviation",
+                "r2 deviation",
+            ]
+        ].to_numpy()
+    else:
+        # Do not add auction info to new_listing, since it already has that
+        ret_axie_df[
+            [
+                "stats",
+                "eyes",
+                "ears",
+                "mouth",
+                "horn",
+                "back",
+                "tail",
+                "r1 deviation",
+                "r2 deviation",
+            ]
+        ] = genes[
+            [
+                "stats",
+                "eyes",
+                "ears",
+                "mouth",
+                "horn",
+                "back",
+                "tail",
+                "r1 deviation",
+                "r2 deviation",
+            ]
+        ].to_numpy()
 
     return ret_axie_df

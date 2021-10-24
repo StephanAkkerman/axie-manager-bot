@@ -26,6 +26,7 @@ class Alert(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.send = []
+        self.new = []
         self.specifications = get_builds()
 
         # Start functions
@@ -35,22 +36,22 @@ class Alert(commands.Cog):
         # Helper functions
         self.clear_send.start()
         self.new_builds.start()
+        self.clear_new.start()
 
     @loop(hours=5)
     async def clear_send(self):
         """Clears the send list every 5 hours"""
-
-        # Wait 5 hours and then clear send list
-        await asyncio.sleep(18000)
         self.send = []
 
     @loop(hours=1)
     async def new_builds(self):
         """Gets the new builds every hour"""
-
-        # Wait 1 hour and then get the new builds
-        await asyncio.sleep(3600)
         self.specifications = get_builds()
+
+    @loop(seconds=60)
+    async def clear_new(self):
+        """Clears the new list every minute"""
+        self.send = []
 
     async def send_alert(self, axie_df, build):
         """
@@ -79,7 +80,7 @@ class Alert(commands.Cog):
                         url=link,
                         color=0x00FFFF,
                     )
-                    
+
                     # Maybe improve this
                     if row["auction"] == None:
                         start_price = row["price"]
@@ -126,24 +127,28 @@ class Alert(commands.Cog):
                     ]
 
                     # Could call the get_genes to fix this
-                    if build['Name'] == "Cheap":
+                    if build["Name"] == "Cheap":
                         d = "Unknown"
                         r1 = "Unknown"
                         r2 = "Unknown"
-                    
+
                     else:
                         d = ""
                         r1 = ""
                         r2 = ""
-                        
+
                         for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
                             d += f"{(row[part]['d']['name'])}\n"
                             r1 += f"{(row[part]['r1']['name'])}\n"
                             r2 += f"{(row[part]['r2']['name'])}\n"
 
                     e.add_field(name="D", value=d, inline=True)
-                    e.add_field(name="R1", value=r1, inline=True)
-                    e.add_field(name="R2", value=r2, inline=True)
+                    e.add_field(
+                        name=f"R1 ({row['r1 deviation']})", value=r1, inline=True
+                    )
+                    e.add_field(
+                        name=f"R2 ({row['r2 deviation']})", value=r2, inline=True
+                    )
 
                     # Create cropped image for thumbnail
                     img = Image.open(urlopen(row["image"]))
@@ -235,8 +240,12 @@ class Alert(commands.Cog):
                     & (set(build["Parts"]) <= df["parts"])
                 ]
 
+                # Remove ids we have already seen the last minute
+                search = search.loc[~search.id.isin(self.new)]
+
                 # Only do this if it is not empty
                 if not search.empty:
+                    self.new.append(search.id)
                     await self.send_alert(
                         await get_genes(
                             search, build["R1 deviation"], build["R2 deviation"]
@@ -245,7 +254,7 @@ class Alert(commands.Cog):
                     )
 
             # Send alert if there are axies with price less than 50$
-            await self.send_alert(df.loc[df["price"] < 50], {"Name":"Cheap"})
+            await self.send_alert(df.loc[df["price"] < 50], {"Name": "Cheap"})
 
             # IMPLEMENT!
             # Add axies where startingPrice == endingPrice to seen
