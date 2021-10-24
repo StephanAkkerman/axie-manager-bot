@@ -131,11 +131,15 @@ class Alert(commands.Cog):
                         d = "Unknown"
                         r1 = "Unknown"
                         r2 = "Unknown"
+                        r1_title = "R1"
+                        r2_titel = "R2"
 
                     else:
                         d = ""
                         r1 = ""
                         r2 = ""
+                        r1_title = f"R1 ({row['r1 deviation']})"
+                        r2_titel = f"R2 ({row['r2 deviation']})"
 
                         for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
                             d += f"{(row[part]['d']['name'])}\n"
@@ -144,10 +148,10 @@ class Alert(commands.Cog):
 
                     e.add_field(name="D", value=d, inline=True)
                     e.add_field(
-                        name=f"R1 ({row['r1 deviation']})", value=r1, inline=True
+                        name=r1_title, value=r1, inline=True
                     )
                     e.add_field(
-                        name=f"R2 ({row['r2 deviation']})", value=r2, inline=True
+                        name=r2_titel, value=r2, inline=True
                     )
 
                     # Create cropped image for thumbnail
