@@ -1,8 +1,8 @@
 # Standard libraries
 import json
 import traceback
-import asyncio
 from datetime import datetime
+import asyncio
 
 # Discord imports
 import discord
@@ -20,7 +20,7 @@ import aiohttp
 from alerts.graphql import *
 from alerts.builds import get_builds
 from alerts.genes import get_genes
-
+from alerts.api import api_new_listings, api_old_listings
 
 class Alert(commands.Cog):
     def __init__(self, bot):
@@ -51,7 +51,7 @@ class Alert(commands.Cog):
     @loop(seconds=60)
     async def clear_new(self):
         """Clears the new list every minute"""
-        self.send = []
+        self.new = []
 
     async def send_alert(self, axie_df, build):
         """
@@ -184,26 +184,16 @@ class Alert(commands.Cog):
         try:
             # Use the GraphQL query specified above, nly results section is important
             try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.post(
-                        url,
-                        json={
-                            "query": axie_query,
-                            "operationName": axie_operationName,
-                            "variables": axie_variables,
-                        },
-                    ) as r:
-                        response = await r.json()
-                        data = response["data"]["axies"]["results"]
+                # Get a dataframe of the new listings
+                df = await api_new_listings()
             except Exception as e:
                 print(e)
                 print(
-                    "Error with fetching new listings using GraphQL, trying again in 30 sec"
+                    "Error with fetching new listings using GraphQL, trying again in 5 minutes"
                 )
+                # Wait 5 minutes
+                asyncio.sleep(300)
                 return
-
-            # convert list to pandas DataFrame
-            df = pd.DataFrame(data)
 
             # Specify columns
             df = df[
@@ -297,28 +287,15 @@ class Alert(commands.Cog):
 
                     # https://axie-graphql.web.app/operations/getAxieBriefList
                     try:
-                        async with aiohttp.ClientSession() as session:
-                            async with session.post(
-                                url,
-                                json={
-                                    "query": old_axies_query,
-                                    "operationName": old_axie_operationName,
-                                    "variables": old_axie_variables(
-                                        from_var, classes, breedCount, parts
-                                    ),
-                                },
-                            ) as r:
-                                response = await r.json()
-                                data = response["data"]["axies"]["results"]
+                        df = await api_old_listings(from_var, classes, breedCount, parts)
                     except Exception as e:
                         print(e)
                         print(
-                            "Error with fetching old listings using GraphQL, trying again in 30 sec"
+                            "Error with fetching old listings using GraphQL, trying again in 5 minutes"
                         )
                         # Return because otherwise the rest does not work
+                        asyncio.sleep(300)
                         return
-
-                    df = pd.DataFrame(data)
 
                     # Specify columns
                     df = df[["id", "auction", "class", "breedCount", "parts", "image"]]

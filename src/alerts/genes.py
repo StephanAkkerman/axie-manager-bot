@@ -1,5 +1,9 @@
+# 3rd party dependencies
 import pandas as pd
 import aiohttp
+
+# Local dependencies
+from alerts.api import api_genes
 
 
 async def get_genes(axie_df, r1, r2, get_auction_info=False):
@@ -10,16 +14,12 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
     ret_axie_df = axie_df.copy()
 
     try:
-        # If we need to add stats and auction info
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                "https://api.axie.technology/getgenes/" + ids + "/all"
-            ) as r:
-                response = await r.json()
-
+        response = await api_genes(ids)
     except Exception as e:
         print(e)
-        print("Error at get_genes")
+        print("Error fetching api_genes")
+        # Return an empty dataframe, so no crashes will occur
+        return pd.DataFrame({})
 
     # Reponse returns columns ['cls', 'region', 'pattern', 'color', 'eyes', 'mouth', 'ears', 'horn', 'back', 'tail', 'axieId']
     if not get_auction_info:
