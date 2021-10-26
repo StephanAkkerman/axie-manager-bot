@@ -190,7 +190,7 @@ class Alert(commands.Cog):
                     "Error with fetching new listings using GraphQL, trying again in 5 minutes"
                 )
                 # Wait 5 minutes
-                asyncio.sleep(300)
+                await asyncio.sleep(300)
                 return
 
             # Specify columns
@@ -292,7 +292,7 @@ class Alert(commands.Cog):
                             "Error with fetching old listings using GraphQL, trying again in 5 minutes"
                         )
                         # Return because otherwise the rest does not work
-                        asyncio.sleep(300)
+                        await asyncio.sleep(300)
                         return
 
                     # Specify columns
