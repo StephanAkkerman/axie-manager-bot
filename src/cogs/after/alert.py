@@ -127,24 +127,22 @@ class Alert(commands.Cog):
                     ]
 
                     # Could call the get_genes to fix this
-                    if build["Name"] == "Cheap":
-                        d = "Unknown"
-                        r1 = "Unknown"
-                        r2 = "Unknown"
-                        r1_title = "R1"
-                        r2_titel = "R2"
+                    #if build["Name"] == "Cheap":
+                    #    d = "Unknown"
+                    #    r1 = "Unknown"
+                    #    r2 = "Unknown"
+                    #    r1_title = "R1"
+                    #    r2_titel = "R2"
+                    d = ""
+                    r1 = ""
+                    r2 = ""
+                    r1_title = f"R1 ({row['r1 deviation']})"
+                    r2_titel = f"R2 ({row['r2 deviation']})"
 
-                    else:
-                        d = ""
-                        r1 = ""
-                        r2 = ""
-                        r1_title = f"R1 ({row['r1 deviation']})"
-                        r2_titel = f"R2 ({row['r2 deviation']})"
-
-                        for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
-                            d += f"{(row[part]['d']['name'])}\n"
-                            r1 += f"{(row[part]['r1']['name'])}\n"
-                            r2 += f"{(row[part]['r2']['name'])}\n"
+                    for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
+                        d += f"{(row[part]['d']['name'])}\n"
+                        r1 += f"{(row[part]['r1']['name'])}\n"
+                        r2 += f"{(row[part]['r2']['name'])}\n"
 
                     e.add_field(name="D", value=d, inline=True)
                     e.add_field(
@@ -248,7 +246,7 @@ class Alert(commands.Cog):
                     )
 
             # Send alert if there are axies with price less than 50$
-            await self.send_alert(df.loc[df["price"] < 50], {"Name": "Cheap"})
+            #await self.send_alert(df.loc[df["price"] < 50], {"Name": "Cheap"})
 
             # IMPLEMENT!
             # Add axies where startingPrice == endingPrice to seen
