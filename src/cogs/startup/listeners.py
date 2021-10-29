@@ -62,50 +62,50 @@ class Listeners(commands.Cog):
             e = discord.Embed(
                 title="Congratulations on passing the selection!",
                 description=f"""Hello {after.mention},
-                Congratulations on passing the selection! You will now be given the chance to compete for a limited scholarship!
-                Here are the rules:
-                - You will each be seperated in a group
-                - You will then receive a time slot to play on the axie account
-                - You can then play ONLY 10 games
-                - After finishing 10 games please send us a screenshot and tell us you're done.
+                You have been chosen🌟 
+                Congratulations on passing our tryout selection! Now you will get the chance to prove your skills to win an exciting scholarship program at Axie Manager!
 
-                Please note these important rules:
-                - If you play more than 10 games YOU WILL BE INSTANTLY BANNED
-                - if you play longer than your time frame YOU WILL BE INSTANTLY BANNED
-                - if you do not update us once you are done with a screenshot YOU WILL BE INSTANTLY BANNED
+                Here is some important information before you get started on your exciting journey with us!ℹ️ 
 
-                Best of luck!""",
+                - If you are ever lost in our discord refer to the 🔑 Information category to find how to navigate our discord
+                - Please visit 📆  | welcome-tryouts to get started with the tryout process!
+                - In the 🙇‍♂️  tryout category you will find all the tryout related topics! A perfect place to seek advice or socialize with your fellow tryouts!
+                - If you ever get lose the login don't worry we got you. Simply type: !qr in the 🤖┃login channel to get your qr!
+
+                Before you get started please watch the following video as this video will explain the entire tryout process!
+
+                Show us what you got and best of luck🍀 
+                _You play to earn and we will manage the rest😎_""",
                 color=0x00FFFF,
             )
             e.set_author(name="Axie Manager")
             e.set_thumbnail(url=self.bot.user.avatar_url)
-            e.set_footer("This is an automatically-generated message. Please do not reply here.")
+            e.set_footer(text="This is an automatically-generated message. Please do not reply to this message.")
 
             await after.send(embed=e)
             await after.send("https://youtu.be/2uG2lOfhe6s")
 
         elif (new_role.name == "Scholar"):
             e = discord.Embed(
-                title="Congratulations on passing the selection!",
+                title="Congratulations on becoming a tryout!",
                 description=f"""Hello {after.mention},
-                Congratulations on passing the selection! You will now be given the chance to compete for a limited scholarship!
-                Here are the rules:
-                - You will each be seperated in a group
-                - You will then receive a time slot to play on the axie account
-                - You can then play ONLY 10 games
-                - After finishing 10 games please send us a screenshot and tell us you're done.
+                A Big Congratulations! 🎊 
+                We are thrilled to have you on board as a scholar of our fast growing Axie Infinity group! 
+                Here at Axie Manager we seek the best players for a scholarship where you play to earn 💰 and we manage the rest 😎 
 
-                Please note these important rules:
-                - If you play more than 10 games YOU WILL BE INSTANTLY BANNED
-                - if you play longer than your time frame YOU WILL BE INSTANTLY BANNED
-                - if you do not update us once you are done with a screenshot YOU WILL BE INSTANTLY BANNED
+                Here is some important information before you get started on your exciting journey with us!ℹ️ 
+                - If you are ever lost in our discord refer to the 🔑 Information category to find how to navigate our discord
+                - In the 🎓  scholar category you will find all the scholar related topics! A perfect place to seek advice or discuss meta strats with your fellow scholars!
+                - If you ever get lose the login don't worry we got you. Simply type: !qr in the 🤖┃login channel to get your qr!
 
-                Best of luck!""",
+                To summarize we have created a simple video for you!
+
+                Thank you for joining our Axie Infinity group, now let's get that juicy SLP🤑""",
                 color=0x00FFFF,
             )
             e.set_author(name="Axie Manager")
             e.set_thumbnail(url=self.bot.user.avatar_url)
-            e.set_footer("This is an automatically-generated message. Please do not reply here.")
+            e.set_footer(text="This is an automatically-generated message. Please do not reply to this message.")
 
             await after.send(embed=e)
             await after.send("https://youtu.be/J2h_tOdMwoA")
