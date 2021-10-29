@@ -10,20 +10,16 @@ class Listeners(commands.Cog):
     async def print(self, ctx):
         print(f"{ctx.author} used !{ctx.command} in channel {ctx.message.channel}")
 
-    ###################
-    ###  REACTIONS  ###
-    ###################
-
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
         # Load necessary variables
         channel = self.bot.get_channel(reaction.channel_id)
         guild = self.bot.get_guild(reaction.guild_id)
 
-        if (reaction.member.id != self.bot.user.id):
-            if (channel.name == "👋┃welcome"):
+        if reaction.member.id != self.bot.user.id:
+            if channel.name == "👋┃welcome":
                 await self.verification_check(reaction, channel, guild)
-            elif (channel.name == "💎┃bot-alerts"):
+            elif channel.name == "💎┃bot-alerts":
                 await self.claim_axie(reaction, channel)
 
     async def verification_check(self, reaction, channel, guild):
@@ -40,12 +36,15 @@ class Listeners(commands.Cog):
                 await r.remove(reaction.member)
 
     async def claim_axie(self, reaction, channel):
-        msg = discord.utils.get(await channel.history(limit=None).flatten(), author=self.bot.user)
+        msg = discord.utils.get(
+            await channel.history(limit=None).flatten(), author=self.bot.user
+        )
 
         # Check that the message is an embed, and the reaction is the gem stone emoji
-        if (len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}"):
+        if len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}":
             await reaction.member.send(embed=msg.embeds[0])
             await msg.delete()
+
             
     ###################
     # MEMBER  UPDATES #
