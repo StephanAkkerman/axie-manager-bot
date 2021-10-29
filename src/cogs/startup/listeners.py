@@ -36,9 +36,12 @@ class Listeners(commands.Cog):
                 await r.remove(reaction.member)
 
     async def claim_axie(self, reaction, channel):
-        msg = discord.utils.get(
-            await channel.history(limit=None).flatten(), author=self.bot.user
-        )
+        msgs = [m for m in await channel.history(limit=None).flatten() if m.author==self.bot.user]
+        msg = None
+
+        for m in msgs:
+            if m.id == reaction.message_id:
+                msg = m
 
         # Check that the message is an embed, and the reaction is the gem stone emoji
         if len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}":
