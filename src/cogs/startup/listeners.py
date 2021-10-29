@@ -89,7 +89,7 @@ class Listeners(commands.Cog):
 
         elif (new_role.name == "Scholar"):
             e = discord.Embed(
-                title="Congratulations on becoming a tryout!",
+                title="Congratulations on becoming a scholar!",
                 description=f"""Hello {after.mention},
                 A Big Congratulations! 🎊 
                 We are thrilled to have you on board as a scholar of our fast growing Axie Infinity group! 
