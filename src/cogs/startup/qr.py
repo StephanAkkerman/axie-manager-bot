@@ -27,9 +27,11 @@ class QR(commands.Cog):
     @commands.command(aliases=["code", "login"])
     @commands.has_role("Verified")
     async def qr(self, ctx):
-        """Give users their qr code if they request it in the correct channel.
+        """Request your personal QR code
 
-        Discord ID needs to be linked to Ronin Address and fernet encrypted private key
+        Usage: `!qr`
+        Request your personal QR code to log in. This has to be done in the "🤖┃login" channel.
+        _Note_: Your Discord ID needs to be linked to Ronin Address and fernet encrypted private key. Please contact your manager to do so.
         """
 
         # If the user writes !qr in the correct channel

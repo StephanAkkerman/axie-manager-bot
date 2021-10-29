@@ -8,7 +8,11 @@ class Help(commands.Cog):
 
     @commands.command()
     async def help(self, ctx, *input):
-        """Receive information about a command or list all commands"""
+        """Receive information about a command or list all commands
+
+        Usage: `!help [command]`
+        List all commands available to you. If you want more information about a specific command, simply type that command after `!help`.
+        """
         # List all commands
         if not input:
             e = discord.Embed(
@@ -32,9 +36,7 @@ class Help(commands.Cog):
                         aliases = command.name
                         for a in (alias for alias in command.aliases):
                             aliases += f" | {a}"
-                            print(aliases)
                         e.add_field(
-                            # name=f"!{command.name}/{for alias in (alias for alias in command.aliases): }"[:-1],
                             name=aliases,
                             value=command.help.partition("\n")[0],
                             inline=False,

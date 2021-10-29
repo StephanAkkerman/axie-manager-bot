@@ -17,9 +17,11 @@ class Encrypt(commands.Cog):
     @commands.command()
     @commands.has_role("Verified")
     async def encrypt(self, ctx, message=None):
-        """Encrypts a user's message using your personal fernet key
+        """Encrypt message using your personal fernet key
 
-        Message following !encrypt should not be empty
+        Usage: `!encrypt <message>`
+        Send an encrypted message to a user using your personal fernet key.
+        _Note_: Message following !encrypt should not be empty.
         """
 
         # If the user writes !encrypt followed by something else
