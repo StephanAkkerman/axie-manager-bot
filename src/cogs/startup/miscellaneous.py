@@ -16,7 +16,7 @@ class Misc(commands.Cog):
         """
         
         roles = [r.name for r in ctx.author.roles if r.name in ["Akkie100", "BreakDownzPvp", "MrJuggler", "unheil", "Joepermans", "ManDerMannen"]]
-        managers = [m.display_name for m in ctx.guild.members if m.name in roles and "Manager" in [r.name for r in m.roles]]
+        managers = [m.display_name for m in ctx.guild.members if m.display_name in roles and "Manager" in [r.name for r in m.roles]]
         managernames = " and ".join(managers)
 
         await ctx.reply(f"Your manager{' is**' if len(managers) == 1 else 's are**'} {managernames}**! If you want to ask them something, please message them _privately_.")
