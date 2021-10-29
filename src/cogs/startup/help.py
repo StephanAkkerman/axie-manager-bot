@@ -29,8 +29,13 @@ class Help(commands.Cog):
                             condition = False
                             break
                     if condition:
+                        aliases = command.name
+                        for a in (alias for alias in command.aliases):
+                            aliases += f" | {a}"
+                            print(aliases)
                         e.add_field(
-                            name=f"!{command.name}",
+                            # name=f"!{command.name}/{for alias in (alias for alias in command.aliases): }"[:-1],
+                            name=aliases,
                             value=command.help.partition("\n")[0],
                             inline=False,
                         )
@@ -46,7 +51,11 @@ class Help(commands.Cog):
                         check(ctx)
                     except commands.MissingRole:
                         raise
-                if command.name.lower() == input[0].lower():
+
+                if (
+                    command.name.lower() == input[0].lower()
+                    or input[0].lower() in command.aliases
+                ):
                     e = discord.Embed(title=f"{command} - Commands", color=0x00FFFF)
                     e.add_field(
                         name=f"!{command.name}", value=command.help, inline=False

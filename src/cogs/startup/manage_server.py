@@ -102,7 +102,7 @@ class ManageServer(commands.Cog):
     ### NEW COMMAND ###
     ###################
 
-    @commands.command()
+    @commands.command(aliases=["purge", "remove", "delete"])
     @commands.has_role("Manager")
     async def clear(self, ctx, *input):
         """Clear an amount of messages [from a user if specified]
@@ -216,7 +216,7 @@ class ManageServer(commands.Cog):
     ### NEW COMMAND ###
     ###################
 
-    @commands.command()
+    @commands.command(aliases=["tryouts"])
     @commands.has_role("Manager")
     async def tryout(self, ctx, *input):
         """Start tryouts
