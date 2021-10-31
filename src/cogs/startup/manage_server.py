@@ -7,7 +7,12 @@ import datetime
 # > 3rd Party Dependencies
 import discord
 from discord.ext import commands
+import pandas as pd
+import gspread
+import gspread_dataframe as gd
 
+# Login using the .json file
+gc = gspread.service_account(filename="authentication.json")
 
 class ManageServer(commands.Cog):
     def __init__(self, bot):
@@ -320,34 +325,31 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def scholar(self, ctx, *input):
-        """ Add a scholar [UNFINISHED]
+        """ Add a scholar 
         
+        Usage: `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`
+        This will add the specified scholar to the Scholars Google spreadsheet.       
         """
 
-        if (len(input) >= 4):
-            new_scholar_id = int(input[0][3:-1]) if "!" in input[0] else int(input[0][2:-1])
+        if (len(input) >= 5):
             new_scholar = discord.utils.get(
                 ctx.guild.members,
-                id=new_scholar_id
+                id=int(input[0])
             )
 
             if("Verified" in [r.name for r in new_scholar.roles]):
-                # Google Sheet things here:
-                #
-                #
-                #
-
                 # Get managers info
-                manager_ids = [int(id[3:-1]) if "!" in id else int(id[2:-1]) for id in list(input[4:])]
+                manager_ids = [int(id[3:-1]) if "!" in id else int(id[2:-1]) for id in list(input[5:])]
                 managers = [m for m in ctx.guild.members if m.id in manager_ids]
 
                 # Ask for confirmation
                 e = discord.Embed(title="Confirm New Scholar", description="", color=0x00FFFF)
                 e.add_field(name="Scholar Name", value=new_scholar.name, inline=True)
-                e.add_field(name="Scholar Discord ID", value=new_scholar_id, inline=True)
+                e.add_field(name="Scholar Discord ID", value=new_scholar.id, inline=True)
                 e.add_field(name="Scholar Share", value=f"{float(input[2])*100}%", inline=True)
                 e.add_field(name="Address", value=input[1], inline=True)
                 e.add_field(name="Payout Address", value=input[3], inline=True)
+                e.add_field(name="Encrypted key", value=input[4], inline=True)
                 e.add_field(name="Manager(s)", value="\n".join(manager.display_name for manager in managers), inline=True)
                 e.set_author(name="Axie Manager")
                 e.set_thumbnail(url=self.bot.user.avatar_url)
@@ -388,6 +390,31 @@ class ManageServer(commands.Cog):
                     await new_scholar.send(f"Your manager{' is**' if len(managers) == 1 else 's are**'} {' and '.join([m.display_name for m in managers])}**! If you want to ask them something, please message them _privately_.")
 
                     await ctx.send(f"Succesfully added **{new_scholar.display_name}** as a scholar!")
+                    
+                    # Convert accepted information to a dataframe
+                    new_scholar = pd.DataFrame({"Scholar Name":new_scholar.name,
+                                                "Manager":"\n".join(manager.display_name for manager in managers),
+                                                "Scholar Share":input[2],
+                                                "Address":input[1],
+                                                "Payout Address":input[3],
+                                                "Scholar Discord ID":new_scholar.id,
+                                                "Info":input[4]
+                                                }, index = [0])
+                    
+                    # Add scholar to google spreadsheets
+                    # Read current Scholars spreadsheet
+                    ws = gc.open("Scholars").worksheet("Scholars")
+                    
+                    # Get it as an df
+                    scholar_info = (gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all"))
+
+                    # Append the info to it
+                    scholar_info = scholar_info.append(new_scholar)
+                    
+                    print(scholar_info)
+                    
+                    # Upload it
+                    gd.set_with_dataframe(ws, scholar_info, include_index=False)
 
                 elif reaction[0].emoji == "\N{CROSS MARK}":
                     await confirm_msg.delete()
