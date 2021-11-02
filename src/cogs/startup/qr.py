@@ -105,15 +105,19 @@ class QR(commands.Cog):
 
     @qr.error
     async def qr_error(self, ctx, error):
-        # Delete this message, to remove clutter
-        await ctx.message.delete()
-
         if isinstance(error, commands.MissingRole):
             channel = discord.utils.get(ctx.guild.channels, name="👋┃welcome")
             channel_id = channel.id
             await ctx.message.author.send(
                 f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
             )
+        else:
+            await ctx.message.author.send(
+                    "Sorry, something went wrong when trying to load your personal QR code. Please contact a manager."
+                )
+
+        # Delete this message, to remove clutter
+        await ctx.message.delete()
 
 
 def getRawMessage():
