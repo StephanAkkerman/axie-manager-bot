@@ -10,6 +10,10 @@ class Listeners(commands.Cog):
     async def print(self, ctx):
         print(f"{ctx.author} used !{ctx.command} in channel {ctx.message.channel}")
 
+    ###################
+    #### REACTIONS ####
+    ###################
+
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
         # Load necessary variables
@@ -47,6 +51,22 @@ class Listeners(commands.Cog):
         if len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}":
             await reaction.member.send(embed=msg.embeds[0])
             await msg.delete()
+
+    ###################
+    ## TEXT CHANNELS ##
+    ###################
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if(message.channel.name == "🤖┃login"):
+            if message.content != "!qr":
+                await message.delete()
+
+
+    #async def clean_channel(self, channel):
+    #    messages = (await channel.history(limit=None).flatten())[:-1]
+    #    await channel.delete_messages(messages)
+
 
             
     ###################
