@@ -428,6 +428,16 @@ class ManageServer(commands.Cog):
         else:
             raise
 
+    @scholar.error
+    async def scholar_error(self, ctx, error):
+        if isinstance(error, commands.MissingRole):
+            await ctx.message.author.send(
+                f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
+            )
+        else:
+            await ctx.send(
+                f"Something went wrong... For information on how to use this function, see `!help scholar`"
+            )
 
 
 
