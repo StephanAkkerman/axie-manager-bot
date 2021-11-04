@@ -15,7 +15,7 @@ def getScholar(discordID):
     df = gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
 
     # Find row corresponding with discordID
-    row = df.loc[df["Discord ID"] == discordID]
+    row = df.loc[df["Scholar Discord ID"] == discordID]
 
     # Check if this discord ID exists
     try:
