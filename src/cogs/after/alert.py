@@ -64,6 +64,18 @@ class Alert(commands.Cog):
                     link = (
                         "https://marketplace.axieinfinity.com/axie/" + row["id"] + "/"
                     )
+                    
+                    # For setting the right D, R1, and R2
+                    d = ""
+                    r1 = ""
+                    r2 = ""
+                    r1_title = f"R1 ({row['r1 deviation']})"
+                    r2_title = f"R2 ({row['r2 deviation']})"
+
+                    for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
+                        d += f"{(row[part]['d']['name'])}\n"
+                        r1 += f"{(row[part]['r1']['name'])}\n"
+                        r2 += f"{(row[part]['r2']['name'])}\n"
 
                     # Send message in discord channel
                     channel = discord.utils.get(
@@ -75,7 +87,7 @@ class Alert(commands.Cog):
                     )
 
                     e = discord.Embed(
-                        title=build["Name"],
+                        title=f"{build['Name']} {r1_title}  {r2_title}",
                         description="",
                         url=link,
                         color=0x00FFFF,
@@ -126,30 +138,12 @@ class Alert(commands.Cog):
                         for stat in str(row["stats"])[1:-28].split(", ")
                     ]
 
-                    # Could call the get_genes to fix this
-                    #if build["Name"] == "Cheap":
-                    #    d = "Unknown"
-                    #    r1 = "Unknown"
-                    #    r2 = "Unknown"
-                    #    r1_title = "R1"
-                    #    r2_titel = "R2"
-                    d = ""
-                    r1 = ""
-                    r2 = ""
-                    r1_title = f"R1 ({row['r1 deviation']})"
-                    r2_titel = f"R2 ({row['r2 deviation']})"
-
-                    for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
-                        d += f"{(row[part]['d']['name'])}\n"
-                        r1 += f"{(row[part]['r1']['name'])}\n"
-                        r2 += f"{(row[part]['r2']['name'])}\n"
-
                     e.add_field(name="D", value=d, inline=True)
                     e.add_field(
                         name=r1_title, value=r1, inline=True
                     )
                     e.add_field(
-                        name=r2_titel, value=r2, inline=True
+                        name=r2_title, value=r2, inline=True
                     )
 
                     # Create cropped image for thumbnail
@@ -180,7 +174,7 @@ class Alert(commands.Cog):
 
         # Try, in case marketplace is down
         try:
-            # Use the GraphQL query specified above, nly results section is important
+            # Use the GraphQL query specified above, only results section is important
             try:
                 # Get a dataframe of the new listings
                 df = await api_new_listings()
@@ -230,9 +224,6 @@ class Alert(commands.Cog):
                         ),
                         build,
                     )
-
-            # Send alert if there are axies with price less than 50$
-            #await self.send_alert(df.loc[df["price"] < 50], {"Name": "Cheap"})
 
             # IMPLEMENT!
             # Add axies where startingPrice == endingPrice to seen
