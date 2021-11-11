@@ -193,20 +193,6 @@ class Alert(commands.Cog):
                 await asyncio.sleep(300)
                 return
 
-            # Specify columns
-            df = df[
-                [
-                    "id",
-                    "auction",
-                    "class",
-                    "stage",
-                    "breedCount",
-                    "parts",
-                    "image",
-                    "stats",
-                ]
-            ]
-
             # Replace parts by their part name
             df["parts"] = [[d.get("name") for d in x] for x in df["parts"]]
 
@@ -294,9 +280,6 @@ class Alert(commands.Cog):
                         # Return because otherwise the rest does not work
                         await asyncio.sleep(300)
                         return
-
-                    # Specify columns
-                    df = df[["id", "auction", "class", "breedCount", "parts", "image"]]
 
                     # Replace auction dict by current price in USD and convert it to numeric
                     try:

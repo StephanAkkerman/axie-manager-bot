@@ -38,9 +38,16 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
     # Remove ids of axies that are currently in the API as eggs
     genes = genes.loc[~genes.story_id.isin(genes[genes.stage == 1]["story_id"].tolist())]
 
+    # Remove nan ids
+    genes = genes[genes["story_id"].notna()]
+
     # Add columns for parts
     for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
-        genes[part] = genes["traits"].apply(lambda x: x[part])
+        try:
+            genes[part] = genes["traits"].apply(lambda x: x[part])
+        except Exception as e:
+            print(e)
+            print(",".join(genes['story_id'].to_list()))
 
     # Count deviations for every part
     for part in ["mouth", "horn", "back", "tail"]:
