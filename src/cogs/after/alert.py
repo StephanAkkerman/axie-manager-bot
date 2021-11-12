@@ -87,7 +87,7 @@ class Alert(commands.Cog):
                     )
 
                     e = discord.Embed(
-                        title=f"{build['Name']} {r1_title}  {r2_title}",
+                        title=f"{build['Name']} {row['r1 deviation']} - {row['r2 deviation']}",
                         description="",
                         url=link,
                         color=0x00FFFF,
