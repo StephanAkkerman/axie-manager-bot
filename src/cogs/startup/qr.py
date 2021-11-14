@@ -25,7 +25,7 @@ class QR(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=["code", "login", " qr"])
-    @commands.has_role("Verified")
+    @commands.has_role("Scholar")
     async def qr(self, ctx):
         """Request your personal QR code
 

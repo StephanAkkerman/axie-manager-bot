@@ -48,9 +48,9 @@ class Alert(commands.Cog):
         """Gets the new builds every hour"""
         self.specifications = get_builds()
 
-    @loop(seconds=60)
+    @loop(seconds=120)
     async def clear_new(self):
-        """Clears the new list every minute"""
+        """Clears the new list every 2 minutes"""
         self.new = []
 
     async def send_alert(self, axie_df, build):
