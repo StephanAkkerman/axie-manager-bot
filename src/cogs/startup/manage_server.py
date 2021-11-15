@@ -226,83 +226,97 @@ class ManageServer(commands.Cog):
     async def tryout(self, ctx, *input):
         """Start tryouts
 
-        Usage: `!tryout [number of groups]`
+        Usage: `!tryout [number of groups|stop/end]`
         Specify the number of tryout groups. If no argument given, all tryout groups will be used. Bot will ask for tryout settings confirmation.
         After confirmation tryouts will start.
+        Use "stop" or "end" as first argument to end tryouts.
         """
         if len(input) <= 1:
-            # Get everyone that has the "Tryout" role
-            role = discord.utils.get(ctx.guild.roles, name="Tryout")
-            tryouts = role.members
+            if (len(input) == 1 and (input[0].lower() == "stop" or input[0].lower() == "end")):
+                # Get everyone that has the "Tryout" role
+                role = discord.utils.get(ctx.guild.roles, name="Tryout")
+                tryouts = role.members
 
-            # Place tryouts in roles at random
-            roles = [r for r in ctx.guild.roles if r.name.startswith("Group")]
-            roles.reverse()
+                for tryout in tryouts:
+                    roles = [r for r in tryout.roles if r.name.startswith("Group")]
+                    if (len(roles) > 0):
+                        await tryout.remove_roles(*roles)
 
-            # Decide the amount of tryouts per group
-            group_amount = len(roles) if len(input) == 0 else int(input[0])
-            group_size = math.ceil(len(tryouts) / group_amount)
-            groups = roles[:group_amount]
+                await ctx.send("**TRYOUTS ENDED!**")
 
-            # Assign role to tryout
-            tryouts_dict = {}
-            for group in groups:
-                tryouts_dict[group] = []
+            else:
+                # Get everyone that has the "Tryout" role
+                role = discord.utils.get(ctx.guild.roles, name="Tryout")
+                tryouts = role.members
 
-            for tryout in tryouts:
-                # Continue until succesful
-                while 1:
-                    group = randrange(group_amount)
-                    if len(tryouts_dict[groups[group]]) + 1 <= group_size:
-                        tryouts_dict[groups[group]].append(tryout)
-                        break
+                # Place tryouts in roles at random
+                roles = [r for r in ctx.guild.roles if r.name.startswith("Group")]
+                roles.reverse()
 
-            # Ask for confirmation
-            e = discord.Embed(title="Confirm Tryout", description="", color=0x00FFFF)
-            e.add_field(name="No. tryouts", value=len(tryouts), inline=True)
-            e.add_field(name="Amount of groups", value=group_amount, inline=True)
-            e.add_field(name="Max no. tryouts per group", value=group_size, inline=True)
+                # Decide the amount of tryouts per group
+                group_amount = len(roles) if len(input) == 0 else int(input[0])
+                group_size = math.ceil(len(tryouts) / group_amount)
+                groups = roles[:group_amount]
 
-            # Add all tryouts to correct group in confirmation
-            for k, v in tryouts_dict.items():
-                value = ""
-                for tryout in v:
-                    value += f"{tryout.name}\n"
+                # Assign role to tryout
+                tryouts_dict = {}
+                for group in groups:
+                    tryouts_dict[group] = []
 
-                e.add_field(name=k.name, value=value, inline=True)
+                for tryout in tryouts:
+                    # Continue until succesful
+                    while 1:
+                        group = randrange(group_amount)
+                        if len(tryouts_dict[groups[group]]) + 1 <= group_size:
+                            tryouts_dict[groups[group]].append(tryout)
+                            break
 
-            e.set_author(name="Axie Manager")
-            e.set_thumbnail(url=self.bot.user.avatar_url)
-            e.set_footer(text="Confirm that these are the correct tryout settings.")
+                # Ask for confirmation
+                e = discord.Embed(title="Confirm Tryout", description="", color=0x00FFFF)
+                e.add_field(name="No. tryouts", value=len(tryouts), inline=True)
+                e.add_field(name="Amount of groups", value=group_amount, inline=True)
+                e.add_field(name="Max no. tryouts per group", value=group_size, inline=True)
 
-            # Send confirmation request
-            confirm_msg = await ctx.send(embed=e)
-            await confirm_msg.add_reaction("\N{WHITE HEAVY CHECK MARK}")
-            await confirm_msg.add_reaction("\N{CROSS MARK}")
-
-            # Handle preview accept/deny using reactions
-            reaction = await self.bot.wait_for(
-                "reaction_add",
-                check=lambda r, u: (
-                    str(r.emoji) == "\N{WHITE HEAVY CHECK MARK}"
-                    or str(r.emoji) == "\N{CROSS MARK}"
-                )
-                and u == ctx.author,
-            )
-
-            if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
-                # Add tryouts to roles
+                # Add all tryouts to correct group in confirmation
                 for k, v in tryouts_dict.items():
+                    value = ""
                     for tryout in v:
-                        await tryout.add_roles(k)
-                await ctx.send(f"**STARTING TRYOUTS!**")
+                        value += f"{tryout.name}\n"
 
-            # Cancel tryouts
-            elif reaction[0].emoji == "\N{CROSS MARK}":
-                await confirm_msg.delete()
-                await ctx.send(
-                    f"Cancelled tryouts. To start a tryout use `!tryout [number of groups]` or see `!help tryout`."
+                    e.add_field(name=k.name, value=value, inline=True)
+
+                e.set_author(name="Axie Manager")
+                e.set_thumbnail(url=self.bot.user.avatar_url)
+                e.set_footer(text="Confirm that these are the correct tryout settings.")
+
+                # Send confirmation request
+                confirm_msg = await ctx.send(embed=e)
+                await confirm_msg.add_reaction("\N{WHITE HEAVY CHECK MARK}")
+                await confirm_msg.add_reaction("\N{CROSS MARK}")
+
+                # Handle preview accept/deny using reactions
+                reaction = await self.bot.wait_for(
+                    "reaction_add",
+                    check=lambda r, u: (
+                        str(r.emoji) == "\N{WHITE HEAVY CHECK MARK}"
+                        or str(r.emoji) == "\N{CROSS MARK}"
+                    )
+                    and u == ctx.author,
                 )
+
+                if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
+                    # Add tryouts to roles
+                    for k, v in tryouts_dict.items():
+                        for tryout in v:
+                            await tryout.add_roles(k)
+                    await ctx.send(f"**STARTING TRYOUTS!**")
+
+                # Cancel tryouts
+                elif reaction[0].emoji == "\N{CROSS MARK}":
+                    await confirm_msg.delete()
+                    await ctx.send(
+                        f"Cancelled tryouts. To start a tryout use `!tryout [number of groups]` or see `!help tryout`."
+                    )
 
         else:
             raise
