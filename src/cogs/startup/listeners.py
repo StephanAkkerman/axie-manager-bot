@@ -58,9 +58,10 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if(message.channel.name == "🤖┃login"):
-            if message.content != "!qr":
-                await message.delete()
+        if(not isinstance(message.channel, discord.channel.DMChannel)):
+            if(message.channel.name == "🤖┃login"):
+                if message.content != "!qr":
+                    await message.delete()
 
 
     #async def clean_channel(self, channel):
