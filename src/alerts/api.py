@@ -46,3 +46,21 @@ async def api_old_listings(from_var, classes, breedCount, parts):
         ) as r:
             response = await r.json()
             return pd.DataFrame(response["data"]["axies"]["results"])[["id", "auction", "class", "breedCount", "parts", "image"]]
+
+async def api_axie_details(id):
+    """ Gets details of specific axie id """
+    
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            url,
+            json={
+                "query": details_query,
+                "operationName": "GetAxieDetail",
+                "variables": {"axieId": id},
+            },
+        ) as r:
+            df = pd.DataFrame.from_dict(await r.json()['data']['axie'], orient="index")
+            df = df.transpose()
+            return df[['id', 'image', 'class', 'stage', 'breedCount', 'level','parts', 'stats', 'auction']]
+
+    

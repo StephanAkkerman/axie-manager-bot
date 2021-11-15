@@ -20,7 +20,7 @@ from io import BytesIO
 from alerts.graphql import *
 from alerts.builds import get_builds
 from alerts.genes import get_genes
-from alerts.api import api_new_listings, api_old_listings
+from alerts.api import api_new_listings, api_old_listings, api_axie_details
 
 class Alert(commands.Cog):
     def __init__(self, bot):
@@ -95,10 +95,23 @@ class Alert(commands.Cog):
 
                     # Maybe improve this
                     if row["auction"] == None:
-                        start_price = row["price"]
-                        end_price = row["price"]
-                        start_time = datetime.now().strftime("%Y-%m-%d")
-                        end_time = datetime.now().strftime("%Y-%m-%d")
+                        
+                        updated_info = api_axie_details(row["id"])
+                        
+                        if updated_info["auction"].tolist()[0] == None:
+                            start_price = row["price"]
+                            end_price = row["price"]
+                            start_time = datetime.now().strftime("%Y-%m-%d")
+                            end_time = datetime.now().strftime("%Y-%m-%d")
+                        else:
+                            start_price = int(updated_info["auction"].tolist()[0]["startingPrice"])
+                            end_price = int(updated_info["auction"].tolist()[0]["endingPrice"])
+                            start_time = datetime.fromtimestamp(
+                                int(updated_info["auction"].tolist()[0]["startingTimestamp"])
+                            )
+                            end_time = datetime.fromtimestamp(
+                                int(updated_info["auction"].tolist()[0]["endingTimestamp"])
+                            )
                     else:
                         start_price = int(row["auction"]["startingPrice"])
                         end_price = int(row["auction"]["endingPrice"])
