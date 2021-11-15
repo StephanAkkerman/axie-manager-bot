@@ -14,7 +14,6 @@ import pandas as pd  # For parsing data
 from urllib.request import urlopen
 from PIL import Image
 from io import BytesIO
-import aiohttp
 
 # Local files
 from alerts.graphql import *
@@ -27,7 +26,8 @@ class Alert(commands.Cog):
         self.bot = bot
         self.send = []
         self.new = []
-        self.specifications = get_builds()
+        self.specifications = []
+        self.new_builds.start()
 
         # Start functions
         self.new_listings.start()
@@ -35,7 +35,6 @@ class Alert(commands.Cog):
 
         # Helper functions
         self.clear_send.start()
-        self.new_builds.start()
         self.clear_new.start()
 
     @loop(hours=5)
