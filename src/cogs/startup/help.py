@@ -72,16 +72,16 @@ class Help(commands.Cog):
         e.set_thumbnail(url=self.bot.user.avatar_url)
         await ctx.send(embed=e)
 
-    @help.error
-    async def help_error(self, ctx, error):
-        e = discord.Embed(
-            title="Help",
-            color=0x00FFFF,
-            description="This command could not be found... Try `!help` to list all available commands.",
-        )
-        e.set_author(name="Axie Manager")
-        e.set_thumbnail(url=self.bot.user.avatar_url)
-        await ctx.send(embed=e)
+    #@help.error
+    #async def help_error(self, ctx, error):
+    #    e = discord.Embed(
+    #        title="Help",
+    #        color=0x00FFFF,
+    #        description="This command could not be found... Try `!help` to list all available commands.",
+    #    )
+    #    e.set_author(name="Axie Manager")
+    #    e.set_thumbnail(url=self.bot.user.avatar_url)
+    #    await ctx.send(embed=e)
 
 
 def setup(bot):
