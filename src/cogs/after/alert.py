@@ -3,6 +3,7 @@ import json
 import traceback
 from datetime import datetime
 import asyncio
+import math
 
 # Discord imports
 import discord
@@ -164,6 +165,13 @@ class Alert(commands.Cog):
                     await msg.add_reaction("\N{GEM STONE}")
 
                     self.send.append(row["id"])
+
+                    if ("Discord Name" in build and build["Discord Name"] == build["Discord Name"]):
+                        users = [user for user in self.bot.get_all_members() if user.name in build["Discord Name"]]
+                        mentions = ""
+                        for user in users:
+                            mentions += f"<@{user.id}> "
+                        await channel.send(mentions)
 
     @loop(seconds=10)
     async def new_listings(self):
