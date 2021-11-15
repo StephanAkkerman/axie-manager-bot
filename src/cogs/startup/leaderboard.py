@@ -18,8 +18,13 @@ class Leaderboard(commands.Cog):
         
     @commands.command()
     @commands.has_role("Scholar")
-    async def leaderboard(self, ctx, message=None):
-        
+    async def leaderboard(self, ctx):
+        """Print the current leaderboard
+
+        Usage: `!leaderboard`
+        Print the best performing scholars.
+        """
+
         # Open the worksheet of the specified spreadsheet
         ws = gc.open("Scholars").worksheet("Scholars")
         scholar_info = (
