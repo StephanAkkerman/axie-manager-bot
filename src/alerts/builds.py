@@ -38,5 +38,8 @@ def get_builds():
 
     builds["Part Ids"] = builds["Parts (Axie ID)"].apply(get_parts, args=("Ids",))
 
+    if ("Discord Name" in builds.index):
+        builds["Discord Name"] = builds["Discord Name"].str.split(", ")
+
     # Convert it to list of dictionaries
     return builds.to_dict(orient="records")

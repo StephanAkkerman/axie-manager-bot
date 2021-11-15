@@ -42,15 +42,22 @@ class Listeners(commands.Cog):
     async def claim_axie(self, reaction, channel):
         msgs = [m for m in await channel.history(limit=None).flatten() if m.author==self.bot.user]
         msg = None
+        mention_msg = None
 
-        for m in msgs:
-            if m.id == reaction.message_id:
-                msg = m
+        for i in range(len(msgs)):
+            if msgs[i].id == reaction.message_id:
+                msg = msgs[i]
+                if i <= len(msgs) - 1:
+                    if msgs[i+1].mentions:
+                        mention_msg = msgs[i+1]
+                break
 
         # Check that the message is an embed, and the reaction is the gem stone emoji
         if len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}":
             await reaction.member.send(embed=msg.embeds[0])
             await msg.delete()
+            if mention_msg:
+                await mention_msg.delete()
 
     ###################
     ## TEXT CHANNELS ##
