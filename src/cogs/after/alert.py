@@ -96,7 +96,7 @@ class Alert(commands.Cog):
                     # Maybe improve this
                     if row["auction"] == None:
                         
-                        updated_info = api_axie_details(row["id"])
+                        updated_info = await api_axie_details(row["id"])
                         
                         if updated_info["auction"].tolist()[0] == None:
                             start_price = row["price"]

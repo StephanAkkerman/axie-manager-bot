@@ -60,7 +60,8 @@ async def api_axie_details(id):
                 "variables": {"axieId": id},
             },
         ) as r:
-            df = pd.DataFrame.from_dict(await r.json()['data']['axie'], orient="index")
+            response = await r.json()
+            df = pd.DataFrame.from_dict(response['data']['axie'], orient="index")
             df = df.transpose()
             return df[['id', 'image', 'class', 'stage', 'breedCount', 'level','parts', 'stats', 'auction']]
         
@@ -68,6 +69,14 @@ async def api_axie_details(id):
 async def api_game_api(ids):
      async with aiohttp.ClientSession() as session:
         async with session.get("https://game-api.axie.technology/api/v1/" + ids) as r:
-            return pd.DataFrame(await r.json()).transpose()
+            response = await r.json()
+            return pd.DataFrame(response).transpose()
+        
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+async def api_game_api_single(id):
+     async with aiohttp.ClientSession() as session:
+        async with session.get("https://game-api.axie.technology/api/v1/" + id) as r:
+            response = await r.json()
+            return pd.DataFrame([response])
 
     
