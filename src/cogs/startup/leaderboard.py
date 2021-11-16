@@ -8,6 +8,8 @@ import gspread_dataframe as gd
 import discord
 from discord.ext import commands
 
+from alerts.api import api_game_api
+
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
 
@@ -32,18 +34,13 @@ class Leaderboard(commands.Cog):
         together = ",".join(scholar_info["Address"].tolist())
 
         # Call all addresses at once and retreive json
-        response = requests.get(
-            "https://game-api.axie.technology/api/v1/" + together
-        ).json()
+        df = await api_game_api(together)
         
-        # Calculate for each address in_game_slp / time since last_claim
-        
-        df = pd.DataFrame(response).transpose()
-        
-        df = df[['name', 'mmr', 'in_game_slp', 'last_claim']]#.set_index('name')
-        
+        # Only these columns are important
+        df = df [['name', 'mmr', 'in_game_slp', 'last_claim']]
+
+        # Process the data
         df['name'] = df['name'].str.split('|').str[-1]
-        
         df['last_claim'] = pd.to_datetime(df['last_claim'],unit='s')
         df['since_last_claim'] = (datetime.now() - df['last_claim']).dt.days 
         df.loc[df['since_last_claim'] < 1, 'since_last_claim'] = 1
@@ -89,7 +86,7 @@ class Leaderboard(commands.Cog):
             inline=True,
         )
         
-        msg = await ctx.channel.send(embed=e)
+        await ctx.channel.send(embed=e)
         
 def setup(bot):
     bot.add_cog(Leaderboard(bot))
