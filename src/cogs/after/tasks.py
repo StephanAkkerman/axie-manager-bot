@@ -59,7 +59,8 @@ class Tasks(commands.Cog):
             
     async def send_warning(self, discord_id, manager):
         
-        managers = [user for user in self.bot.get_all_members() if user.name == manager][0]
+        # Code in alert.py
+        manager = [user for user in self.bot.get_all_members() if user.name == manager][0]
         
         # Scholar
         scholar = await self.bot.get_user(discord_id)
@@ -72,9 +73,10 @@ class Tasks(commands.Cog):
         
         e.set_author(name="Axie Manager", icon_url=self.bot.user.avatar_url)
         
-        await scholar.send(embed=e)
+        e.set_footer(text="This is an automated message, if you believe this message was incorrectly send to you please notify your manager")
         
-        # Also notify manager
+        # Notify scholar and manager
+        await scholar.send(embed=e)
         await manager.send(embed=e)
 
     @slp_warning.before_loop
