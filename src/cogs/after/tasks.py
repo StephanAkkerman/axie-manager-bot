@@ -10,7 +10,7 @@ import discord
 from discord.ext import commands
 from discord.ext.tasks import loop
 
-from alerts.api import 
+from alerts.api import api_game_api
 
 gc = gspread.service_account(filename="authentication.json")
 class Tasks(commands.Cog):
@@ -41,11 +41,7 @@ class Tasks(commands.Cog):
         together = ",".join(scholar_info["Address"].tolist())
 
         # Call all addresses at once and retreive json
-        response = requests.get(
-            "https://game-api.axie.technology/api/v1/" + together
-        ).json()
-
-        df = pd.DataFrame(response).transpose().reset_index()
+        df = api_game_api(together).reset_index()
 
         df['days_since_last_claim'] = (datetime.now() - pd.to_datetime(df['last_claim'],unit='s'))
         df['days_since_last_claim'] = df['days_since_last_claim'].apply(lambda x: x.days if x.days > 0 else 1)
@@ -57,11 +53,29 @@ class Tasks(commands.Cog):
 
         for address in bad_addresses:
             discord_id = scholar_info.loc[scholar_info['Address'] == address]['Scholar Discord ID'].tolist()[0]
+            manager = scholar_info.loc[scholar_info['Address'] == address]['Manager'].tolist()[0]
             
-            await send_warning(discord_id)
+            await self.send_warning(discord_id, manager)
             
-    async def send_warning(discord_id):
-        pass
+    async def send_warning(self, discord_id, manager):
+        
+        managers = [user for user in self.bot.get_all_members() if user.name == manager][0]
+        
+        # Scholar
+        scholar = await self.bot.get_user(discord_id)
+        
+        e = discord.Embed(
+                            title="Low Average SLP Income",
+                            description=f"Hey {scholar.name}, we noticed that your average SLP income is below 100 SLP daily. If there is any reason why your SLP income is low, please contact your manager {manager.name} and explain your reasons.",
+                            color=0x00FFFF,
+                         )
+        
+        e.set_author(name="Axie Manager", icon_url=self.bot.user.avatar_url)
+        
+        await scholar.send(embed=e)
+        
+        # Also notify manager
+        await manager.send(embed=e)
 
     @slp_warning.before_loop
     async def before_slp_warning(self):
