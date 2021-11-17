@@ -20,6 +20,8 @@ The purpose of this bot is that it can be used for guilds with multiple scholars
 - Automated alerts of axies specified in a Google Spreadsheet. More about this [below](#alerts).
 - Automated buy, sell and listing alerts of other managers. These get posted in '🤝┃axie-trades' channel.
 - Automated error handling. This sends all errors that occur in the '🐞┃bot-errors' channel, so every manager in the server is aware if there are any issues.
+- If a user gets the role 'scholar' then the bot will send them a video containing an explanation about how everything works.
+- If a user gets the role 'tryout' then the bot will send them a video containing an explanation about how everything works.
 
 ### Tryouts
 Tryouts are used to select a new scholar from a group of people (with the role 'tryout'). For each account that is available for a new scholar a new tryout group can be made, it is also possible to make less groups and pick the first and second best players.
