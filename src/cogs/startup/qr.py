@@ -1,4 +1,5 @@
-# Standard library
+##> Imports
+# > Standard library
 from discord.ext.commands.core import has_role
 import requests
 import json
@@ -6,16 +7,16 @@ import os
 import uuid
 from datetime import datetime
 
-# Third Party Dependencies
+# > 3rd party dependencies
 import qrcode
 from web3.auto import w3
 from eth_account.messages import encode_defunct
 
-# Discord imports
+# > Discord imports
 import discord
 from discord.ext import commands
 
-# Local files
+# > Local files
 from scholars import getScholar
 from cogs.startup.encrypt import fernet
 
@@ -90,18 +91,13 @@ class QR(commands.Cog):
                 await ctx.message.author.send(file=discord.File(qrCodePath))
                 # Delete picture
                 os.remove(qrCodePath)
-                return
 
             # Scholar does not exist in sheet, maybe different Discord ID?
             else:
-                print("This user didn't receive a QR Code : " + ctx.message.author.name)
-                print("Discord ID : " + str(ctx.message.author.id))
-                print("Current time : ", current_time)
+                raise commands.MemberNotFound(ctx.message.author.name)
 
-                await ctx.message.author.send(
-                    "Sorry, something went wrong when trying to load your personal QR code. Please contact a manager."
-                )
-                return
+        else:
+            raise commands.ChannelNotFound('')
 
     @qr.error
     async def qr_error(self, ctx, error):
@@ -111,13 +107,32 @@ class QR(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
             )
+        elif isinstance(error,commands.ChannelNotFound):
+            channel = discord.utils.get(ctx.guild.channels, name="🤖┃login")
+            channel_id = channel.id
+            await ctx.message.author.send(
+                f"You used this command in the wrong channel. You can use it in the <#{channel_id}> channel."
+            )
+        elif isinstance(error,commands.MemberNotFound):
+            print("This user didn't receive a QR Code : " + ctx.message.author.name)
+            print("Discord ID : " + str(ctx.message.author.id))
+            print("Current time : ", datetime.now().strftime("%H:%M:%S"))
+            await ctx.message.author.send(
+                f"Sorry, your Discord ID could not be found in our database. Please contact a manager."
+            )
         else:
             await ctx.message.author.send(
-                    "Sorry, something went wrong when trying to load your personal QR code. Please contact a manager."
-                )
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
+            )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+            )
 
         # Delete this message, to remove clutter
-        await ctx.message.delete()
+        login_channel = discord.utils.get(ctx.guild.channels, name="🤖┃login")
+        if (login_channel != ctx.channel):
+            await ctx.message.delete()
 
 
 def getRawMessage():

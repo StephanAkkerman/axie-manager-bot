@@ -7,7 +7,6 @@ import datetime
 # > 3rd Party Dependencies
 import discord
 from discord.ext import commands
-from discord.ext.commands.errors import UserInputError
 import pandas as pd
 import gspread
 import gspread_dataframe as gd
@@ -280,7 +279,7 @@ class ManageServer(commands.Cog):
             await user.remove_roles(role)
             await ctx.send(f"User **{user.display_name}** has been unmuted.")
         else:
-            raise UserInputError()
+            raise commands.UserInputError()
 
     @unmute.error
     async def unmute_error(self, ctx, error):
@@ -314,7 +313,7 @@ class ManageServer(commands.Cog):
     async def tryout(self, ctx, *input):
         """Start tryouts
 
-        Usage: `!tryout [number of groups|stop/end]`
+        Usage: `!tryout [number of groups|stop|end]`
         Specify the number of tryout groups. If no argument given, all tryout groups will be used. Bot will ask for tryout settings confirmation.
         After confirmation tryouts will start.
         Use "stop" or "end" as first argument to end tryouts.
@@ -342,7 +341,10 @@ class ManageServer(commands.Cog):
                 roles.reverse()
 
                 # Decide the amount of tryouts per group
-                group_amount = len(roles) if len(input) == 0 else int(input[0])
+                try:
+                    group_amount = len(roles) if len(input) == 0 else int(input[0])
+                except:
+                    raise commands.UserInputError()
                 group_size = math.ceil(len(tryouts) / group_amount)
                 groups = roles[:group_amount]
 
@@ -407,7 +409,7 @@ class ManageServer(commands.Cog):
                     )
 
         else:
-            raise
+            raise commands.UserInputError()
 
     @tryout.error
     async def tryout_error(self, ctx, error):
@@ -415,9 +417,17 @@ class ManageServer(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
             )
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Sorry, you used this command incorrectly. Correct usage is `!tryout [number of groups|stop/end]`. Try again or see `!help tryout` for more information."
+            )
         else:
             await ctx.send(
-                f"Something went wrong... For information on how to use this function, see `!help tryout`"
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
+            )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )
 
     ###################
@@ -441,7 +451,14 @@ class ManageServer(commands.Cog):
 
             if("Verified" in [r.name for r in new_scholar.roles]):
                 # Get managers info
-                manager_ids = [int(id[3:-1]) if "!" in id else int(id[2:-1]) for id in list(input[5:])]
+                try:
+                    manager_ids = [int(id[3:-1]) if "!" in id else int(id[2:-1]) for id in list(input[5:])]
+                except:
+                    raise commands.MemberNotFound((id[3:-1]) if "!" in id else int(id[2:-1]) for id in list(input[5:]))
+
+                if not manager_ids:
+                    raise commands.MemberNotFound((id[3:-1]) if "!" in id else int(id[2:-1]) for id in list(input[5:]))
+
                 managers = [m for m in ctx.guild.members if m.id in manager_ids]
 
                 # Ask for confirmation
@@ -513,8 +530,6 @@ class ManageServer(commands.Cog):
                     # Append the info to it
                     scholar_info = scholar_info.append(new_scholar)
                     
-                    print(scholar_info)
-                    
                     # Upload it
                     gd.set_with_dataframe(ws, scholar_info, include_index=False)
 
@@ -525,10 +540,10 @@ class ManageServer(commands.Cog):
                     )
 
             else:
-                raise
+                raise commands.UserNotFound(input[0])
 
         else:
-            raise
+            raise commands.UserInputError()
 
     @scholar.error
     async def scholar_error(self, ctx, error):
@@ -536,11 +551,26 @@ class ManageServer(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
             )
+        elif isinstance(error, commands.MemberNotFound):
+            await ctx.send(
+                f"Sorry, could not find the supplied manager(s). Did you mention them?"
+            )
+        elif isinstance(error, commands.UserNotFound):
+            await ctx.send(
+                f"Sorry, the new scholar is not yet verified. Ask them to verify themselves first."
+            )
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Sorry, you used this command incorrectly. Correct usage is `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`. Try again or see `!help scholar` for more information."
+            )
         else:
             await ctx.send(
-                f"Something went wrong... For information on how to use this function, see `!help scholar`"
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+            )
 
 
 def setup(bot):

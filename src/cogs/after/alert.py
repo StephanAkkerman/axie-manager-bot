@@ -1,22 +1,22 @@
-# Standard libraries
+##> Imports
+# > Standard libraries
 import json
 import traceback
 from datetime import datetime
 import asyncio
-import math
 
-# Discord imports
+# > Discord dependencies
 import discord
 from discord.ext import commands
 from discord.ext.tasks import loop
 
-# 3rd party dependencies
+# > 3rd party dependencies
 import pandas as pd  # For parsing data
 from urllib.request import urlopen
 from PIL import Image
 from io import BytesIO
 
-# Local files
+# > Local dependencies
 from alerts.graphql import *
 from alerts.builds import get_builds
 from alerts.genes import get_genes

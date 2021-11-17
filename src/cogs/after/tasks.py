@@ -1,15 +1,20 @@
+##> Imports
+# > Standard libraries
 import asyncio
 from datetime import datetime, timedelta
 
+# > 3rd party dependencies
 from dateutil.relativedelta import relativedelta
 import gspread
 import gspread_dataframe as gd
 import pandas as pd
 
+# > Discord dependencies
 import discord
 from discord.ext import commands
 from discord.ext.tasks import loop
 
+# > Local dependencies
 from alerts.api import api_game_api
 
 gc = gspread.service_account(filename="authentication.json")

@@ -1,16 +1,13 @@
 ##> Imports
-#> Standard Library
+# > Standard Library
 import json
-
-#> Own Modules
-from errors import *
 
 # > 3rd Party Dependencies
 from cryptography.fernet import Fernet
 
+# > Discord dependencies
 import discord
 from discord.ext import commands
-
 
 #  Get vars from .json
 with open("./authentication.json") as f:

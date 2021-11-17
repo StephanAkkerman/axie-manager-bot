@@ -1,4 +1,5 @@
-# 3rd party dependencies
+##> Imports
+# > 3rd party dependencies
 import pandas as pd
 import gspread
 import gspread_dataframe as gd
@@ -8,12 +9,12 @@ from urllib.request import urlopen
 from PIL import Image
 from io import BytesIO
 
-# Discord imports
+# > Discord dependencies
 import discord
 from discord.ext import commands
 from discord.ext.tasks import loop
 
-# Local dependencies
+# > Local dependencies
 from alerts.api import api_genes
 
 # Login using the .json file

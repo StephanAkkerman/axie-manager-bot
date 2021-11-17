@@ -1,6 +1,7 @@
+##> Imports
+# > Discord dependencies
 import discord
 from discord.ext import commands
-
 
 class Listeners(commands.Cog):
     def __init__(self, bot):
@@ -16,15 +17,22 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
-        # Load necessary variables
-        channel = self.bot.get_channel(reaction.channel_id)
-        guild = self.bot.get_guild(reaction.guild_id)
+        try:
+            # Load necessary variables
+            channel = self.bot.get_channel(reaction.channel_id)
+            guild = self.bot.get_guild(reaction.guild_id)
+            if reaction.member.id != self.bot.user.id:
+                if channel.name == "👋┃welcome":
+                    await self.verification_check(reaction, channel, guild)
+                elif channel.name == "💎┃bot-alerts":
+                    await self.claim_axie(reaction, channel)
 
-        if reaction.member.id != self.bot.user.id:
-            if channel.name == "👋┃welcome":
-                await self.verification_check(reaction, channel, guild)
-            elif channel.name == "💎┃bot-alerts":
-                await self.claim_axie(reaction, channel)
+        except commands.CommandError as e:
+            exception_channel = self.bot.get_channel(reaction.channel_id)
+            channel = discord.utils.get(guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {exception_channel.mention}. User **{reaction.member.name}#{reaction.member.discriminator}** caused an error by adding a reaction to a message. ```{e}```"
+            )
 
     async def verification_check(self, reaction, channel, guild):
         original_msg = (await channel.history(oldest_first=True, limit=1).flatten())[0]
@@ -65,11 +73,18 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if(not isinstance(message.channel, discord.channel.DMChannel)):
-            if(message.channel.name == "🤖┃login"):
-                if message.content != "!qr":
-                    await message.delete()
-            
+        try:
+            if(not isinstance(message.channel, discord.channel.DMChannel)):
+                if(message.channel.name == "🤖┃login"):
+                    if message.content != "!qr":
+                        await message.delete()
+        
+        except commands.CommandError as e:
+            channel = discord.utils.get(message.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {message.channel.mention}. User **{message.author.name}#{message.author.discriminator}** caused an error in a message listener. ```{e}```"
+            )
+
     ###################
     # MEMBER  UPDATES #
     ###################

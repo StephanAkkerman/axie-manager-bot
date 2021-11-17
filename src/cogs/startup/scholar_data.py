@@ -1,9 +1,13 @@
+##> Imports
+# > Standard library
 from datetime import datetime, timedelta
 
+# > 3rd party dependencies
 import pandas as pd
 import gspread
 import gspread_dataframe as gd
 
+# > Discord dependencies
 import discord
 from discord.ext import commands
 
@@ -16,12 +20,14 @@ class ScholarData(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-    @commands.command()
+    @commands.command(aliases=["stats","data"])
     @commands.has_role("Scholar")
-    async def mydata(self, ctx, message=None):
+    async def mydata(self, ctx):
+        """ Request information on your Axie Infinity scholarship account
         
-        # Delete this message, to remove clutter
-        await ctx.message.delete()
+        Usage: `!mydata`
+        Use this command to request some information about your Axie Infinity scholarship account.
+        """
         
         # Open Scholars spreadsheet
         ws = gc.open("Scholars").worksheet("Scholars")
@@ -29,7 +35,10 @@ class ScholarData(commands.Cog):
             gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
         )
         
-        address = scholar_info.loc[scholar_info['Scholar Discord ID'] == ctx.message.author.id]['Address']
+        try:
+            address = scholar_info.loc[scholar_info['Scholar Discord ID'] == ctx.message.author.id]['Address']
+        except:
+            raise commands.UserNotFound(ctx.message.author.name)
 
         if not address.empty:
             df = await api_game_api_single(address.tolist()[0])
@@ -84,13 +93,34 @@ class ScholarData(commands.Cog):
             await ctx.message.author.send(embed=e)
             
         else:
+            raise commands.UserNotFound(ctx.message.author.name)
+        
+        # Delete this message, to remove clutter
+        await ctx.message.delete()
+
+    @mydata.error
+    async def mydata_error(self, ctx, error):
+        if isinstance(error, commands.MissingRole):
+            await ctx.message.author.send(
+                f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
+            )
+        elif isinstance(error, commands.UserNotFound):
             print("This user didn't receive their personal data : " + ctx.message.author.name)
             print("Discord ID : " + str(ctx.message.author.id))
             print("Current time : ", datetime.now().strftime("%H:%M:%S"))
-            
             await ctx.message.author.send(
-                    "Sorry, something went wrong when trying to load your personal data. Please contact a manager."
-                )
-        
+                f"Sorry, could not find your Discord ID in our database. Please contact a manager if you think that this is incorrect."
+            )
+        else:
+            await ctx.message.author.send(
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
+            )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+            )
+
+        await ctx.message.delete()
+
 def setup(bot):
     bot.add_cog(ScholarData(bot))

@@ -1,12 +1,17 @@
+##> Imports
+# > Standard library
 from datetime import datetime
 
+# > 3rd party dependencies
 import pandas as pd
 import gspread
 import gspread_dataframe as gd
 
+# > Discord dependencies
 import discord
 from discord.ext import commands
 
+# > Local dependencies
 from alerts.api import api_game_api
 
 # Login using the .json file
