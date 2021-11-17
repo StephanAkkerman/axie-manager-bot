@@ -21,24 +21,12 @@ The purpose of this bot is that it can be used for guilds with multiple scholars
 - Automated buy, sell and listing alerts of other managers. These get posted in '🤝┃axie-trades' channel.
 - Automated error handling. This sends all errors that occur in the '🐞┃bot-errors' channel, so every manager in the server is aware if there are any issues.
 
-### Alerts
-Setup:
-
-
 ### Tryouts
 Tryouts are used to select a new scholar from a group of people (with the role 'tryout'). For each account that is available for a new scholar a new tryout group can be made, it is also possible to make less groups and pick the first and second best players.
 Currenlty we let every tryout play for 3 hours on the account and after all tryouts are done the best will be picked. This is done by selecting the tryout that had the best winrate. At the moment the API for that is offline, so after a tryout is done they should send screenshots of their match history.
 
-### Encryption
-If you want to use the `!encrypt` function, you should have a fernet key. To generate this key use the following code:
-```py
-from cryptography.fernet import Fernet
-print(Fernet.generate_key())
-```
-Save the printed key in the secret file (authentication.json).
-
-### QR Code
-The code of QRCodeBot.py and part of qr.py was written by [ZracheSs | xyZ](https://github.com/ZracheSs-xyZ), check out their repo for the original code.
+### Disclaimer
+The code for the `!qr` command was inspired by [ZracheSs | xyZ](https://github.com/ZracheSs-xyZ), check out their repo for the original code.
 
 ## Dependencies
 The required packages to run this code can be found in the `requirements.txt` file. To run this file, execute the following code block:
@@ -49,6 +37,28 @@ Alternatively, you can install the required packages manually like this:
 ```
 $ pip install <package>
 ```
+
+## Setup
+### General
+This part needs to be done, otherwise more than half of the functions of this bot will not work.
+- Go to Google Drive and make a new spreadsheet named 'Scholars'.
+- Name the worksheet also 'Scholars', please do not deviate from this.
+- Make a table that looks like this:
+![Scholars](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/scholars.png)
+- Fill in the values manually or using the `!scholar` command.
+- Give the bot access to your spreadsheet by following these [instructions](https://docs.gspread.org/en/latest/oauth2.html#for-bots-using-service-account)
+- Save your authentication.json file that you got from the above instructions.
+
+Note:\
+Share your Scholar spreadsheet with the email provided in the .json file. This email is shown after `"client_email":`.
+
+### Encryption
+If you want to use the `!encrypt` function, you should have a fernet key. To generate this key use the following code:
+```py
+from cryptography.fernet import Fernet
+print(Fernet.generate_key())
+```
+Save the printed key in the secret file (authentication.json).
 
 ## How to run
 - Clone the repository and install dependencies as specified [above](#dependencies).
