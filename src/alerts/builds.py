@@ -1,4 +1,8 @@
+##> Imports
+# > Standard library
 import requests
+
+# > 3rd party dependencies
 import gspread
 import gspread_dataframe as gd
 

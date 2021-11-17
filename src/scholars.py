@@ -1,4 +1,5 @@
-import pandas as pd
+##> Imports
+# > 3rd party dependencies
 import gspread
 import gspread_dataframe as gd
 

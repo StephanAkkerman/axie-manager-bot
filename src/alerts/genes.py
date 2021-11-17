@@ -1,13 +1,12 @@
-# 3rd party dependencies
+##> Imports
+# > 3rd party dependencies
 import pandas as pd
-import aiohttp
 
-# Local dependencies
+# > Local dependencies
 from alerts.api import api_genes
 
-
 async def get_genes(axie_df, r1, r2, get_auction_info=False):
-
+    
     # Get all axie ids and add them together
     ids = ",".join(axie_df["id"].tolist())
 

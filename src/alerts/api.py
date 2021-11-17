@@ -1,9 +1,10 @@
-# 3rd party dependencies
+##> Imports
+# > 3rd party dependencies
 import aiohttp
 import pandas as pd
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-# Local dependencies
+# > Local dependencies
 from alerts.graphql import *
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
