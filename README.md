@@ -2,8 +2,8 @@
 This is a Discord bot written in Python, with the purpose of helping our guild manage the scholars in our Discord server.
 The purpose of this bot is that it can be used for guilds with multiple scholars and different managers, who each have their own scholars and wallets. 
 
-# Features
-## Commands
+## Features
+### Commands
 - `!qr`: Scholars can request their QR-code in the specified channel, default in '🤖┃login' channel. The bot will send them a private message containing their QR-code for login.
 - `!mute` / `!unmute`: Mute and unmute specific users. Usage `!mute <@user>`, this gives a user the 'mute' role.
 - `!encrypt`: Encrypt messages, necessary for encrypting private keys and storing them. Usage `!encrypt <message>`.
@@ -16,7 +16,7 @@ The purpose of this bot is that it can be used for guilds with multiple scholars
 - `!mydata`: Scholar can request their up to date data, consisting of: in game slp, MMR, rank, payout day, and the number of days untill payout day.
 - `!help`: Custom written `!help` command.
 
-## Automation
+### Automation
 - Automated alerts of axies specified in a Google Spreadsheet. More about this [below](#alerts).
 - Automated buy, sell and listing alerts of other managers. These get posted in '🤝┃axie-trades' channel.
 - Automated error handling. This sends all errors that occur in the '🐞┃bot-errors' channel, so every manager in the server is aware if there are any issues.
