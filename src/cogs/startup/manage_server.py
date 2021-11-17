@@ -8,6 +8,7 @@ import datetime
 import discord
 from discord.ext import commands
 import pandas as pd
+import numpy as np
 import gspread
 import gspread_dataframe as gd
 
@@ -556,7 +557,7 @@ class ManageServer(commands.Cog):
                             "Scholar Share": input[2],
                             "Address": input[1],
                             "Payout Address": input[3],
-                            "Scholar Discord ID": new_scholar.id,
+                            "Scholar Discord ID": str(new_scholar.id),
                             "Info": input[4],
                         },
                         index=[0],
@@ -572,9 +573,12 @@ class ManageServer(commands.Cog):
                         .dropna(axis=0, how="all")
                         .dropna(axis=1, how="all")
                     )
-
+                    
                     # Append the info to it
                     scholar_info = scholar_info.append(new_scholar)
+                    
+                    # Convert to int64 and then to string
+                    scholar_info["Scholar Discord ID"] = scholar_info["Scholar Discord ID"].astype(np.int64).astype(str)
 
                     # Upload it
                     gd.set_with_dataframe(ws, scholar_info, include_index=False)
