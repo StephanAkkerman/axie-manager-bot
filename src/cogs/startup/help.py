@@ -46,13 +46,15 @@ class Help(commands.Cog):
 
         # List the help for a specific command
         elif len(input) == 1:
+            e = None
             for command in self.bot.walk_commands():
                 # Check if user satisfies function checks (e.g. correct role)
                 for check in command.checks:
                     try:
                         check(ctx)
                     except commands.MissingRole:
-                        raise
+                        # Raise CommandNotFound, so users without permissions do not know that this command actually does exist.
+                        raise commands.CommandNotFound()
 
                 if (
                     command.name.lower() == input[0].lower()
@@ -63,25 +65,39 @@ class Help(commands.Cog):
                         name=f"!{command.name}", value=command.help, inline=False
                     )
                     break
+            
+            if (e == None):
+                raise commands.CommandNotFound()
 
         # Too many arguments, give error message
         else:
-            raise
+            raise commands.UserInputError()
 
         e.set_author(name="Axie Manager")
         e.set_thumbnail(url=self.bot.user.avatar_url)
         await ctx.send(embed=e)
 
-    #@help.error
-    #async def help_error(self, ctx, error):
-    #    e = discord.Embed(
-    #        title="Help",
-    #        color=0x00FFFF,
-    #        description="This command could not be found... Try `!help` to list all available commands.",
-    #    )
-    #    e.set_author(name="Axie Manager")
-    #    e.set_thumbnail(url=self.bot.user.avatar_url)
-    #    await ctx.send(embed=e)
+    @help.error
+    async def help_error(self, ctx, error):
+        if(isinstance(error, commands.UserInputError)):
+            await ctx.send(f"Too many arguments given. Correct usage of this command: `!help [command]`.")
+        elif(isinstance(error, commands.CommandNotFound)):
+            e = discord.Embed(
+                title="Help",
+                color=0x00FFFF,
+                description="This command could not be found... Try `!help` to list all available commands.",
+            )
+            e.set_author(name="Axie Manager")
+            e.set_thumbnail(url=self.bot.user.avatar_url)
+            await ctx.send(embed=e)
+        else:
+            await ctx.send(
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
+            )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                )
 
 
 def setup(bot):

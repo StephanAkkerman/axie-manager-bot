@@ -1,7 +1,16 @@
+##> Imports
+#> Standard Library
 import json
+
+#> Own Modules
+from errors import *
+
+# > 3rd Party Dependencies
 from cryptography.fernet import Fernet
+
 import discord
 from discord.ext import commands
+
 
 #  Get vars from .json
 with open("./authentication.json") as f:
@@ -9,14 +18,13 @@ with open("./authentication.json") as f:
 
 fernet = Fernet(data["KEY"].encode("utf_8"))
 
-
 class Encrypt(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     @commands.has_role("Verified")
-    async def encrypt(self, ctx, message=None):
+    async def encrypt(self, ctx, *input):
         """Encrypt message using your personal fernet key
 
         Usage: `!encrypt <message>`
@@ -28,15 +36,11 @@ class Encrypt(commands.Cog):
         if ctx.channel.name == "🤖┃bots":
 
             # Error handling
-            if message == None:
-                await ctx.message.author.send("Please type something after !encrypt")
-                return
-
-            # Delete this message, for privacy
-            await ctx.message.delete()
+            if len(input) == 0:
+                raise commands.UserInputError()
 
             # Encode private key
-            encMessage = fernet.encrypt(message.encode())
+            encMessage = fernet.encrypt(" ".join(input).encode())
 
             # Send a dm
             await ctx.message.author.send(
@@ -45,7 +49,9 @@ class Encrypt(commands.Cog):
                 + ", here is your encrypted key:\n"
                 + str(encMessage)
             )
-            return
+
+            # Delete this message, for privacy
+            await ctx.message.delete()
 
     @encrypt.error
     async def encrypt_error(self, ctx, error):
@@ -58,6 +64,16 @@ class Encrypt(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
             )
+        elif isinstance(error, commands.UserInputError):
+            await ctx.message.author.send("Nothing to encrypt. Please type something after `!encrypt` or see `!help encrypt` for more information (do not reply here).")
+        else:
+            await ctx.message.author.send(
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
+            )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                )
 
 
 def setup(bot):

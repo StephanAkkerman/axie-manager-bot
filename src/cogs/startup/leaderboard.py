@@ -92,5 +92,19 @@ class Leaderboard(commands.Cog):
         
         await ctx.channel.send(embed=e)
         
+    @leaderboard.error
+    async def leaderboard_error(self, ctx, error):
+        if isinstance(error, commands.MissingRole):
+            await ctx.send(f"You do not have permissions to use this command. If you think that you should, please contact a manager.")
+        else:
+            await ctx.send(
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
+            )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+            )
+
+
 def setup(bot):
     bot.add_cog(Leaderboard(bot))
