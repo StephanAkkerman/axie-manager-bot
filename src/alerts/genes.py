@@ -36,20 +36,13 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
             genes = pd.DataFrame(response)
 
     # Remove ids of axies that are currently in the API as eggs
-    try:
-        genes = genes.loc[
-            ~genes.story_id.isin(genes[genes.stage == 1]["story_id"].tolist())
-        ]
+    genes = genes.loc[
+        ~genes.story_id.isin(genes[genes.stage == 1]["story_id"].tolist())
+    ]
 
-        # Remove nan ids
-        genes = genes[genes["story_id"].notna()]
-
-    except Exception as e:
-        print(e)
-        print("Error with story_id!!!")
-        with pd.option_context("display.max_rows", None, "display.max_columns", None):
-            print(axie_df)
-
+    # Remove nan ids
+    genes = genes[genes["story_id"].notna()]
+    
     # Add columns for parts
     for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
         try:

@@ -16,8 +16,12 @@ async def api_genes(ids: str):
         async with session.get(
             "https://api.axie.technology/getgenes/" + ids + "/all"
         ) as r:
-            return await r.json()
-
+            response = await r.json()
+            if 'message' in response.keys():
+                raise Exception('Stupid Genes API')
+            else:
+                return response
+            
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_new_listings():
