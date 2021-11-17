@@ -7,6 +7,7 @@ import datetime
 # > 3rd Party Dependencies
 import discord
 from discord.ext import commands
+from discord.ext.commands.errors import UserInputError
 import pandas as pd
 import gspread
 import gspread_dataframe as gd
@@ -29,10 +30,16 @@ class ManageServer(commands.Cog):
         Confirm or deny using the emoji reactions.
         """
 
-        channel = discord.utils.get(self.bot.get_all_channels(), id=int(input[0][2:-1]))
+        if len(input) == 0:
+            raise commands.UserInputError()
 
-        if channel == None:
-            raise
+        try:
+            channel = discord.utils.get(self.bot.get_all_channels(), id=int(input[0][2:-1]))
+        except:
+            raise commands.ChannelNotFound(input[0][2:-1])
+
+        if not channel:
+            raise commands.ChannelNotFound(input[0][2:-1])
 
         # Confirm command used
         create_msg = await ctx.send(
@@ -98,10 +105,22 @@ class ManageServer(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
             )
+        elif isinstance(error, commands.ChannelNotFound):
+            await ctx.send(
+                f"Sorry, the supplied channel could not be found. Try again or see `!help announce` for more information."
+            )
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Sorry, you used this command incorrectly. Correct usage is `!announce <channel>`. Try again or see `!help announce` for more information."
+            )
         else:
             await ctx.send(
-                "Incorrect usage. Use `!announce <channel>`. For more help, see `!help announce`."
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                )
 
     ###################
     ### NEW COMMAND ###
@@ -116,18 +135,31 @@ class ManageServer(commands.Cog):
         Specify the amount of messages you want to delete. If you want to delete a certain amount of messages by a specific user,
         also specify the user by adding @<username>.
         """
-
         # Clear x amount of messages from channel
         if len(input) == 1:
-            await ctx.channel.purge(limit=int(input[0]) + 1)
+            try:
+                await ctx.channel.purge(limit=int(input[0]) + 1)
+            except:
+                raise commands.UserInputError()
 
         # Clear x amount of messages from user from channel
         elif len(input) == 2:
-            user = self.bot.get_user(int(input[1][3:-1]))
+            try:
+                user = self.bot.get_user(int(input[1][3:-1]))
+            except:
+                raise commands.UserNotFound(input[1][3:-1])
+
+            if not user:
+                raise commands.UserNotFound(input[1][3:-1])
+
             msgs = []
             counter = 0
             async for message in ctx.channel.history(limit=None):
                 if message.author == user:
+                    try:
+                        int(input[0])
+                    except:
+                        raise commands.UserInputError()
                     if counter < int(input[0]):
                         msgs.append(message)
                         counter += 1
@@ -137,7 +169,7 @@ class ManageServer(commands.Cog):
             await ctx.channel.delete_messages(msgs)
 
         else:
-            raise
+            raise commands.UserInputError()
 
     @clear.error
     async def clear_error(self, ctx, error):
@@ -145,10 +177,22 @@ class ManageServer(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
             )
+        elif isinstance(error, commands.UserNotFound):
+            await ctx.send(
+                f"Sorry, this user could not be found. To find a user, you must mention them. Try again or see `!help clear` for more information."
+            )
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Sorry, you used this command incorrectly. Correct usage is `!clear <amount> [user]`. Try again or see `!help clear` for more information."
+            )
         else:
             await ctx.send(
-                f"This command was not used correctly. Please see `!help clear` for a more detailed explanation on how to use this command."
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                )
 
     ###################
     ### NEW COMMAND ###
@@ -166,13 +210,24 @@ class ManageServer(commands.Cog):
         """
         # Add role [mute] to mentioned user
         if len(input) == 1:
-            user_id = int(input[0][3:-1]) if "!" in input[0] else int(input[0][2:-1])
-            user = ctx.guild.get_member(user_id)
+            try:
+                user_id = int(input[0][3:-1]) if "!" in input[0] else int(input[0][2:-1])
+            except:
+                raise commands.UserNotFound("")
+
+            try:
+                user = ctx.guild.get_member(user_id)
+            except:
+                raise commands.UserNotFound(user_id)
+
+            if not user:
+                raise commands.UserNotFound(user_id)
+
             role = discord.utils.get(ctx.guild.roles, name="[mute]")
             await user.add_roles(role)
             await ctx.send(f"User **{user.display_name}** has been muted.")
         else:
-            raise
+            raise commands.UserInputError()
 
     @mute.error
     async def mute_error(self, ctx, error):
@@ -180,10 +235,22 @@ class ManageServer(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
             )
+        elif isinstance(error, commands.UserNotFound):
+            await ctx.send(
+                f"Sorry, this user could not be found. To find a user, you must mention them. Try again or see `!help mute` for more information."
+            )
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Sorry, you used this command incorrectly. Correct usage is `!mute <user>`. Try again or see `!help mute` for more information."
+            )
         else:
             await ctx.send(
-                f'This command was not used correctly or the role "[mute]" does not exist. Please see `!help mute` for a more detailed explanation on how to use this command.'
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                )
 
     ###################
     ### NEW COMMAND ###
@@ -199,12 +266,21 @@ class ManageServer(commands.Cog):
         """
         # Remove role [mute] from mentioned user
         if len(input) == 1:
-            user = ctx.guild.get_member(int(input[0][3:-1]))
+            try:
+                user_id = int(input[0][3:-1]) if "!" in input[0] else int(input[0][2:-1])
+            except:
+                raise commands.UserNotFound("")
+
+            try:
+                user = ctx.guild.get_member(user_id)
+            except:
+                raise commands.UserNotFound(user_id)
+
             role = discord.utils.get(ctx.guild.roles, name="[mute]")
             await user.remove_roles(role)
             await ctx.send(f"User **{user.display_name}** has been unmuted.")
         else:
-            raise
+            raise UserInputError()
 
     @unmute.error
     async def unmute_error(self, ctx, error):
@@ -212,10 +288,22 @@ class ManageServer(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you do not have permission to use this command. Please contact a manager if you think that you should."
             )
+        elif isinstance(error, commands.UserNotFound):
+            await ctx.send(
+                f"Sorry, this user could not be found. To find a user, you must mention them. Try again or see `!help unmute` for more information."
+            )
+        elif isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Sorry, you used this command incorrectly. Correct usage is `!unmute <user>`. Try again or see `!help unmute` for more information."
+            )
         else:
             await ctx.send(
-                f'This command was not used correctly or the role "[mute]" does not exist. Please see `!help unmute` for a more detailed explanation on how to use this command.'
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
+            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            await channel.send(
+                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                )
 
     ###################
     ### NEW COMMAND ###

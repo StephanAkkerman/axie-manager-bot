@@ -69,13 +69,6 @@ class Listeners(commands.Cog):
             if(message.channel.name == "🤖┃login"):
                 if message.content != "!qr":
                     await message.delete()
-
-
-    #async def clean_channel(self, channel):
-    #    messages = (await channel.history(limit=None).flatten())[:-1]
-    #    await channel.delete_messages(messages)
-
-
             
     ###################
     # MEMBER  UPDATES #
