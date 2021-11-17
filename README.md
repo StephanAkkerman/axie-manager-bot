@@ -42,6 +42,7 @@ $ pip install <package>
 ### Making a Discord bot
 - Setup your own Discord bot, following this [tutorial](https://realpython.com/how-to-make-a-discord-bot-python/).
 - Give the bot admin rights and all permissions possible, since this is the easiest way to set it up.
+- Invite the bot to your server.
 - Write down the token of the bot, as this will be used later.
 
 Optional:\
