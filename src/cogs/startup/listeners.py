@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 
+
 class Listeners(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -48,7 +49,11 @@ class Listeners(commands.Cog):
                 await r.remove(reaction.member)
 
     async def claim_axie(self, reaction, channel):
-        msgs = [m for m in await channel.history(limit=None).flatten() if m.author==self.bot.user]
+        msgs = [
+            m
+            for m in await channel.history(limit=None).flatten()
+            if m.author == self.bot.user
+        ]
         msg = None
         mention_msg = None
 
@@ -56,8 +61,8 @@ class Listeners(commands.Cog):
             if msgs[i].id == reaction.message_id:
                 msg = msgs[i]
                 if i <= len(msgs) - 1:
-                    if msgs[i+1].mentions:
-                        mention_msg = msgs[i+1]
+                    if msgs[i + 1].mentions:
+                        mention_msg = msgs[i + 1]
                 break
 
         # Check that the message is an embed, and the reaction is the gem stone emoji
@@ -74,11 +79,11 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         try:
-            if(not isinstance(message.channel, discord.channel.DMChannel)):
-                if(message.channel.name == "🤖┃login"):
+            if not isinstance(message.channel, discord.channel.DMChannel):
+                if message.channel.name == "🤖┃login":
                     if message.content != "!qr":
                         await message.delete()
-        
+
         except commands.CommandError as e:
             channel = discord.utils.get(message.guild.channels, name="🐞┃bot-errors")
             await channel.send(
@@ -96,7 +101,7 @@ class Listeners(commands.Cog):
 
     async def new_role(self, before, after):
         new_role = next(role for role in after.roles if role not in before.roles)
-        if (new_role.name == "Tryout"):
+        if new_role.name == "Tryout":
             e = discord.Embed(
                 title="Congratulations on passing the selection!",
                 description=f"""Hello {after.mention},
@@ -118,12 +123,14 @@ class Listeners(commands.Cog):
             )
             e.set_author(name="Axie Manager")
             e.set_thumbnail(url=self.bot.user.avatar_url)
-            e.set_footer(text="This is an automatically-generated message. Please do not reply to this message.")
+            e.set_footer(
+                text="This is an automatically-generated message. Please do not reply to this message."
+            )
 
             await after.send(embed=e)
             await after.send("https://youtu.be/2uG2lOfhe6s")
 
-        elif (new_role.name == "Scholar"):
+        elif new_role.name == "Scholar":
             e = discord.Embed(
                 title="Congratulations on becoming a scholar!",
                 description=f"""Hello {after.mention},
@@ -143,10 +150,13 @@ class Listeners(commands.Cog):
             )
             e.set_author(name="Axie Manager")
             e.set_thumbnail(url=self.bot.user.avatar_url)
-            e.set_footer(text="This is an automatically-generated message. Please do not reply to this message.")
+            e.set_footer(
+                text="This is an automatically-generated message. Please do not reply to this message."
+            )
 
             await after.send(embed=e)
             await after.send("https://youtu.be/J2h_tOdMwoA")
+
 
 def setup(bot):
     bot.add_cog(Listeners(bot))

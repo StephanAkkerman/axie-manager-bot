@@ -22,6 +22,7 @@ from alerts.builds import get_builds
 from alerts.genes import get_genes
 from alerts.api import api_new_listings, api_old_listings, api_axie_details
 
+
 class Alert(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -64,7 +65,7 @@ class Alert(commands.Cog):
                     link = (
                         "https://marketplace.axieinfinity.com/axie/" + row["id"] + "/"
                     )
-                    
+
                     # For setting the right D, R1, and R2
                     d = ""
                     r1 = ""
@@ -95,22 +96,34 @@ class Alert(commands.Cog):
 
                     # Maybe improve this
                     if row["auction"] == None:
-                        
+
                         updated_info = await api_axie_details(row["id"])
-                        
+
                         if updated_info["auction"].tolist()[0] == None:
                             start_price = row["price"]
                             end_price = row["price"]
                             start_time = datetime.now().strftime("%Y-%m-%d")
                             end_time = datetime.now().strftime("%Y-%m-%d")
                         else:
-                            start_price = int(updated_info["auction"].tolist()[0]["startingPrice"])
-                            end_price = int(updated_info["auction"].tolist()[0]["endingPrice"])
+                            start_price = int(
+                                updated_info["auction"].tolist()[0]["startingPrice"]
+                            )
+                            end_price = int(
+                                updated_info["auction"].tolist()[0]["endingPrice"]
+                            )
                             start_time = datetime.fromtimestamp(
-                                int(updated_info["auction"].tolist()[0]["startingTimestamp"])
+                                int(
+                                    updated_info["auction"].tolist()[0][
+                                        "startingTimestamp"
+                                    ]
+                                )
                             )
                             end_time = datetime.fromtimestamp(
-                                int(updated_info["auction"].tolist()[0]["endingTimestamp"])
+                                int(
+                                    updated_info["auction"].tolist()[0][
+                                        "endingTimestamp"
+                                    ]
+                                )
                             )
                     else:
                         start_price = int(row["auction"]["startingPrice"])
@@ -152,12 +165,8 @@ class Alert(commands.Cog):
                     ]
 
                     e.add_field(name="D", value=d, inline=True)
-                    e.add_field(
-                        name=r1_title, value=r1, inline=True
-                    )
-                    e.add_field(
-                        name=r2_title, value=r2, inline=True
-                    )
+                    e.add_field(name=r1_title, value=r1, inline=True)
+                    e.add_field(name=r2_title, value=r2, inline=True)
 
                     # Create cropped image for thumbnail
                     img = Image.open(urlopen(row["image"]))
@@ -179,8 +188,15 @@ class Alert(commands.Cog):
 
                     self.send.append(row["id"])
 
-                    if ("Discord Name" in build and build["Discord Name"] == build["Discord Name"]):
-                        users = [user for user in self.bot.get_all_members() if user.name in build["Discord Name"]]
+                    if (
+                        "Discord Name" in build
+                        and build["Discord Name"] == build["Discord Name"]
+                    ):
+                        users = [
+                            user
+                            for user in self.bot.get_all_members()
+                            if user.name in build["Discord Name"]
+                        ]
                         mentions = ""
                         for user in users:
                             mentions += f"<@{user.id}> "
@@ -282,7 +298,9 @@ class Alert(commands.Cog):
 
                     # https://axie-graphql.web.app/operations/getAxieBriefList
                     try:
-                        df = await api_old_listings(from_var, classes, breedCount, parts)
+                        df = await api_old_listings(
+                            from_var, classes, breedCount, parts
+                        )
                     except Exception as e:
                         print(e)
                         print(

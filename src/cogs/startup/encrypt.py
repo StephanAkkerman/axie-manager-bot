@@ -15,6 +15,7 @@ with open("./authentication.json") as f:
 
 fernet = Fernet(data["KEY"].encode("utf_8"))
 
+
 class Encrypt(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -62,7 +63,9 @@ class Encrypt(commands.Cog):
                 f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
             )
         elif isinstance(error, commands.UserInputError):
-            await ctx.message.author.send("Nothing to encrypt. Please type something after `!encrypt` or see `!help encrypt` for more information (do not reply here).")
+            await ctx.message.author.send(
+                "Nothing to encrypt. Please type something after `!encrypt` or see `!help encrypt` for more information (do not reply here)."
+            )
         else:
             await ctx.message.author.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
@@ -70,7 +73,7 @@ class Encrypt(commands.Cog):
             channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
-                )
+            )
 
 
 def setup(bot):

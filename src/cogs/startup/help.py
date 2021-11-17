@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 
+
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -66,8 +67,8 @@ class Help(commands.Cog):
                         name=f"!{command.name}", value=command.help, inline=False
                     )
                     break
-            
-            if (e == None):
+
+            if e == None:
                 raise commands.CommandNotFound()
 
         # Too many arguments, give error message
@@ -80,9 +81,11 @@ class Help(commands.Cog):
 
     @help.error
     async def help_error(self, ctx, error):
-        if(isinstance(error, commands.UserInputError)):
-            await ctx.send(f"Too many arguments given. Correct usage of this command: `!help [command]`.")
-        elif(isinstance(error, commands.CommandNotFound)):
+        if isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Too many arguments given. Correct usage of this command: `!help [command]`."
+            )
+        elif isinstance(error, commands.CommandNotFound):
             e = discord.Embed(
                 title="Help",
                 color=0x00FFFF,
@@ -98,7 +101,7 @@ class Help(commands.Cog):
             channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
-                )
+            )
 
 
 def setup(bot):

@@ -97,7 +97,7 @@ class QR(commands.Cog):
                 raise commands.MemberNotFound(ctx.message.author.name)
 
         else:
-            raise commands.ChannelNotFound('')
+            raise commands.ChannelNotFound("")
 
     @qr.error
     async def qr_error(self, ctx, error):
@@ -107,13 +107,13 @@ class QR(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
             )
-        elif isinstance(error,commands.ChannelNotFound):
+        elif isinstance(error, commands.ChannelNotFound):
             channel = discord.utils.get(ctx.guild.channels, name="🤖┃login")
             channel_id = channel.id
             await ctx.message.author.send(
                 f"You used this command in the wrong channel. You can use it in the <#{channel_id}> channel."
             )
-        elif isinstance(error,commands.MemberNotFound):
+        elif isinstance(error, commands.MemberNotFound):
             print("This user didn't receive a QR Code : " + ctx.message.author.name)
             print("Discord ID : " + str(ctx.message.author.id))
             print("Current time : ", datetime.now().strftime("%H:%M:%S"))
@@ -131,7 +131,7 @@ class QR(commands.Cog):
 
         # Delete this message, to remove clutter
         login_channel = discord.utils.get(ctx.guild.channels, name="🤖┃login")
-        if (login_channel != ctx.channel):
+        if login_channel != ctx.channel:
             await ctx.message.delete()
 
 
