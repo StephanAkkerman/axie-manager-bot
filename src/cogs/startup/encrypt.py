@@ -29,27 +29,24 @@ class Encrypt(commands.Cog):
         Send an encrypted message to a user using your personal fernet key.
         _Note_: Message following !encrypt should not be empty.
         """
+        
+        # Error handling
+        if len(input) == 0:
+            raise commands.UserInputError()
 
-        # If the user writes !encrypt followed by something else
-        if ctx.channel.name == "🤖┃bots":
+        # Encode private key
+        encMessage = fernet.encrypt(" ".join(input).encode())
 
-            # Error handling
-            if len(input) == 0:
-                raise commands.UserInputError()
+        # Send a dm
+        await ctx.message.author.send(
+            "Hi "
+            + ctx.message.author.name
+            + ", here is your encrypted key:\n"
+            + str(encMessage)
+        )
 
-            # Encode private key
-            encMessage = fernet.encrypt(" ".join(input).encode())
-
-            # Send a dm
-            await ctx.message.author.send(
-                "Hi "
-                + ctx.message.author.name
-                + ", here is your encrypted key:\n"
-                + str(encMessage)
-            )
-
-            # Delete this message, for privacy
-            await ctx.message.delete()
+        # Delete this message, for privacy
+        await ctx.message.delete()
 
     @encrypt.error
     async def encrypt_error(self, ctx, error):
