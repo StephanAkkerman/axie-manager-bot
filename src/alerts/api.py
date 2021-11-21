@@ -17,11 +17,13 @@ async def api_genes(ids: str):
             "https://api.axie.technology/getgenes/" + ids + "/all"
         ) as r:
             response = await r.json()
-            if 'message' in response.keys():
-                raise Exception('Stupid Genes API')
-            else:
-                return response
             
+            if type(response) is dict:            
+                if 'message' in response.keys():
+                    raise Exception('Stupid Genes API')
+                
+            return response
+                
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_new_listings():
