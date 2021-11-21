@@ -22,6 +22,7 @@ The purpose of this bot is that it can be used for guilds with multiple scholars
 - Automated error handling. This sends all errors that occur in the '🐞┃bot-errors' channel, so every manager in the server is aware if there are any issues.
 - If a user gets the role 'scholar' then the bot will send them a video containing an explanation about how everything works.
 - If a user gets the role 'tryout' then the bot will send them a video containing an explanation about how everything works.
+- Users get the role 'verified' if the click the ✅ below an announcement.
 
 ### Tryouts
 Tryouts are used to select a new scholar from a group of people (with the role 'tryout'). For each account that is available for a new scholar a new tryout group can be made, it is also possible to make less groups and pick the first and second best players.
@@ -49,6 +50,13 @@ $ pip install <package>
 
 Optional:\
 Make a nice avatar for the bot.
+
+### Mandatory Channels
+As mentioned above there are some channels, with specific channel names necessary. These channels are listed below.
+- `🤖┃login`: In this channel scholars should request their QR-code, using the `!qr` command.
+- `💎┃bot-alerts`: In this channel axies will be automatically posted, see [alerts](#alerts) for more info.
+- `🤝┃axie-trades`: In this channel the buy, sell and listing alerts of managers will be posted.
+- `🐞┃bot-errors`: In this channel issues with the command will be posted.
 
 ### Spreadsheet (Database)
 This part needs to be done, otherwise more than half of the functions of this bot will not work. This spreadsheet will serve as a simple database that everyone manager can access. 
