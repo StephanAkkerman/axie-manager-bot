@@ -48,6 +48,9 @@ class Leaderboard(commands.Cog):
 
         # Only these columns are important
         df = df[["name", "mmr", "in_game_slp", "last_claim"]]
+        
+        # Delete all the NaN values
+        df = df.dropna()
 
         # Process the data
         df["name"] = df["name"].str.split("|").str[-1]
