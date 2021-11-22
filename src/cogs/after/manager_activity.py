@@ -31,6 +31,7 @@ class Activity(commands.Cog):
         # Start function execution
         self.get_axie_auctions.start()
 
+    # Could be less
     @loop(hours=1)
     async def get_axie_auctions(self):
         """ Main function that is looped every hour """
@@ -43,13 +44,13 @@ class Activity(commands.Cog):
         addresses = address_df["Address"].tolist()
 
         # Do this for every address in the dataframe
-        for address in addresses:
+        for address in addresses:            
             owned_axies = await self.get_axies(address)
             owned_axies["Manager"] = address_df.loc[address_df["Address"] == address][
                 "Manager"
             ].tolist()[0]
             df = df.append(owned_axies)
-
+            
         # If axie_ids is empty
         if self.axie_db.empty:
             self.axie_db = df
@@ -63,19 +64,20 @@ class Activity(commands.Cog):
             diff = list(set(new_ids) ^ set(old_ids))
 
             # Sold
-            if new_ids < old_ids:
+            if len(new_ids) < len(old_ids):
                 for id in diff:
                     await self.send_msg(df, self.axie_db, "sold")
 
             # Buy
-            elif new_ids > old_ids:
+            elif len(new_ids) > len(old_ids):
                 for id in diff:
                     await self.send_msg(df, id, "bought")
 
             # No difference in ids
             else:
-                new_auctions = df.loc[df["auction"] != None]["id"].tolist()
-                old_auctions = self.axie_db.loc[self.axie_db["auction"] != None][
+                # Check if price is not NaN
+                new_auctions = df.loc[~df["price"].isna()]["id"].tolist()
+                old_auctions = self.axie_db.loc[~self.axie_db["price"].isna()][
                     "id"
                 ].tolist()
 
@@ -83,9 +85,13 @@ class Activity(commands.Cog):
                 auction_diff = list(set(new_auctions) ^ set(old_auctions))
 
                 # New listing!
-                if new_auctions > old_auctions:
+                if len(new_auctions) > len(old_auctions):
                     for id in auction_diff:
                         await self.send_msg(df, id, "is selling")
+          
+            # Update old db
+            self.axie_db = df              
+        
 
     async def send_msg(self, df, id, keyword):
         """ Sends a message in the discord channel """
@@ -120,25 +126,28 @@ class Activity(commands.Cog):
             else "Bot Test Server",
             name="🤝┃axie-trades",
         )
-
-        e = discord.Embed(
-            title=f"{row['Manager'].tolist()[0]} {keyword}",
-            description="",
-            url=link,
-            color=0x00FFFF,
-        )
+        
+        # Price
+        if "price" in row.columns:
+            e = discord.Embed(
+                title=f"{row['Manager'].tolist()[0]} {keyword} for {str(row['price'].tolist()[0])}",
+                description="",
+                url=link,
+                color=0x00FFFF,
+            )
+        else:
+            e = discord.Embed(
+                title=f"{row['Manager'].tolist()[0]} {keyword}",
+                description="",
+                url=link,
+                color=0x00FFFF,
+            )
 
         e.set_author(name="Axie Manager", icon_url=self.bot.user.avatar_url)
 
-        # Price
-        if "price" in row.columns:
-            e.add_field(
-                name="Price", value=f"${str(row['price'].tolist()[0])}\n", inline=True,
-            )
-
         # Breedcount
         e.add_field(
-            name=":eggplant:", value=str(row["breedCount"].tolist()[0]), inline=True
+            name=":eggplant:", value=str(round(row["breedCount"].tolist()[0])), inline=True
         )
 
         e.add_field(name="Class", value=row["class"].tolist()[0], inline=True)
@@ -149,6 +158,7 @@ class Activity(commands.Cog):
         e.add_field(name="D", value=d, inline=True)
         e.add_field(name="R1", value=r1, inline=True)
         e.add_field(name="R2", value=r2, inline=True)
+        
 
         # Create cropped image for thumbnail
         img = Image.open(urlopen(row["image"].tolist()[0]))
@@ -231,29 +241,25 @@ class Activity(commands.Cog):
                     "variables": {"owner": address},
                 },
             ) as r:
-                response = await r.json()
-                return pd.DataFrame(response["data"]["axies"]["results"])[
-                    ["id", "auction", "class", "breedCount", "parts", "image"]
-                ]
+                response = await r.json()               
+                return pd.DataFrame(response["data"]["axies"]["results"])
 
     async def get_axies(self, address):
         """
         Processes api results and returns the dataframe
         """
-
+        
         df = await self.api_axies(address)
 
-        # Replace parts by their part name
-        df["parts"] = [[d.get("name") for d in x] for x in df["parts"]]
+        # Replace parts by their part name, if there are any parts available
+        if "parts" in df.columns:
+            df["parts"] = [[d.get("name") for d in x] for x in df["parts"]]
 
         # Save the price in dataframe
-        try:
+        if "auction" in df.columns:
             df["price"] = pd.to_numeric(
-                df["auction"].apply(lambda x: x["currentPriceUSD"])
+            df["auction"].apply(lambda x: x["currentPriceUSD"] if x != None else x)
             )
-        # Can only be done if there is an auction going on
-        except TypeError:
-            pass
 
         return df
 
