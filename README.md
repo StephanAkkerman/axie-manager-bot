@@ -12,7 +12,7 @@ The purpose of this bot is that it can be used for guilds with multiple scholars
 - `!clear`: Clear a number of messages. Usage `!clear <number>`, or `!clear <number> <@user>` to clear messages of specific user.
 - `!manager`: Scholars can request information about their manager using this command. Only works if a scholar has manager assigned to them via a role.
 - `!leaderboard`: Prints the leaderboard consisting of all scholars and ranked by MMR, also shows their average daily SLP income.
-- `!scholar`: Adds a scholar to the database of scholars. Usage `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`. See the example [below](#general) of how the values should look like.
+- `!scholar`: Adds a scholar to the database of scholars. Usage `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`. See the example [below](#spreadsheet) of how the values should look like.
 - `!mydata`: Scholar can request their up to date data, consisting of: in game slp, MMR, rank, payout day, and the number of days untill payout day.
 - `!help`: Custom written `!help` command.
 
@@ -58,7 +58,7 @@ As mentioned above there are some channels, with specific channel names necessar
 - `🤝┃axie-trades`: In this channel the buy, sell and listing alerts of managers will be posted.
 - `🐞┃bot-errors`: In this channel issues with the command will be posted.
 
-### Spreadsheet (Database)
+### Spreadsheet
 This part needs to be done, otherwise more than half of the functions of this bot will not work. This spreadsheet will serve as a simple database that everyone manager can access. 
 - Go to Google Drive and make a new spreadsheet named 'Scholars'.
 - Name the worksheet also 'Scholars', please do not deviate from this.
