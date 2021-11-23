@@ -34,7 +34,7 @@ class Activity(commands.Cog):
         self.get_axie_auctions.start()
 
     # Could be quicker
-    @loop(hours=1)
+    @loop(minutes=15)
     async def get_axie_auctions(self):
         """ Main function that is looped every hour """
 
