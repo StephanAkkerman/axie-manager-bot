@@ -1,4 +1,6 @@
 ##> Imports
+import math
+
 # > 3rd party dependencies
 import pandas as pd
 import gspread
@@ -31,7 +33,7 @@ class Activity(commands.Cog):
         # Start function execution
         self.get_axie_auctions.start()
 
-    # Could be less
+    # Could be quicker
     @loop(hours=1)
     async def get_axie_auctions(self):
         """ Main function that is looped every hour """
@@ -66,7 +68,7 @@ class Activity(commands.Cog):
             # Sold
             if len(new_ids) < len(old_ids):
                 for id in diff:
-                    await self.send_msg(df, self.axie_db, "sold")
+                    await self.send_msg(self.axie_db, id, "sold")
 
             # Buy
             elif len(new_ids) > len(old_ids):
@@ -109,6 +111,8 @@ class Activity(commands.Cog):
             d = ""
             r1 = ""
             r2 = ""
+            r1_title = f"R1 ({genes['r1 deviation'].tolist()[0]})"
+            r2_title = f"R2 ({genes['r2 deviation'].tolist()[0]})"
 
             for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
                 d += f"{(genes[part].tolist()[0]['d']['name'])}\n"
@@ -128,16 +132,16 @@ class Activity(commands.Cog):
         )
         
         # Price
-        if "price" in row.columns:
+        if not math.isnan(row['price'].tolist()[0]):
             e = discord.Embed(
-                title=f"{row['Manager'].tolist()[0]} {keyword} for {str(row['price'].tolist()[0])}",
+                title=f"{row['Manager'].tolist()[0]} {keyword} axie named {row['name'].tolist()[0]} for ${str(row['price'].tolist()[0])}",
                 description="",
                 url=link,
                 color=0x00FFFF,
             )
         else:
             e = discord.Embed(
-                title=f"{row['Manager'].tolist()[0]} {keyword}",
+                title=f"{row['Manager'].tolist()[0]} {keyword} axie named {row['name'].tolist()[0]}",
                 description="",
                 url=link,
                 color=0x00FFFF,
@@ -156,8 +160,8 @@ class Activity(commands.Cog):
             for stat in str(genes["stats"].tolist()[0])[1:-28].split(", ")
         ]
         e.add_field(name="D", value=d, inline=True)
-        e.add_field(name="R1", value=r1, inline=True)
-        e.add_field(name="R2", value=r2, inline=True)
+        e.add_field(name=r1_title, value=r1, inline=True)
+        e.add_field(name=r2_title, value=r2, inline=True)
         
 
         # Create cropped image for thumbnail
@@ -192,6 +196,19 @@ class Activity(commands.Cog):
 
         for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
             genes[part] = genes["traits"].apply(lambda x: x[part])
+            
+        # Count deviations for every part
+        for part in ["mouth", "horn", "back", "tail"]:
+            genes[f"{part} r1"] = [0 if x["d"] == x["r1"] else 1 for x in genes[part]]
+            genes[f"{part} r2"] = [0 if x["d"] == x["r2"] else 1 for x in genes[part]]
+
+        # Sum all the deviations
+        genes["r1 deviation"] = (
+            genes["mouth r1"] + genes["horn r1"] + genes["back r1"] + genes["tail r1"]
+        )
+        genes["r2 deviation"] = (
+            genes["mouth r2"] + genes["horn r2"] + genes["back r2"] + genes["tail r2"]
+        )
 
         return genes
 
