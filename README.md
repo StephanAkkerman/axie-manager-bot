@@ -65,7 +65,7 @@ This part needs to be done, otherwise more than half of the functions of this bo
 - Make a table that looks like this:
 ![Scholars](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/scholars.png)
 - Fill in the values manually or using the `!scholar` command.
-- Give the bot access to your spreadsheet by following these [instructions](https://docs.gspread.org/en/latest/oauth2.html#for-bots-using-service-account)
+- Give the bot access to your spreadsheet by following these [instructions](https://docs.gspread.org/en/latest/oauth2.html#for-bots-using-service-account).
 - Save your authentication.json file that you got from the above instructions.
 
 Note:\
