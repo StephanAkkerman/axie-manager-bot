@@ -129,8 +129,7 @@ class Tasks(commands.Cog):
 
         print(f"Removed {count} messages from 💎┃bot-alerts!")
         
-    #@loop(hours=4)
-    @loop(seconds=30)
+    @loop(hours=4)
     async def leaderboard(self):
         """Print the current leaderboard in 🏆┃leaderboard channel
         """
