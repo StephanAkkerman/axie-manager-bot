@@ -10,24 +10,24 @@ from alerts.graphql import *
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_genes(ids: str):
-    """ Gets a string of ids and returns the raw response """
+    """Gets a string of ids and returns the raw response"""
 
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://api.axie.technology/getgenes/" + ids + "/all"
         ) as r:
             response = await r.json()
-            
-            if type(response) is dict:            
-                if 'message' in response.keys():
-                    raise Exception('Stupid Genes API')
-                
+
+            if type(response) is dict:
+                if "message" in response.keys():
+                    raise Exception("Stupid Genes API")
+
             return response
-                
+
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_new_listings():
-    """ Gets the new listings on the market and returns it as a pandas dataframe"""
+    """Gets the new listings on the market and returns it as a pandas dataframe"""
     async with aiohttp.ClientSession() as session:
         async with session.post(
             url,
@@ -55,7 +55,7 @@ async def api_new_listings():
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_old_listings(from_var, classes, breedCount, parts):
-    """ Gets the old listings on the market and returns it as a pandas dataframe"""
+    """Gets the old listings on the market and returns it as a pandas dataframe"""
     async with aiohttp.ClientSession() as session:
         async with session.post(
             url,
@@ -73,7 +73,7 @@ async def api_old_listings(from_var, classes, breedCount, parts):
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_axie_details(id):
-    """ Gets details of specific axie id """
+    """Gets details of specific axie id"""
 
     async with aiohttp.ClientSession() as session:
         async with session.post(
@@ -117,9 +117,10 @@ async def api_game_api_single(id):
             response = await r.json()
             return pd.DataFrame([response])
 
+
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_owner_axies(address):
-    """ 
+    """
     Gets axies of specific Ronin address
     Returns a dataframe consisting of columns "id", "auction", "class", "breedCount", "parts", "image", "price"
     """
@@ -133,5 +134,5 @@ async def api_owner_axies(address):
                 "variables": {"owner": address},
             },
         ) as r:
-            response = await r.json()               
+            response = await r.json()
             return pd.DataFrame(response["data"]["axies"]["results"])

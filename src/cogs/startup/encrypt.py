@@ -29,7 +29,7 @@ class Encrypt(commands.Cog):
         Send an encrypted message to a user using your personal fernet key.
         _Note_: Message following !encrypt should not be empty.
         """
-        
+
         # Error handling
         if len(input) == 0:
             raise commands.UserInputError()

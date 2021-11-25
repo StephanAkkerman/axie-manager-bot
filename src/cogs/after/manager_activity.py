@@ -34,7 +34,7 @@ class Activity(commands.Cog):
     # Could be quicker
     @loop(minutes=15)
     async def get_axie_auctions(self):
-        """ Main function that is looped every hour """
+        """Main function that is looped every hour"""
 
         # Save all important data in dataframe
         df = pd.DataFrame({})
@@ -44,13 +44,13 @@ class Activity(commands.Cog):
         addresses = address_df["Address"].tolist()
 
         # Do this for every address in the dataframe
-        for address in addresses:            
+        for address in addresses:
             owned_axies = await self.get_axies(address)
             owned_axies["Manager"] = address_df.loc[address_df["Address"] == address][
                 "Manager"
             ].tolist()[0]
             df = df.append(owned_axies)
-            
+
         # If axie_ids is empty
         if self.axie_db.empty:
             self.axie_db = df
@@ -88,13 +88,12 @@ class Activity(commands.Cog):
                 if len(new_auctions) > len(old_auctions):
                     for id in auction_diff:
                         await self.send_msg(df, id, "is selling")
-          
+
             # Update old db
-            self.axie_db = df              
-        
+            self.axie_db = df
 
     async def send_msg(self, df, id, keyword):
-        """ Sends a message in the discord channel """
+        """Sends a message in the discord channel"""
 
         # Set variables based on id and df
         row = df.loc[df["id"] == id]
@@ -128,9 +127,9 @@ class Activity(commands.Cog):
             else "Bot Test Server",
             name="🤝┃axie-trades",
         )
-        
+
         # Price
-        if not math.isnan(row['price'].tolist()[0]):
+        if not math.isnan(row["price"].tolist()[0]):
             e = discord.Embed(
                 title=f"{row['Manager'].tolist()[0]} {keyword} axie named {row['name'].tolist()[0]} for ${str(row['price'].tolist()[0])}",
                 description="",
@@ -149,7 +148,9 @@ class Activity(commands.Cog):
 
         # Breedcount
         e.add_field(
-            name=":eggplant:", value=str(round(row["breedCount"].tolist()[0])), inline=True
+            name=":eggplant:",
+            value=str(round(row["breedCount"].tolist()[0])),
+            inline=True,
         )
 
         e.add_field(name="Class", value=row["class"].tolist()[0], inline=True)
@@ -179,7 +180,7 @@ class Activity(commands.Cog):
         await channel.send(file=file, embed=e)
 
     async def get_genes(self, id):
-        """ Takes axie id and returns its genes """
+        """Takes axie id and returns its genes"""
 
         try:
             response = await api_genes(id)
@@ -197,7 +198,7 @@ class Activity(commands.Cog):
 
         for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
             genes[part] = genes["traits"].apply(lambda x: x[part])
-            
+
         # Count deviations for every part
         for part in ["mouth", "horn", "back", "tail"]:
             genes[f"{part} r1"] = [0 if x["d"] == x["r1"] else 1 for x in genes[part]]
@@ -214,7 +215,7 @@ class Activity(commands.Cog):
         return genes
 
     async def get_addresses(self):
-        """ Gets all Ronin addresses in Scholars spreadsheet """
+        """Gets all Ronin addresses in Scholars spreadsheet"""
 
         # Open Scholars spreadsheet
         sheet = gc.open("Scholars")
@@ -247,7 +248,7 @@ class Activity(commands.Cog):
         """
         Processes api results and returns the dataframe
         """
-        
+
         try:
             df = await api_owner_axies(address)
         except Exception:
@@ -260,7 +261,7 @@ class Activity(commands.Cog):
         # Save the price in dataframe
         if "auction" in df.columns:
             df["price"] = pd.to_numeric(
-            df["auction"].apply(lambda x: x["currentPriceUSD"] if x != None else x)
+                df["auction"].apply(lambda x: x["currentPriceUSD"] if x != None else x)
             )
 
         return df

@@ -11,8 +11,8 @@ class Misc(commands.Cog):
     @commands.command()
     @commands.has_role("Scholar")
     async def manager(self, ctx):
-        """ Find out who your manager is
-        
+        """Find out who your manager is
+
         Usage: `!manager`
         With this command you can find out who your manager is! Please, do not message them in this channel but send a DM.
         """

@@ -45,7 +45,7 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
 
     # Remove nan ids
     genes = genes[genes["story_id"].notna()]
-    
+
     # Add columns for parts
     for part in ["eyes", "ears", "mouth", "horn", "back", "tail"]:
         try:

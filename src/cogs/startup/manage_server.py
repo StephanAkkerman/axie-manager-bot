@@ -451,10 +451,10 @@ class ManageServer(commands.Cog):
     @commands.command()
     @commands.has_role("Manager")
     async def scholar(self, ctx, *input):
-        """ Add a scholar 
-        
+        """Add a scholar
+
         Usage: `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`
-        This will add the specified scholar to the Scholars Google spreadsheet.       
+        This will add the specified scholar to the Scholars Google spreadsheet.
         """
 
         if len(input) >= 5:
@@ -573,12 +573,14 @@ class ManageServer(commands.Cog):
                         .dropna(axis=0, how="all")
                         .dropna(axis=1, how="all")
                     )
-                    
+
                     # Append the info to it
                     scholar_info = scholar_info.append(new_scholar)
-                    
+
                     # Convert to int64 and then to string
-                    scholar_info["Scholar Discord ID"] = scholar_info["Scholar Discord ID"].astype(np.int64).astype(str)
+                    scholar_info["Scholar Discord ID"] = (
+                        scholar_info["Scholar Discord ID"].astype(np.int64).astype(str)
+                    )
 
                     # Upload it
                     gd.set_with_dataframe(ws, scholar_info, include_index=False)

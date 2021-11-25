@@ -48,7 +48,7 @@ class Leaderboard(commands.Cog):
 
         # Only these columns are important
         df = df[["name", "mmr", "in_game_slp", "last_claim"]]
-        
+
         # Delete all the NaN values
         df = df.dropna()
 
@@ -75,18 +75,28 @@ class Leaderboard(commands.Cog):
         mmr = "\n".join(df["mmr"].tolist())
         avg_slp = "\n".join(df["avg_slp"].tolist())
 
-        e = discord.Embed(title="Leaderboard", description="", color=0x00FFFF,)
-
-        e.add_field(
-            name="Scholar", value=scholars, inline=True,
+        e = discord.Embed(
+            title="Leaderboard",
+            description="",
+            color=0x00FFFF,
         )
 
         e.add_field(
-            name="MMR", value=mmr, inline=True,
+            name="Scholar",
+            value=scholars,
+            inline=True,
         )
 
         e.add_field(
-            name="Average SLP", value=avg_slp, inline=True,
+            name="MMR",
+            value=mmr,
+            inline=True,
+        )
+
+        e.add_field(
+            name="Average SLP",
+            value=avg_slp,
+            inline=True,
         )
 
         await ctx.channel.send(embed=e)
