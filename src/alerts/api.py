@@ -116,3 +116,22 @@ async def api_game_api_single(id):
         async with session.get("https://game-api.axie.technology/api/v1/" + id) as r:
             response = await r.json()
             return pd.DataFrame([response])
+
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+async def api_owner_axies(address):
+    """ 
+    Gets axies of specific Ronin address
+    Returns a dataframe consisting of columns "id", "auction", "class", "breedCount", "parts", "image", "price"
+    """
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            "https://axieinfinity.com/graphql-server-v2/graphql",
+            json={
+                "query": "query GetAxieBriefList($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\n  axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\n    total\n    results {\n      ...AxieBrief\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment AxieBrief on Axie {\n  id\n  name\n  stage\n  class\n  breedCount\n  image\n  title\n  battleInfo {\n    banned\n    __typename\n  }\n  auction {\n    currentPrice\n    currentPriceUSD\n    __typename\n  }\n  parts {\n    id\n    name\n    class\n    type\n    specialGenes\n    __typename\n  }\n  __typename\n}\n",
+                "operationName": "GetAxieBriefList",
+                "variables": {"owner": address},
+            },
+        ) as r:
+            response = await r.json()               
+            return pd.DataFrame(response["data"]["axies"]["results"])

@@ -169,15 +169,18 @@ class Alert(commands.Cog):
                     e.add_field(name=r2_title, value=r2, inline=True)
 
                     # Create cropped image for thumbnail
-                    img = Image.open(urlopen(row["image"]))
-                    width, height = img.size
-                    img_cropped = img.crop((300, 220, width - 300, height - 220))
-                    temp = BytesIO()
-                    img_cropped.save(temp, img.format)
-                    temp.seek(0)
+                    try:
+                        img = Image.open(urlopen(row["image"]))
+                        width, height = img.size
+                        img_cropped = img.crop((300, 220, width - 300, height - 220))
+                        temp = BytesIO()
+                        img_cropped.save(temp, img.format)
+                        temp.seek(0)
 
-                    file = discord.File(temp, filename="a.png")
-                    e.set_thumbnail(url="attachment://a.png")
+                        file = discord.File(temp, filename="a.png")
+                        e.set_thumbnail(url="attachment://a.png")
+                    except Exception:
+                        pass
 
                     e.set_footer(
                         text=f"Listing started at: {start_time}\nListing ending at: {end_time}"

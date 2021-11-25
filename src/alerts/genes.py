@@ -27,7 +27,10 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
             df = pd.DataFrame.from_dict(response, orient="index")
             genes = df.transpose()
         else:
-            genes = pd.DataFrame([pd.Series(value) for value in response])
+            if response == None:
+                return pd.DataFrame({})
+            else:
+                genes = pd.DataFrame([pd.Series(value) for value in response])
     else:
         if len(axie_df) == 1:
             df = pd.DataFrame.from_dict(response, orient="index")

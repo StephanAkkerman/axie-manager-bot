@@ -5,8 +5,6 @@ import math
 import pandas as pd
 import gspread
 import gspread_dataframe as gd
-import aiohttp
-from tenacity import retry, stop_after_attempt, wait_fixed
 from urllib.request import urlopen
 from PIL import Image
 from io import BytesIO
@@ -17,7 +15,7 @@ from discord.ext import commands
 from discord.ext.tasks import loop
 
 # > Local dependencies
-from alerts.api import api_genes
+from alerts.api import api_genes, api_owner_axies
 
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
@@ -155,22 +153,25 @@ class Activity(commands.Cog):
         )
 
         e.add_field(name="Class", value=row["class"].tolist()[0], inline=True)
-        [
-            e.add_field(name=stat[1:-5].capitalize(), value=stat[-2:], inline=True)
-            for stat in str(genes["stats"].tolist()[0])[1:-28].split(", ")
-        ]
+        if "stats" in genes.columns:
+            [
+                e.add_field(name=stat[1:-5].capitalize(), value=stat[-2:], inline=True)
+                for stat in str(genes["stats"].tolist()[0])[1:-28].split(", ")
+            ]
         e.add_field(name="D", value=d, inline=True)
         e.add_field(name=r1_title, value=r1, inline=True)
         e.add_field(name=r2_title, value=r2, inline=True)
-        
 
         # Create cropped image for thumbnail
-        img = Image.open(urlopen(row["image"].tolist()[0]))
-        width, height = img.size
-        img_cropped = img.crop((300, 220, width - 300, height - 220))
-        temp = BytesIO()
-        img_cropped.save(temp, img.format)
-        temp.seek(0)
+        try:
+            img = Image.open(urlopen(row["image"].tolist()[0]))
+            width, height = img.size
+            img_cropped = img.crop((300, 220, width - 300, height - 220))
+            temp = BytesIO()
+            img_cropped.save(temp, img.format)
+            temp.seek(0)
+        except Exception:
+            pass
 
         file = discord.File(temp, filename="a.png")
         e.set_thumbnail(url="attachment://a.png")
@@ -242,31 +243,15 @@ class Activity(commands.Cog):
 
         return addresses
 
-    @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
-    async def api_axies(self, address):
-        """ 
-        Gets axies of specific Ronin address
-        Returns a dataframe consisting of columns "id", "auction", "class", "breedCount", "parts", "image", "price"
-        """
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                "https://axieinfinity.com/graphql-server-v2/graphql",
-                json={
-                    "query": "query GetAxieBriefList($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\n  axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\n    total\n    results {\n      ...AxieBrief\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment AxieBrief on Axie {\n  id\n  name\n  stage\n  class\n  breedCount\n  image\n  title\n  battleInfo {\n    banned\n    __typename\n  }\n  auction {\n    currentPrice\n    currentPriceUSD\n    __typename\n  }\n  parts {\n    id\n    name\n    class\n    type\n    specialGenes\n    __typename\n  }\n  __typename\n}\n",
-                    "operationName": "GetAxieBriefList",
-                    "variables": {"owner": address},
-                },
-            ) as r:
-                response = await r.json()               
-                return pd.DataFrame(response["data"]["axies"]["results"])
-
     async def get_axies(self, address):
         """
         Processes api results and returns the dataframe
         """
         
-        df = await self.api_axies(address)
+        try:
+            df = await api_owner_axies(address)
+        except Exception:
+            return pd.DataFrame({})
 
         # Replace parts by their part name, if there are any parts available
         if "parts" in df.columns:
