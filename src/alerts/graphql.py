@@ -119,14 +119,14 @@ fragment AxieAuction on Auction {
 old_axie_operationName = "GetAxieBriefList"
 
 
-def old_axie_variables(from_var, classes, breedCount, parts):
+def old_axie_variables(from_var, classes, breedCount, parts, hp, speed, skill, morale):
     return f"""
   {{
       "from": {from_var},
       "size": 100,
       "sort": "PriceAsc",
       "auctionType": "Sale",
-      "criteria": {{"classes":{classes}, "stages":[4], "breedCount":{breedCount}, "parts":{parts}}}
+      "criteria": {{"classes":{classes}, "stages":[4], "breedCount":{breedCount}, "parts":{parts}, "hp":{hp}, "speed":{speed}, "skill":{skill}, "morale":{morale}}}
   }}
   """
 

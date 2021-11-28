@@ -237,18 +237,34 @@ class Alert(commands.Cog):
                 df["price"] = pd.to_numeric(
                     df["auction"].apply(lambda x: x["currentPriceUSD"])
                 )
+                df['hp'] = pd.to_numeric(
+                    df["stats"].apply(lambda x: x["hp"])
+                )
+                df['morale'] = pd.to_numeric(
+                    df["stats"].apply(lambda x: x["morale"])
+                )
+                df['speed'] = pd.to_numeric(
+                    df["stats"].apply(lambda x: x["speed"])
+                )
+                df['skill'] = pd.to_numeric(
+                    df["stats"].apply(lambda x: x["skill"])
+                )
             except Exception as e:
                 print(e)
 
             # Check if any of these new listings are like the ones we are looking for
             for build in self.specifications:
-
+                
                 # Build a new dataframe for this search
                 search = df.loc[
                     (df["class"].isin(build["Class"]))
                     & (df["breedCount"] <= build["Max Breedcount"])
                     & (df["price"] < build["Max Price"])
                     & (set(build["Parts"]) <= df["parts"])
+                    & (df["hp"] >= build["Hp"])
+                    & (df["morale"] >= build['Morale'])
+                    & (df["speed"] >= build['Speed'])
+                    & (df["skill"] >= build['Skill'])
                 ]
 
                 # Remove ids we have already seen the last minute
@@ -288,21 +304,25 @@ class Alert(commands.Cog):
 
                 # Do this until the max price has been reached, increasing the limit with + 100 every time
                 while not_done:
-                    # Only works for 1 class
-                    classes = json.dumps(build["Class"])
                     # Breed count is an array of numbers
                     if int(build["Max Breedcount"]) != 0:
                         # This only works if it is not 0
                         breedCount = list(range(int(build["Max Breedcount"])))
                     else:
                         breedCount = [0]
-
+                        
+                    classes = json.dumps(build["Class"])
                     parts = json.dumps(build["Part Ids"])
+                    # Stats max is always 61
+                    hp = [build['Hp'], 61]
+                    speed = [build['Speed'], 61]
+                    skill = [build['Skill'], 61]
+                    morale = [build['Morale'], 61]
 
                     # https://axie-graphql.web.app/operations/getAxieBriefList
                     try:
                         df = await api_old_listings(
-                            from_var, classes, breedCount, parts
+                            from_var, classes, breedCount, parts, hp, speed, skill, morale
                         )
                     except Exception as e:
                         print(e)
@@ -320,7 +340,7 @@ class Alert(commands.Cog):
                         )
                     except Exception as e:
                         print(e)
-
+                        
                     # Only keep the ones with price less than max
                     search = df.loc[df["price"] < build["Max Price"]]
 

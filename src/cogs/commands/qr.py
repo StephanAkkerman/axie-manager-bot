@@ -11,14 +11,17 @@ from datetime import datetime
 import qrcode
 from web3.auto import w3
 from eth_account.messages import encode_defunct
+import gspread
+import gspread_dataframe as gd
 
 # > Discord imports
 import discord
 from discord.ext import commands
 
 # > Local files
-from scholars import getScholar
-from cogs.startup.encrypt import fernet
+from cogs.commands.encrypt import fernet
+
+gc = gspread.service_account(filename="authentication.json")
 
 
 class QR(commands.Cog):
@@ -204,6 +207,30 @@ def submitSignature(signedMessage, message, accountAddress):
     json_data = json.loads(r.text)
     # Return the accessToken value
     return json_data["data"]["createAccessTokenWithSignature"]["accessToken"]
+
+
+def getScholar(discordID):
+    """Simple function to read the "Scholars" worksheet and return the dataframe"""
+
+    # Open Scholars worksheet
+    ws = gc.open("Scholars").worksheet("Scholars")
+
+    # Convert to DataFrames
+    df = gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
+
+    # Find row corresponding with discordID
+    row = df.loc[df["Scholar Discord ID"] == discordID]
+
+    # Check if this discord ID exists
+    try:
+        # Return list of most important info
+        return [row["Address"].tolist()[0], row["Info"].tolist()[0]]
+
+    except Exception as e:
+        print("Error with discord user: " + str(discordID))
+
+        # Return nothing
+        return None
 
 
 def setup(bot):
