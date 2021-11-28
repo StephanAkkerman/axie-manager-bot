@@ -44,7 +44,7 @@ class Leaderboard(commands.Cog):
         df = await api_game_api(together)
 
         # Only these columns are important
-        df = df[["name", "mmr", "in_game_slp", "last_claim"]]
+        df = df[["name", "mmr", "in_game_slp", "last_claim", "cache_last_updated"]]
 
         # Delete all the NaN values
         df = df.dropna()
@@ -53,10 +53,13 @@ class Leaderboard(commands.Cog):
         df["name"] = df["name"].str.split("|").str[-1]
         df["last_claim"] = pd.to_datetime(df["last_claim"], unit="s")
         df["since_last_claim"] = (datetime.now() - df["last_claim"]).dt.days
+        df["cache_last_updated"] = pd.to_datetime(df["cache_last_updated"], unit="ms")
         df.loc[df["since_last_claim"] < 1, "since_last_claim"] = 1
         df["avg_slp"] = df["in_game_slp"] / df["since_last_claim"]
         df = df.astype({"avg_slp": int})
         df = df.sort_values(by=["mmr", "avg_slp"], ascending=False)
+        
+        latest_update = df['cache_last_updated'].max().strftime("%m/%d/%Y, %H:%M:%S")
 
         # Convert all columns to string
         df = df.astype(str)
@@ -104,6 +107,8 @@ class Leaderboard(commands.Cog):
             value=avg_slp,
             inline=True,
         )
+        
+        e.set_footer(text=f"Updated on {latest_update}")
 
         await channel.send(embed=e)
         
