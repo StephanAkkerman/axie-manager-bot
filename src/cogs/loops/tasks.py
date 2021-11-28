@@ -28,8 +28,7 @@ class Tasks(commands.Cog):
         # Start loops
         self.clean_listings.start()
         self.slp_warning.start()
-        self.instagram.start()
-
+        
     def delta(self, day, hour, minute):
         """Calculate the amount of seconds until the next day, hour, minute triple"""
         now = datetime.now()

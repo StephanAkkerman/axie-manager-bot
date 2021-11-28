@@ -34,6 +34,9 @@ class Help(commands.Cog):
                         except commands.MissingRole:
                             condition = False
                             break
+                        except commands.PrivateMessageOnly:
+                            condition = False
+                            break
                     if condition:
                         aliases = command.name
                         for a in (alias for alias in command.aliases):
