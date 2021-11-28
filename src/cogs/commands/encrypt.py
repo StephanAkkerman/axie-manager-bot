@@ -21,13 +21,13 @@ class Encrypt(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role("Verified")
+    @commands.dm_only()
     async def encrypt(self, ctx, *input):
-        """Encrypt message using your personal fernet key
+        """Encrypt message using your personal fernet key, via a direct message 
 
         Usage: `!encrypt <message>`
         Send an encrypted message to a user using your personal fernet key.
-        _Note_: Message following !encrypt should not be empty.
+        _Note_: This only works by sending a direct message to the bot, message following !encrypt should not be empty.
         """
 
         # Error handling
@@ -45,9 +45,6 @@ class Encrypt(commands.Cog):
             + str(encMessage)
         )
 
-        # Delete this message, for privacy
-        await ctx.message.delete()
-
     @encrypt.error
     async def encrypt_error(self, ctx, error):
         # Delete this message, to remove clutter
@@ -59,10 +56,14 @@ class Encrypt(commands.Cog):
             await ctx.message.author.send(
                 f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
             )
+        elif isinstance(error, commands.PrivateMessageOnly):
+            await ctx.message.author.send(
+                "Please only use the `!encrypt` command in private messages for security reasons."
+            ) 
         elif isinstance(error, commands.UserInputError):
             await ctx.message.author.send(
                 "Nothing to encrypt. Please type something after `!encrypt` or see `!help encrypt` for more information (do not reply here)."
-            )
+            )           
         else:
             await ctx.message.author.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
