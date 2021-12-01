@@ -135,7 +135,7 @@ class Listeners(commands.Cog):
             )
 
             await after.send(embed=e)
-            await after.send("https://youtu.be/2uG2lOfhe6s")
+            await after.send("https://youtu.be/xFjCxAezCIE")
 
         elif new_role.name == "Scholar":
             e = discord.Embed(
