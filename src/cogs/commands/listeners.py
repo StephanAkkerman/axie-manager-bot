@@ -29,11 +29,14 @@ class Listeners(commands.Cog):
             # Load necessary variables
             channel = self.bot.get_channel(reaction.channel_id)
             guild = self.bot.get_guild(reaction.guild_id)
-            if reaction.member.id != self.bot.user.id:
-                if channel.name == "👋┃welcome":
-                    await self.verification_check(reaction, channel, guild)
-                elif channel.name == "💎┃bot-alerts":
-                    await self.claim_axie(reaction, channel)
+            try:
+                if reaction.member.id != self.bot.user.id:
+                    if channel.name == "👋┃welcome":
+                        await self.verification_check(reaction, channel, guild)
+                    elif channel.name == "💎┃bot-alerts":
+                        await self.claim_axie(reaction, channel)
+            except AttributeError:
+                print(reaction.member.name)
 
         except commands.CommandError as e:
             exception_channel = self.bot.get_channel(reaction.channel_id)

@@ -36,7 +36,11 @@ async def get_genes(axie_df, r1, r2, get_auction_info=False):
             df = pd.DataFrame.from_dict(response, orient="index")
             genes = df.transpose()
         else:
-            genes = pd.DataFrame(response)
+            try:
+                genes = pd.DataFrame(response)
+            except Exception:
+                print("Error with converting genes API response to dataframe")
+                print(response)                
 
     # Remove ids of axies that are currently in the API as eggs
     genes = genes.loc[

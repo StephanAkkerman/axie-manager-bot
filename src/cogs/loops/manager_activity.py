@@ -118,6 +118,8 @@ class Activity(commands.Cog):
 
         else:
             d = r1 = r2 = "Unknown"
+            r1_title = "R1"
+            r2_title = "R2"
 
         # Send message in discord channel
         channel = discord.utils.get(
