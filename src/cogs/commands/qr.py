@@ -53,7 +53,7 @@ class QR(commands.Cog):
             scholar_info = getScholar(ctx.message.author.name)
 
             # This for loop check for all the user's DiscordID in the Database
-            if scholar_info != None:
+            if scholar_info != []:
 
                 # Print log info
                 print("This user received his QR Code : " + ctx.message.author.name)
