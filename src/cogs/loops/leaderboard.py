@@ -18,12 +18,13 @@ from alerts.api import api_game_api
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
 
+
 class Leaderboard(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+
         self.leaderboard.start()
-        
+
     @loop(hours=4)
     async def leaderboard(self):
         """Print the current leaderboard in 🏆┃leaderboard channel"""
@@ -58,8 +59,8 @@ class Leaderboard(commands.Cog):
         df["avg_slp"] = df["in_game_slp"] / df["since_last_claim"]
         df = df.astype({"avg_slp": int})
         df = df.sort_values(by=["mmr", "avg_slp"], ascending=False)
-        
-        latest_update = df['cache_last_updated'].max().strftime("%m/%d/%Y, %H:%M:%S")
+
+        latest_update = df["cache_last_updated"].max().strftime("%m/%d/%Y, %H:%M:%S")
 
         # Convert all columns to string
         df = df.astype(str)
@@ -84,33 +85,24 @@ class Leaderboard(commands.Cog):
             name="🏆┃leaderboard",
         )
 
-        e = discord.Embed(
-            title="Leaderboard",
-            description="",
-            color=0x00FFFF,
+        e = discord.Embed(title="Leaderboard", description="", color=0x00FFFF,)
+
+        e.add_field(
+            name="Scholar", value=scholars, inline=True,
         )
 
         e.add_field(
-            name="Scholar",
-            value=scholars,
-            inline=True,
+            name="MMR", value=mmr, inline=True,
         )
 
         e.add_field(
-            name="MMR",
-            value=mmr,
-            inline=True,
+            name="Average SLP", value=avg_slp, inline=True,
         )
 
-        e.add_field(
-            name="Average SLP",
-            value=avg_slp,
-            inline=True,
-        )
-        
         e.set_footer(text=f"Updated on {latest_update}")
 
         await channel.send(embed=e)
-        
+
+
 def setup(bot):
     bot.add_cog(Leaderboard(bot))

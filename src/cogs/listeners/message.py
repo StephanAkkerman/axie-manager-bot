@@ -3,6 +3,7 @@
 import discord
 from discord.ext import commands
 
+
 class Message(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -20,6 +21,7 @@ class Message(commands.Cog):
             await channel.send(
                 f"Unhandled error in {message.channel.mention}. User **{message.author.name}#{message.author.discriminator}** caused an error in a message listener. ```{e}```"
             )
-                
+
+
 def setup(bot):
     bot.add_cog(Message(bot))

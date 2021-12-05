@@ -65,11 +65,7 @@ class Issue(commands.Cog):
         )
 
         # Create Discord embed from msg
-        e = discord.Embed(
-            title=title,
-            description=msg.content,
-            color=0x00FFFF,
-        )
+        e = discord.Embed(title=title, description=msg.content, color=0x00FFFF,)
 
         # Comine disc emoji + label name
         field_labels = [m + " " + n for m, n in zip(disc_emojis, label_text)]

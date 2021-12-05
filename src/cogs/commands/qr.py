@@ -6,6 +6,7 @@ import json
 import os
 import uuid
 from datetime import datetime
+import traceback
 
 # > 3rd party dependencies
 import qrcode
@@ -49,7 +50,7 @@ class QR(commands.Cog):
             print("\n")
 
             # Get this scholars info from the sheet
-            scholar_info = getScholar(ctx.message.author.id)
+            scholar_info = getScholar(ctx.message.author.name)
 
             # This for loop check for all the user's DiscordID in the Database
             if scholar_info != None:
@@ -129,7 +130,8 @@ class QR(commands.Cog):
             )
             channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
             await channel.send(
-                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
+                \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""
             )
 
         # Delete this message, to remove clutter
@@ -189,8 +191,17 @@ def submitSignature(signedMessage, message, accountAddress):
         },
         "query": "mutation CreateAccessTokenWithSignature($input: SignatureInput!) {\n  createAccessTokenWithSignature(input: $input) {\n    newAccount\n    result\n    accessToken\n    __typename\n  }\n}\n",
     }
+
+    signature = signedMessage["signature"].hex()
+
+    # This is necessary according to discord guy
+    if signature[-2:] == "1c":
+        signature = signature[:-2] + "01"
+    elif signature[-2:] == "1b":
+        signature = signature[:-2] + "00"
+
     # Remplace in that example to the actual signed message
-    requestBody["variables"]["input"]["signature"] = signedMessage["signature"].hex()
+    requestBody["variables"]["input"]["signature"] = signature
     # Remplace in that example to the actual raw message
     requestBody["variables"]["input"]["message"] = message
     # Remplace in that example to the actual account address
@@ -205,11 +216,12 @@ def submitSignature(signedMessage, message, accountAddress):
     )
     # Load the data into json format
     json_data = json.loads(r.text)
+
     # Return the accessToken value
     return json_data["data"]["createAccessTokenWithSignature"]["accessToken"]
 
 
-def getScholar(discordID):
+def getScholar(scholarName):
     """Simple function to read the "Scholars" worksheet and return the dataframe"""
 
     # Open Scholars worksheet
@@ -218,8 +230,11 @@ def getScholar(discordID):
     # Convert to DataFrames
     df = gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
 
-    # Find row corresponding with discordID
-    row = df.loc[df["Scholar Discord ID"] == discordID]
+    # Make everything lowercase
+    df["Scholar Name"] = df["Scholar Name"].str.lower()
+
+    # Find row corresponding with discord name
+    row = df.loc[df["Scholar Name"] == scholarName.lower()]
 
     # Check if this discord ID exists
     try:
@@ -227,7 +242,7 @@ def getScholar(discordID):
         return [row["Address"].tolist()[0], row["Info"].tolist()[0]]
 
     except Exception as e:
-        print("Error with discord user: " + str(discordID))
+        print("Error with discord user: " + str(scholarName))
 
         # Return nothing
         return None

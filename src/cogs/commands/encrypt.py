@@ -59,11 +59,11 @@ class Encrypt(commands.Cog):
         elif isinstance(error, commands.PrivateMessageOnly):
             await ctx.message.author.send(
                 "Please only use the `!encrypt` command in private messages for security reasons."
-            ) 
+            )
         elif isinstance(error, commands.UserInputError):
             await ctx.message.author.send(
                 "Nothing to encrypt. Please type something after `!encrypt` or see `!help encrypt` for more information (do not reply here)."
-            )           
+            )
         else:
             await ctx.message.author.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."

@@ -54,7 +54,9 @@ async def api_new_listings():
 
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
-async def api_old_listings(from_var, classes, breedCount, parts, hp, speed, skill, morale):
+async def api_old_listings(
+    from_var, classes, breedCount, parts, hp, speed, skill, morale
+):
     """Gets the old listings on the market and returns it as a pandas dataframe"""
     async with aiohttp.ClientSession() as session:
         async with session.post(
@@ -62,7 +64,9 @@ async def api_old_listings(from_var, classes, breedCount, parts, hp, speed, skil
             json={
                 "query": old_axies_query,
                 "operationName": old_axie_operationName,
-                "variables": old_axie_variables(from_var, classes, breedCount, parts, hp, speed, skill, morale),
+                "variables": old_axie_variables(
+                    from_var, classes, breedCount, parts, hp, speed, skill, morale
+                ),
             },
         ) as r:
             response = await r.json()

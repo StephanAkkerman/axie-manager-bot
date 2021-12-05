@@ -7,7 +7,7 @@ from discord.ext import commands
 class Role(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         if len(before.roles) < len(after.roles):
@@ -70,6 +70,7 @@ class Role(commands.Cog):
 
             await after.send(embed=e)
             await after.send("https://youtu.be/J2h_tOdMwoA")
-        
+
+
 def setup(bot):
     bot.add_cog(Role(bot))

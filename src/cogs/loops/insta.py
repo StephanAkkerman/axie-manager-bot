@@ -15,12 +15,13 @@ import discord
 from discord.ext import commands
 from discord.ext.tasks import loop
 
+
 class Instagram(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
         self.instagram.start()
-        
+
     async def get_last_post(self):
         headers = {
             "Host": "www.instagram.com",
@@ -51,7 +52,7 @@ class Instagram(commands.Cog):
         caption = last_post["edge_media_to_caption"]["edges"][0]["node"]["text"]
         comments = last_post["edge_media_to_comment"]["count"]
         likes = last_post["edge_liked_by"]["count"]
-        timestamp = datetime.utcfromtimestamp(last_post['taken_at_timestamp'])
+        timestamp = datetime.utcfromtimestamp(last_post["taken_at_timestamp"])
         post_url = "https://www.instagram.com/" + "p/" + last_post["shortcode"]
 
         # Profile data
@@ -73,7 +74,7 @@ class Instagram(commands.Cog):
         last_message = await channel.history().find(
             lambda m: m.author.id == self.bot.user.id
         )
-        
+
         try:
             old_description = last_message.embeds[0].to_dict()["description"]
         except Exception:

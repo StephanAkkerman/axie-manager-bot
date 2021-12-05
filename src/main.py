@@ -45,7 +45,7 @@ if __name__ == "__main__":
         if filename.endswith(".py"):
             print("Loading:", filename)
             bot.load_extension(f"cogs.commands.{filename[:-3]}")
-            
+
     # Load all listeners
     for filename in os.listdir("./src/cogs/listeners"):
         if filename.endswith(".py"):

@@ -7,7 +7,7 @@ from discord.ext import commands
 class Reaction(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
         try:
@@ -66,6 +66,7 @@ class Reaction(commands.Cog):
             await msg.delete()
             if mention_msg:
                 await mention_msg.delete()
-                
+
+
 def setup(bot):
     bot.add_cog(Reaction(bot))
