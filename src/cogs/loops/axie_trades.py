@@ -21,7 +21,7 @@ from alerts.api import api_genes, api_owner_axies
 gc = gspread.service_account(filename="authentication.json")
 
 
-class Activity(commands.Cog):
+class Axie_trades(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -270,4 +270,4 @@ class Activity(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Activity(bot))
+    bot.add_cog(Axie_trades(bot))

@@ -23,7 +23,7 @@ from alerts.genes import get_genes
 from alerts.api import api_new_listings, api_old_listings, api_axie_details
 
 
-class Alert(commands.Cog):
+class Axie_alert(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.send = []
@@ -371,4 +371,4 @@ class Alert(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Alert(bot))
+    bot.add_cog(Axie_alert(bot))
