@@ -5,16 +5,21 @@
 import os
 import asyncio
 import sys
-import json
 
 # > 3rd Party Dependencies
+import yaml
+
+# Discord libraries
 import discord
 from discord.ext import commands
 
-# Bot prefix is !
-bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
-bot.remove_command("help")
+# Read config.yaml content
+with open("config.yaml", "r") as f:
+    config = yaml.full_load(f)
 
+# Bot prefix is !
+bot = commands.Bot(command_prefix=config["PREFIX"], intents=discord.Intents.all())
+bot.remove_command("help")
 
 @bot.event
 async def on_ready():
@@ -22,48 +27,41 @@ async def on_ready():
 
     guild = discord.utils.get(
         bot.guilds,
-        name=data["TEST"]
+        name=config["DEBUG"]["GUILD_NAME"]
         if len(sys.argv) > 1 and sys.argv[1] == "-test"
-        else data["GUILD"],
-    )
-
-    print(
-        f"{bot.user} is connected to the following guild:\n"
-        f"{guild.name}(id: {guild.id})"
+        else config["DISCORD"]["GUILD_NAME"],
     )
 
     # Load all loops
-    print("Loading loops ...")
-    for filename in os.listdir("./src/cogs/loops"):
-        if filename.endswith(".py"):
-            print("Loading:", filename)
-            bot.load_extension(f"cogs.loops.{filename[:-3]}")
+    load_folder(config, 'loops')
 
-    print("All done!")
+    print(f"{bot.user} is connected to {guild.name} (id: {guild.id}) \n")
+
+def load_folder(config, foldername):
+    
+    # Get enabled commands
+    enabled_commands = ['help.py']
+    for file in config[foldername.upper()]:
+        if config[foldername.upper()][file]:
+            enabled_commands.append(file.lower() + '.py')
+    
+    # Load all commands
+    print(f"Loading {foldername} ...")
+    for filename in os.listdir(f"./src/cogs/{foldername}"):
+        if filename.endswith(".py") and filename in enabled_commands:
+            print("Loading:", filename)
+            bot.load_extension(f"cogs.{foldername}.{filename[:-3]}")
+            
+    print()
 
 if __name__ == "__main__":
-    # Load all commands
-    print("Loading commands ...")
-    for filename in os.listdir("./src/cogs/commands"):
-        if filename.endswith(".py"):
-            print("Loading:", filename)
-            bot.load_extension(f"cogs.commands.{filename[:-3]}")
-
-    # Load all listeners
-    print("Loading listeners ...")
-    for filename in os.listdir("./src/cogs/listeners"):
-        if filename.endswith(".py"):
-            print("Loading:", filename)
-            bot.load_extension(f"cogs.listeners.{filename[:-3]}")
-
-    # Get vars from .json
-    with open("authentication.json") as f:
-        data = json.load(f)
+    load_folder(config, 'commands')
+    load_folder(config, 'listeners')
 
     TOKEN = (
-        data["TEST_TOKEN"]
+        config["DEBUG"]["TOKEN"]
         if len(sys.argv) > 1 and sys.argv[1] == "-test"
-        else data["TOKEN"]
+        else config["DISCORD"]["TOKEN"]
     )
 
     # Main event loop
