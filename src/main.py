@@ -33,20 +33,24 @@ async def on_ready():
     )
 
     # Load all loops
+    print("Loading loops ...")
     for filename in os.listdir("./src/cogs/loops"):
         if filename.endswith(".py"):
             print("Loading:", filename)
             bot.load_extension(f"cogs.loops.{filename[:-3]}")
 
+    print("All done!")
 
 if __name__ == "__main__":
     # Load all commands
+    print("Loading commands ...")
     for filename in os.listdir("./src/cogs/commands"):
         if filename.endswith(".py"):
             print("Loading:", filename)
             bot.load_extension(f"cogs.commands.{filename[:-3]}")
 
     # Load all listeners
+    print("Loading listeners ...")
     for filename in os.listdir("./src/cogs/listeners"):
         if filename.endswith(".py"):
             print("Loading:", filename)

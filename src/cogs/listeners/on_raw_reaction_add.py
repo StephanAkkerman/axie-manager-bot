@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 
-class Reaction(commands.Cog):
+class On_raw_reaction_add(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -69,4 +69,4 @@ class Reaction(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Reaction(bot))
+    bot.add_cog(On_raw_reaction_add(bot))

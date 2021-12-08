@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 
-class Role(commands.Cog):
+class On_member_update(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -73,4 +73,4 @@ class Role(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Role(bot))
+    bot.add_cog(On_member_update(bot))

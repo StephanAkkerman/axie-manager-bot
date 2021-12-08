@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 
-class Message(commands.Cog):
+class On_message(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -24,4 +24,4 @@ class Message(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Message(bot))
+    bot.add_cog(On_message(bot))

@@ -38,7 +38,7 @@ class ScholarData(commands.Cog):
 
         try:
             address = scholar_info.loc[
-                scholar_info["Scholar Discord ID"] == ctx.message.author.id
+                scholar_info["Scholar Name"] == ctx.message.author.name
             ]["Address"]
         except:
             raise commands.UserNotFound(ctx.message.author.name)
@@ -105,7 +105,7 @@ class ScholarData(commands.Cog):
             )
         elif isinstance(error, commands.UserNotFound):
             print(
-                "This user didn't receive their personal data : "
+                "This user didn't receive their personal data: "
                 + ctx.message.author.name
             )
             print("Discord ID : " + str(ctx.message.author.id))
