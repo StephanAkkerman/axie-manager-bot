@@ -3,6 +3,8 @@
 import discord
 from discord.ext import commands
 
+# Import local dependencies
+from config import config
 
 class On_raw_reaction_add(commands.Cog):
     def __init__(self, bot):
@@ -25,7 +27,7 @@ class On_raw_reaction_add(commands.Cog):
 
         except commands.CommandError as e:
             exception_channel = self.bot.get_channel(reaction.channel_id)
-            channel = discord.utils.get(guild.channels, name="🐞┃bot-errors")
+            channel = discord.utils.get(guild.channels, name=config['ERROR'])
             await channel.send(
                 f"Unhandled error in {exception_channel.mention}. User **{reaction.member.name}#{reaction.member.discriminator}** caused an error by adding a reaction to a message. ```{e}```"
             )

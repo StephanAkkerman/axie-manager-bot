@@ -6,16 +6,12 @@ import os
 import asyncio
 import sys
 
-# > 3rd Party Dependencies
-import yaml
-
 # Discord libraries
 import discord
 from discord.ext import commands
 
-# Read config.yaml content
-with open("config.yaml", "r") as f:
-    config = yaml.full_load(f)
+# Import local dependencies
+from config import config
 
 # Bot prefix is !
 bot = commands.Bot(command_prefix=config["PREFIX"], intents=discord.Intents.all())

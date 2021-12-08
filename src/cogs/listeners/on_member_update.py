@@ -3,6 +3,8 @@
 import discord
 from discord.ext import commands
 
+# Import local dependencies
+from config import config
 
 class On_member_update(commands.Cog):
     def __init__(self, bot):
@@ -15,7 +17,7 @@ class On_member_update(commands.Cog):
 
     async def new_role(self, before, after):
         new_role = next(role for role in after.roles if role not in before.roles)
-        if new_role.name == "Tryout":
+        if new_role.name == config['ROLES']['TRYOUT']:
             e = discord.Embed(
                 title="Congratulations on passing the selection!",
                 description=f"""Hello {after.mention},
@@ -42,9 +44,9 @@ class On_member_update(commands.Cog):
             )
 
             await after.send(embed=e)
-            await after.send("https://youtu.be/xFjCxAezCIE")
+            await after.send(config['LISTENERS']['ON_MEMBER_UPDATE']['TRYOUT'])
 
-        elif new_role.name == "Scholar":
+        elif new_role.name == config['ROLES']['SCHOLAR']:
             e = discord.Embed(
                 title="Congratulations on becoming a scholar!",
                 description=f"""Hello {after.mention},
@@ -69,7 +71,7 @@ class On_member_update(commands.Cog):
             )
 
             await after.send(embed=e)
-            await after.send("https://youtu.be/J2h_tOdMwoA")
+            await after.send(config['LISTENERS']['ON_MEMBER_UPDATE']['SCHOLAR'])
 
 
 def setup(bot):
