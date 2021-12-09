@@ -4,6 +4,7 @@ import json
 import traceback
 from datetime import datetime
 import asyncio
+import sys
 
 # > Discord dependencies
 import discord
@@ -21,7 +22,7 @@ from alerts.graphql import *
 from alerts.builds import get_builds
 from alerts.genes import get_genes
 from alerts.api import api_new_listings, api_old_listings, api_axie_details
-
+from config import config
 
 class Axie_alert(commands.Cog):
     def __init__(self, bot):
@@ -81,10 +82,10 @@ class Axie_alert(commands.Cog):
                     # Send message in discord channel
                     channel = discord.utils.get(
                         self.bot.get_all_channels(),
-                        guild__name="Axie Manager Scholar Group"
-                        if self.bot.user.id == 892855262124326932
-                        else "Bot Test Server",
-                        name="💎┃bot-alerts",
+                        guild__name=config["DEBUG"]["GUILD_NAME"]
+                        if len(sys.argv) > 1 and sys.argv[1] == "-test"
+                        else config["DISCORD"]["GUILD_NAME"],
+                        name=config["LOOPS"]["AXIE_ALERT"]["CHANNEL"],
                     )
 
                     e = discord.Embed(

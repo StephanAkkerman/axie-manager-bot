@@ -11,7 +11,6 @@ class Announce(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     @commands.command()
     @commands.has_role("Manager")
     async def announce(self, ctx, *input):

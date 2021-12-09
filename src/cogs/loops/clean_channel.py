@@ -1,12 +1,15 @@
 ##> Imports
 # > Standard libraries
 from datetime import datetime, timedelta
+import sys
 
 # > Discord dependencies
 import discord
 from discord.ext import commands
 from discord.ext.tasks import loop
 
+# Local dependencies
+from config import config
 class Clean_channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -14,15 +17,16 @@ class Clean_channel(commands.Cog):
         # Start loops
         self.clean_channel.start()
 
-    @loop(hours=24)
+    @loop(hours=config["LOOPS"]["CLEAN_CHANNEL"]["HOURS"])
     async def clean_channel(self):
+        
         # Find discord channel
         channel = discord.utils.get(
             self.bot.get_all_channels(),
-            guild__name="Axie Manager Scholar Group"
-            if self.bot.user.id == 892855262124326932
-            else "Bot Test Server",
-            name="💎┃bot-alerts",
+            guild__name=config["DEBUG"]["GUILD_NAME"]
+            if len(sys.argv) > 1 and sys.argv[1] == "-test"
+            else config["DISCORD"]["GUILD_NAME"],
+            name=config["LOOPS"]["CLEAN_CHANNEL"]["CHANNEL"],
         )
 
         # Check if message is older than 24 hours

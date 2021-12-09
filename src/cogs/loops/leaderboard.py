@@ -1,6 +1,7 @@
 ##> Imports
 # > Standard libraries
 from datetime import datetime
+import sys
 
 # > 3rd party dependencies
 import gspread
@@ -14,6 +15,7 @@ from discord.ext.tasks import loop
 
 # > Local dependencies
 from alerts.api import api_game_api
+from config import config
 
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
@@ -27,7 +29,7 @@ class Leaderboard(commands.Cog):
 
     @loop(hours=4)
     async def leaderboard(self):
-        """Print the current leaderboard in 🏆┃leaderboard channel"""
+        f"""Print the current leaderboard in {config["LOOPS"]["LEADERBOARD"]['CHANNEL']} channel"""
 
         # Open the worksheet of the specified spreadsheet
         ws = gc.open("Scholars").worksheet("Scholars")
@@ -79,10 +81,10 @@ class Leaderboard(commands.Cog):
         # Send message in discord channel
         channel = discord.utils.get(
             self.bot.get_all_channels(),
-            guild__name="Axie Manager Scholar Group"
-            if self.bot.user.id == 892855262124326932
-            else "Bot Test Server",
-            name="🏆┃leaderboard",
+            guild__name=config["DEBUG"]["GUILD_NAME"]
+            if len(sys.argv) > 1 and sys.argv[1] == "-test"
+            else config["DISCORD"]["GUILD_NAME"],
+            name=config["LOOPS"]["LEADERBOARD"]["CHANNEL"],
         )
 
         e = discord.Embed(title="Leaderboard", description="", color=0x00FFFF,)

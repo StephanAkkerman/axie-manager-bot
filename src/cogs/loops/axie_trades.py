@@ -1,5 +1,6 @@
 ##> Imports
 import math
+import sys
 
 # > 3rd party dependencies
 import pandas as pd
@@ -16,6 +17,7 @@ from discord.ext.tasks import loop
 
 # > Local dependencies
 from alerts.api import api_genes, api_owner_axies
+from config import config
 
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
@@ -124,10 +126,10 @@ class Axie_trades(commands.Cog):
         # Send message in discord channel
         channel = discord.utils.get(
             self.bot.get_all_channels(),
-            guild__name="Axie Manager Scholar Group"
-            if self.bot.user.id == 892855262124326932
-            else "Bot Test Server",
-            name="🤝┃axie-trades",
+            guild__name=config["DEBUG"]["GUILD_NAME"]
+            if len(sys.argv) > 1 and sys.argv[1] == "-test"
+            else config["DISCORD"]["GUILD_NAME"],
+            name=config["LOOPS"]["AXIE_TRADES"]["CHANNEL"],
         )
 
         # Price
