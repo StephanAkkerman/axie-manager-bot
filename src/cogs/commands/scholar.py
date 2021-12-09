@@ -1,9 +1,11 @@
 ##> Imports
+
+import traceback
+
 # > 3rd Party Dependencies
 import discord
 from discord.ext import commands
 import pandas as pd
-import numpy as np
 import gspread
 import gspread_dataframe as gd
 
@@ -20,12 +22,13 @@ class Scholar(commands.Cog):
     async def scholar(self, ctx, *input):
         """Add a scholar
 
-        Usage: `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`
+        Usage: `!scholar <scholar_name> <address> <split> <payout_address> <encrypted_key> <[manager]>`
         This will add the specified scholar to the Scholars Google spreadsheet.
         """
 
         if len(input) >= 5:
-            new_scholar = discord.utils.get(ctx.guild.members, id=int(input[0]))
+            new_scholar = discord.utils.get(ctx.guild.members, name=input[0])
+            print(new_scholar)
 
             if "Verified" in [r.name for r in new_scholar.roles]:
                 # Get managers info
@@ -53,9 +56,6 @@ class Scholar(commands.Cog):
                     title="Confirm New Scholar", description="", color=0x00FFFF
                 )
                 e.add_field(name="Scholar Name", value=new_scholar.name, inline=True)
-                e.add_field(
-                    name="Scholar Discord ID", value=new_scholar.id, inline=True
-                )
                 e.add_field(
                     name="Scholar Share", value=f"{float(input[2])*100}%", inline=True
                 )
@@ -124,7 +124,6 @@ class Scholar(commands.Cog):
                             "Scholar Share": input[2],
                             "Address": input[1],
                             "Payout Address": input[3],
-                            "Scholar Discord ID": str(new_scholar.id),
                             "Info": input[4],
                         },
                         index=[0],
@@ -143,11 +142,6 @@ class Scholar(commands.Cog):
 
                     # Append the info to it
                     scholar_info = scholar_info.append(new_scholar)
-
-                    # Convert to int64 and then to string
-                    scholar_info["Scholar Discord ID"] = (
-                        scholar_info["Scholar Discord ID"].astype(np.int64).astype(str)
-                    )
 
                     # Upload it
                     gd.set_with_dataframe(ws, scholar_info, include_index=False)
@@ -180,7 +174,7 @@ class Scholar(commands.Cog):
             )
         elif isinstance(error, commands.UserInputError):
             await ctx.send(
-                f"Sorry, you used this command incorrectly. Correct usage is `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`. Try again or see `!help scholar` for more information."
+                f"Sorry, you used this command incorrectly. Correct usage is `!scholar <scholar_name> <address> <split> <payout_address> <encrypted_key> <[manager]>`. Try again or see `!help scholar` for more information."
             )
         else:
             await ctx.send(
@@ -188,7 +182,8 @@ class Scholar(commands.Cog):
             )
             channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
             await channel.send(
-                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
+                \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""
             )
 
 

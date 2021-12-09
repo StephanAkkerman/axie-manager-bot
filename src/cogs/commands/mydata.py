@@ -111,7 +111,7 @@ class ScholarData(commands.Cog):
             print("Discord ID : " + str(ctx.message.author.id))
             print("Current time : ", datetime.now().strftime("%H:%M:%S"))
             await ctx.message.author.send(
-                f"Sorry, could not find your Discord ID in our database. Please contact a manager if you think that this is incorrect."
+                f"Sorry, could not find your Discord name in our database. Please contact a manager if you think that this is incorrect."
             )
         else:
             await ctx.message.author.send(
