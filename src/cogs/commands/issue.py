@@ -1,6 +1,4 @@
 ##> Imports
-import json
-
 # > 3rd party dependencies
 from github import Github
 import emoji
@@ -9,9 +7,11 @@ import emoji
 import discord
 from discord.ext import commands
 
+# Local dependencies
+from config import config
+
 # Get the access token
-with open("authentication.json") as f:
-    gh_token = json.load(f)["GH_TOKEN"]
+gh_token = config['COMMANDS']['ISSUE']['TOKEN']
 
 # Initialize GH client and repo
 g = Github(gh_token)
@@ -38,7 +38,7 @@ class Issue(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=["idea"])
-    @commands.has_role("Manager")
+    @commands.has_role(config['ROLES']['MANAGER'])
     async def issue(self, ctx, *input):
         """Create a new issue for the Axie Manager Discord bot
 

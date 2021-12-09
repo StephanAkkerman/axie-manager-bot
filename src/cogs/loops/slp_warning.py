@@ -16,6 +16,7 @@ from discord.ext.tasks import loop
 
 # > Local dependencies
 from alerts.api import api_game_api
+from config import config
 
 gc = gspread.service_account(filename="authentication.json")
 
@@ -91,7 +92,7 @@ class Slp_warning(commands.Cog):
             color=0x00FFFF,
         )
 
-        e.set_author(name="Axie Manager", icon_url=self.bot.user.avatar_url)
+        e.set_author(name=config['MANAGER_NAME'], icon_url=self.bot.user.avatar_url)
 
         e.set_footer(
             text="This is an automated message, if you believe this message was incorrectly send to you please notify your manager"

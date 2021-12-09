@@ -1,5 +1,4 @@
 ##> Imports
-
 import traceback
 
 # > 3rd Party Dependencies
@@ -8,6 +7,9 @@ from discord.ext import commands
 import pandas as pd
 import gspread
 import gspread_dataframe as gd
+
+# Local dependencies
+from config import config
 
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
@@ -18,7 +20,7 @@ class Scholar(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role("Manager")
+    @commands.has_role(config['ROLES']['MANAGER'])
     async def scholar(self, ctx, *input):
         """Add a scholar
 
@@ -180,7 +182,7 @@ class Scholar(commands.Cog):
             await ctx.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
             await channel.send(
                 f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
                 \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""

@@ -29,7 +29,7 @@ class Leaderboard(commands.Cog):
 
     @loop(hours=4)
     async def leaderboard(self):
-        f"""Print the current leaderboard in {config["LOOPS"]["LEADERBOARD"]['CHANNEL']} channel"""
+        """Print the current leaderboard in dedicated leaderboard channel"""
 
         # Open the worksheet of the specified spreadsheet
         ws = gc.open("Scholars").worksheet("Scholars")

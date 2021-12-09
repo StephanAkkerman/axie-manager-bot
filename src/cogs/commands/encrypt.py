@@ -1,7 +1,4 @@
 ##> Imports
-# > Standard Library
-import json
-
 # > 3rd Party Dependencies
 from cryptography.fernet import Fernet
 
@@ -9,12 +6,10 @@ from cryptography.fernet import Fernet
 import discord
 from discord.ext import commands
 
-#  Get vars from .json
-with open("./authentication.json") as f:
-    data = json.load(f)
+# local dependencies
+from config import config
 
-fernet = Fernet(data["KEY"].encode("utf_8"))
-
+fernet = Fernet(config['COMMANDS']['ENCRYPT']['KEY'].encode('utf_8'))
 
 class Encrypt(commands.Cog):
     def __init__(self, bot):
@@ -50,13 +45,7 @@ class Encrypt(commands.Cog):
         # Delete this message, to remove clutter
         await ctx.message.delete()
 
-        if isinstance(error, commands.MissingRole):
-            channel = discord.utils.get(ctx.guild.channels, name="👋┃welcome")
-            channel_id = channel.id
-            await ctx.message.author.send(
-                f"Sorry, you cannot use this command yet, since you are not verified. You can get verified in the <#{channel_id}> channel."
-            )
-        elif isinstance(error, commands.PrivateMessageOnly):
+        if isinstance(error, commands.PrivateMessageOnly):
             await ctx.message.author.send(
                 "Please only use the `!encrypt` command in private messages for security reasons."
             )
@@ -68,7 +57,7 @@ class Encrypt(commands.Cog):
             await ctx.message.author.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )

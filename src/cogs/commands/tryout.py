@@ -1,4 +1,4 @@
-   ##> Imports
+##> Imports
 # > Standard library
 from random import randrange
 import math
@@ -7,13 +7,15 @@ import math
 import discord
 from discord.ext import commands
 
+# Local dependencies
+from config import config
 
 class Tryout(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
     
     @commands.command(aliases=["tryouts"])
-    @commands.has_role("Manager")
+    @commands.has_role(config['ROLES']['MANAGER'])
     async def tryout(self, ctx, *input):
         """Start tryouts
 
@@ -135,7 +137,7 @@ class Tryout(commands.Cog):
             await ctx.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )

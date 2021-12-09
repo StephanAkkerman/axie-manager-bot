@@ -11,18 +11,19 @@ import gspread_dataframe as gd
 import discord
 from discord.ext import commands
 
+# Local dependencies
+from alerts.api import api_game_api_single
+from config import config
+
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
-
-from alerts.api import api_game_api_single
-
 
 class ScholarData(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command(aliases=["stats", "data"])
-    @commands.has_role("Scholar")
+    @commands.has_role(config['ROLES']['SCHOLAR'])
     async def mydata(self, ctx):
         """Request information on your Axie Infinity scholarship account
 
@@ -117,7 +118,7 @@ class ScholarData(commands.Cog):
             await ctx.message.author.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name="🐞┃bot-errors")
+            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )
