@@ -1,0 +1,145 @@
+DISCORD:
+  TOKEN: Your Discord bot Token
+  GUILD_NAME: The server name that the Discord bot should be connected to
+
+# This will only be used if -test is added to startup
+# No need to fill this in unless you want to debug the bot
+DEBUG:
+  TOKEN: Empty
+  GUILD_NAME: Empty
+
+# Default prefix for commands is !, can be changed to $, &, and others
+PREFIX: '!'
+
+# The role names for certain groups of people
+# Please make these roles first before running the bot
+# If empty 'everyone' will be used instead
+ROLES:
+  VERIFIED: Verified
+  TRYOUT: Tryout
+  SCHOLAR: Scholar
+  MANAGER: Manager
+
+# The name of the manager, used as footer in messages
+MANAGER_NAME: Axie Manager
+
+# Send error messages in dedicated channel
+ERROR:
+    ENABLED: True
+    CHANNEL: 🐞┃bot-errors
+
+# If people use the ✅ emoji as reaction under a bot message send in the welcome channel they will get the 'verified' role
+# Make a bot message using the !announce <channel> command
+WELCOME_CHANNEL: 👋┃welcome
+
+###################
+###### Loops ######
+###################
+LOOPS:
+
+# If ENABLED: True, the bot will send alerts of your axies specified in the 'Axie Builds' spreadsheet
+# See the (https://github.com/StephanAkkerman/Axie_Manager_Bot/tree/main#alerts) for setting up this spreadsheet
+  AXIE_ALERT: 
+    ENABLED: True
+    CHANNEL: 💎┃bot-alerts
+
+# If ENABLED: True, the bot will send messages with recent buys and sells of managers
+  AXIE_TRADES:
+    ENABLED: True
+    CHANNEL: 🤝┃axie-trades
+ 
+# If ENABLED: True, the bot will clean the specified channel every 24 hours
+  CLEAN_CHANNEL:
+    ENABLED: True
+    HOURS: 24
+    CHANNEL: 💎┃bot-alerts
+
+# If ENABLED: True, the bot will upload new instagram messages of the user in the specified channel
+  INSTAGRAM:
+    ENABLED: True
+    CHANNEL: 💗┃social-media
+    USERNAME: Axie_Manager
+
+# If ENABLED: True, the bot will send a message every 4 hours containing the top scholars sorted by MMR
+  LEADERBOARD:
+    ENABLED: True
+    CHANNEL: 🏆┃leaderboard
+
+# If ENABLED: True, the scholars will receive a warning if they are below MIN_SLP on average
+  SLP_WARNING:
+    ENABELD: True
+    DAYS: 14
+    MIN_SLP: 100
+
+##################
+#### Commands ####
+##################
+
+COMMANDS:
+  # !announce <channel>: Admins can use this to announce a message in certain channel
+  ANNOUNCE: True
+
+  # !clear x: Will clear last x messages
+  CLEAR: True
+
+  # !encrypt msg: Encrypts a message using your personal fernet key
+  ENCRYPT:
+    ENABLED: True
+    KEY: Your Fernet Key
+
+  # !issue command for adding issues to github
+  # Needs a GitHub token, but without any access
+  ISSUE:
+    ENABLED: True
+    TOKEN: GitHub token
+    REPO: StephanAkkerman/Axie_Manager_Bot
+
+  # !manager: This will show the scholar their manager info
+  MANAGER: True
+
+  # !mute: Managers can mute other users
+  MUTE: True
+
+  # !mydata command: Sends a scholar their next payday and many other personal information
+  MYDATA: True  
+
+  # !scholar: This will add a scholar to the database
+  SCHOLAR: True
+
+  # !tryout: Devides the people with role 'Tryout' in x groups
+  TRYOUT: True
+
+  # !qr: Gives the scholar their login
+  QR:
+    ENABLED: True
+    CHANNEL: 🤖┃login
+    ROLE: Scholar
+
+#################
+### Listeners ###
+#################
+
+# Reports command usage in console
+LISTENERS:
+  ON_COMMAND:
+    ENABLED: True
+
+  # The role new members will get
+  ON_MEMBER_JOIN: 
+    ENABLED: False
+    ROLE: Tryout
+
+  # Sends new tryouts and scholars an instruction video
+  ON_MEMBER_UPDATE:
+    ENABLED: True
+    TRYOUT: https://youtu.be/xFjCxAezCIE
+    SCHOLAR: https://youtu.be/J2h_tOdMwoA
+
+  # Deletes all messages that are not from the bot in the specified channels
+  ON_MESSAGE:
+    ENABLED: True
+    CHANNEL: 🤖┃login
+
+  # If people react with a gem on a bot alert, the message will get deleted and they will get the message as a private message instead
+  ON_RAW_REACTION_ADD:
+    ENABLED: True

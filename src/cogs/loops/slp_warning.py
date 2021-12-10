@@ -40,7 +40,7 @@ class Slp_warning(commands.Cog):
 
         return (future - now).seconds + (future - now).days * 24 * 3600
 
-    @loop(hours=168)
+    @loop(hours=7*24)
     async def slp_warning(self):
         scholar_info = (
             gd.get_as_dataframe(gc.open("Scholars").worksheet("Scholars"))
@@ -62,7 +62,7 @@ class Slp_warning(commands.Cog):
         )
         df["avg_slp"] = df["in_game_slp"] / df["days_since_last_claim"]
 
-        bad_scholars = df.loc[df["avg_slp"] < 100]
+        bad_scholars = df.loc[df["avg_slp"] < config['LOOPS']['SLP_WARNING']['MIN_SLP']]
 
         bad_addresses = bad_scholars["index"].str.replace("0x", "ronin:")
 
@@ -104,7 +104,7 @@ class Slp_warning(commands.Cog):
 
     @slp_warning.before_loop
     async def before_slp_warning(self):
-        seconds = self.delta(14, 0, 1)
+        seconds = self.delta(config['LOOPS']['SLP_WARNING']['DAYS'], 0, 1)
         await asyncio.sleep(seconds)
 
 def setup(bot):

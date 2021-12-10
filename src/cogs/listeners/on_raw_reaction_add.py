@@ -22,9 +22,9 @@ class On_raw_reaction_add(commands.Cog):
             channel = self.bot.get_channel(reaction.channel_id)
             guild = self.bot.get_guild(reaction.guild_id)
             if reaction.user_id != self.bot.user.id:
-                if channel.name == "👋┃welcome":
+                if channel.name == config['WELCOME_CHANNEL']:
                     await self.verification_check(reaction, channel, guild)
-                elif channel.name == "💎┃bot-alerts":
+                elif channel.name == config['LOOPS']['AXIE_ALERT']['CHANNEL']:
                     await self.claim_axie(reaction, channel)
 
         except commands.CommandError as e:
@@ -36,7 +36,7 @@ class On_raw_reaction_add(commands.Cog):
 
     async def verification_check(self, reaction, channel, guild):
         original_msg = (await channel.history(oldest_first=True, limit=1).flatten())[0]
-        role = discord.utils.get(guild.roles, name="Verified")
+        role = discord.utils.get(guild.roles, name=config['ROLES']['VERIFIED'])
 
         # Check if this is the original verification message
         if reaction.message_id == original_msg.id:
