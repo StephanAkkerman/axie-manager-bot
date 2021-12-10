@@ -14,7 +14,7 @@ from discord.ext.tasks import loop
 # > Local dependencies
 from config import config
 from alerts.graphql import *
-from alerts.api import api_axie_details
+from alerts.api import api_genes
 
 class Prices(commands.Cog):
     def __init__(self, bot):
@@ -42,7 +42,7 @@ class Prices(commands.Cog):
                     "operationName": old_axie_operationName,
                     "variables": """{
                         "from": 0,
-                        "size": 1,
+                        "size": 30,
                         "sort": "PriceAsc",
                         "auctionType": "Sale",
                         "criteria": {"stages":[4]}
@@ -50,11 +50,17 @@ class Prices(commands.Cog):
                 },
             ) as r:
                 response = await r.json()
-                floor_id = response['data']['axies']['results'][0]['id']
+                df = pd.DataFrame(response['data']['axies']['results'])
+                             
+                # Get prices
+                df["price"] = pd.to_numeric(
+                    df["auction"].apply(lambda x: x["currentPriceUSD"])
+                )                             
+                             
+                # Average over the currentPriceUSD
+                avg_floor = df['price'].mean()
                 
-                # Get this axie's auction info
-                floor_df = await api_axie_details(floor_id)
-                return float(floor_df['auction'].tolist()[0]['currentPriceUSD']), floor_id
+                return avg_floor
 
     @loop(hours=4)
     async def prices(self):
@@ -67,7 +73,7 @@ class Prices(commands.Cog):
         axs = float(price_df.loc[price_df['symbol'] == 'AXSUSDT']['price'].tolist()[0])
         
         # Get floor price
-        floor_price, floor_id = await self.get_floor_price()
+        floor_price = await self.get_floor_price()
         
         # Get channel for price updates
         channel = discord.utils.get(
@@ -81,7 +87,7 @@ class Prices(commands.Cog):
         e = discord.Embed(
             title="Price overview",
             description="",
-            url = f"https://marketplace.axieinfinity.com/axie/{floor_id}/",
+            url = "https://marketplace.axieinfinity.com/axie/",
             color=0x00FFFF,
         )
         
@@ -102,7 +108,7 @@ class Prices(commands.Cog):
             name=f"AXS {axs_emoji}", value=f"${round(axs,3)}", inline=False,
         )
         e.add_field(
-            name="Floor price", value=f"${round(floor_price,2)}", inline=False,
+            name="Average Floor price", value=f"${round(floor_price,2)}", inline=False,
         )
         
         await channel.send(embed=e)

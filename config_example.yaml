@@ -28,6 +28,14 @@ ERROR:
     ENABLED: True
     CHANNEL: 🐞┃bot-errors
 
+# Please add the custom emojis for SLP and AXS
+EMOJIS:
+  # This emoji is used by LEADERBOARD and PRICES
+  SLP: slp
+
+  # This emoji is used by PRICES
+  AXS: axs
+
 # If people use the ✅ emoji as reaction under a bot message send in the welcome channel they will get the 'verified' role
 # Make a bot message using the !announce <channel> command
 WELCOME_CHANNEL: 👋┃welcome
@@ -64,9 +72,11 @@ LOOPS:
   LEADERBOARD:
     ENABLED: True
     CHANNEL: 🏆┃leaderboard
-    
-    # To get your SLP_EMOJI, add it to the server first with command :slp:, then type \:slp: and paste the result here
-    SLP_EMOJI: <:slp:ID of emoji>
+
+# If ENABLED: True, the bot will send AXS, SLP and floor price updates every 4 hours
+  PRICES:
+    ENABLED: True
+    CHANNEL: 📈┃price-updates
 
 # If ENABLED: True, the scholars will receive a warning if they are below MIN_SLP on average
   SLP_WARNING:
