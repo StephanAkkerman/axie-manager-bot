@@ -16,5 +16,6 @@ aiohttp==3.7.4.post0
 discord==1.7.3
 Pillow==8.4.0
 PyGithub==1.55
+PyYAML==6.0
 python_dateutil==2.8.2
 qrcode==7.3.1

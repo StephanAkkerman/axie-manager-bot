@@ -30,6 +30,14 @@ class Leaderboard(commands.Cog):
     @loop(hours=4)
     async def leaderboard(self):
         """Print the current leaderboard in dedicated leaderboard channel"""
+        
+        # Get the guild
+        guild = discord.utils.get(
+            self.bot.guilds,
+            name=config["DEBUG"]["GUILD_NAME"]
+            if len(sys.argv) > 1 and sys.argv[1] == "-test"
+            else config["DISCORD"]["GUILD_NAME"],
+        )
 
         # Open the worksheet of the specified spreadsheet
         ws = gc.open("Scholars").worksheet("Scholars")
@@ -61,18 +69,25 @@ class Leaderboard(commands.Cog):
         df["avg_slp"] = df["in_game_slp"] / df["since_last_claim"]
         df = df.astype({"avg_slp": int})
         df = df.sort_values(by=["mmr", "avg_slp"], ascending=False)
+        slp = df.sort_values(by=["avg_slp"], ascending=False)
 
         latest_update = df["cache_last_updated"].max().strftime("%m/%d/%Y, %H:%M:%S")
 
         # Convert all columns to string
         df = df.astype(str)
+        
+        # Get top player based on avg SLP
+        top_slp = slp["name"].tolist()[0]
 
         # Add emojis
         names = df["name"].tolist()
+        
+        slp_emoji = discord.utils.get(guild.emojis, name=config['EMOJIS']['SLP'])
+        
+        names[names.index(top_slp)] = f"{slp_emoji} {names[names.index(top_slp)]}"
         names[0] = "🥇" + names[0]
         names[1] = "🥈" + names[1]
         names[2] = "🥉" + names[2]
-        # names[-1] = '🤡' + names[-1]
 
         scholars = "\n".join(names)
         mmr = "\n".join(df["mmr"].tolist())

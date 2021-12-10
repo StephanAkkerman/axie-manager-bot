@@ -64,6 +64,9 @@ LOOPS:
   LEADERBOARD:
     ENABLED: True
     CHANNEL: 🏆┃leaderboard
+    
+    # To get your SLP_EMOJI, add it to the server first with command :slp:, then type \:slp: and paste the result here
+    SLP_EMOJI: <:slp:ID of emoji>
 
 # If ENABLED: True, the scholars will receive a warning if they are below MIN_SLP on average
   SLP_WARNING:
