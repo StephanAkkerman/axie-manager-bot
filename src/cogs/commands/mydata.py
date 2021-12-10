@@ -72,9 +72,10 @@ class ScholarData(commands.Cog):
                 name="Rank", value=df["rank"].tolist()[0], inline=False,
             )
 
-            payout_date = (datetime.now().replace(day=1) + timedelta(days=32)).replace(
-                day=14
-            )
+            payout_date = (datetime.now().replace(day=1) + timedelta(days=14)).replace(day=14)
+            if datetime.now() > payout_date:
+                # Get next month
+                payout_date = (datetime.now().replace(day=1) + timedelta(days=32)).replace(day=14)
 
             e.add_field(
                 name="Next Payout Date",

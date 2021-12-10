@@ -12,18 +12,20 @@ class On_raw_reaction_add(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
+        
+        # Ignore private messages
+        if reaction.guild_id is None:
+            return
+        
         try:
             # Load necessary variables
             channel = self.bot.get_channel(reaction.channel_id)
             guild = self.bot.get_guild(reaction.guild_id)
-            try:
-                if reaction.member.id != self.bot.user.id:
-                    if channel.name == "👋┃welcome":
-                        await self.verification_check(reaction, channel, guild)
-                    elif channel.name == "💎┃bot-alerts":
-                        await self.claim_axie(reaction, channel)
-            except AttributeError:
-                print(reaction.member.name)
+            if reaction.user_id != self.bot.user.id:
+                if channel.name == "👋┃welcome":
+                    await self.verification_check(reaction, channel, guild)
+                elif channel.name == "💎┃bot-alerts":
+                    await self.claim_axie(reaction, channel)
 
         except commands.CommandError as e:
             exception_channel = self.bot.get_channel(reaction.channel_id)
@@ -63,11 +65,14 @@ class On_raw_reaction_add(commands.Cog):
                 break
 
         # Check that the message is an embed, and the reaction is the gem stone emoji
-        if len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}":
-            await reaction.member.send(embed=msg.embeds[0])
-            await msg.delete()
-            if mention_msg:
-                await mention_msg.delete()
+        try:
+            if len(msg.embeds) > 0 and str(reaction.emoji) == "\N{GEM STONE}":
+                await reaction.member.send(embed=msg.embeds[0])
+                await msg.delete()
+                if mention_msg:
+                    await mention_msg.delete()
+        except AttributeError:
+            pass
 
 
 def setup(bot):

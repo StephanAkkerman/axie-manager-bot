@@ -54,7 +54,7 @@ class QR(commands.Cog):
             scholar_info = getScholar(ctx.message.author.name)
 
             # This for loop check for all the user's DiscordID in the Database
-            if scholar_info != []:
+            if scholar_info != None:
 
                 # Print log info
                 print("This user received his QR Code : " + ctx.message.author.name)
@@ -117,11 +117,10 @@ class QR(commands.Cog):
                 f"You used this command in the wrong channel. You can use it in the <#{channel_id}> channel."
             )
         elif isinstance(error, commands.MemberNotFound):
-            print("This user didn't receive a QR Code : " + ctx.message.author.name)
-            print("Discord ID : " + str(ctx.message.author.id))
+            print("This user was not found in the database : " + ctx.message.author.name)
             print("Current time : ", datetime.now().strftime("%H:%M:%S"))
             await ctx.message.author.send(
-                f"Sorry, your Discord ID could not be found in our database. Please contact a manager."
+                f"Sorry, your Discord name could not be found in our database. Please contact a manager."
             )
         else:
             await ctx.message.author.send(
