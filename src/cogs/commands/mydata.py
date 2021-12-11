@@ -22,7 +22,7 @@ class ScholarData(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=["stats", "data"])
+    @commands.command(aliases=["mystats", "stats", "data"])
     @commands.has_role(config['ROLES']['SCHOLAR'])
     async def mydata(self, ctx):
         """Request information on your Axie Infinity scholarship account
