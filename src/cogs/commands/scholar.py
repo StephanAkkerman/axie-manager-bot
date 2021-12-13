@@ -30,7 +30,6 @@ class Scholar(commands.Cog):
 
         if len(input) >= 5:
             new_scholar = discord.utils.get(ctx.guild.members, name=input[0])
-            print(new_scholar)
 
             if "Verified" in [r.name for r in new_scholar.roles]:
                 # Get managers info

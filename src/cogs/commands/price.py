@@ -1,6 +1,7 @@
 ##> Imports
 # > Standard library
 import json
+import traceback
 
 # > 3rd party dependencies
 import pandas as pd
@@ -16,6 +17,50 @@ from config import config
 class Price(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        
+    @commands.command(aliases=["prices"])
+    @commands.has_role(config['ROLES']['SCHOLAR'])
+    async def price(self, ctx, *input):
+        """Request pricing advace using marketplace API
+
+        Usage: `!price <axie_id>`
+        Use this command to request information about good prices to sell your axie for.
+        """
+        if len(input) == 1:
+            axie_id = input[0]
+        else:
+            raise commands.UserInputError()
+        
+        price1, id1, price2, id2, price3, id3, price4, id4 = await self.get_axie_info(axie_id)
+        
+        e = discord.Embed(title=f"Recommended price for selling axie #{axie_id}", description="", color=0x00FFFF, url=f"https://www.axieinfinity.com/axie/{axie_id}/")
+        
+        if id1 != 0:
+            e.add_field(name="Class, Breedcount, Abilities", value=f"${price1} \nhttps://www.axieinfinity.com/axie/{id1}/", inline=False)
+        if id2 != 0:
+            e.add_field(name="+ Stats", value=f"${price2} \nhttps://www.axieinfinity.com/axie/{id2}/", inline=False)
+        if id3 != 0:
+            e.add_field(name="+ R1 (abilities)", value=f"${price3} \nhttps://www.axieinfinity.com/axie/{id3}/", inline=False)
+        if id4 != 0:
+            e.add_field(name="+ R1 (all)", value=f"${price4} \nhttps://www.axieinfinity.com/axie/{id4}/", inline=False)
+        
+        await ctx.send(embed=e)
+        
+    @price.error
+    async def price_error(self, ctx, error):
+        if isinstance(error, commands.UserInputError):
+            await ctx.send(
+                f"Sorry, you used this command incorrectly. Correct usage is `!price <axie_ID>`. Try again or see `!help price` for more information."
+            )
+        else:
+            await ctx.send(
+                f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
+            )
+            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            await channel.send(
+                f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
+                \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""
+            )
         
     async def get_axie_info(self, axie_id):
         
@@ -181,34 +226,6 @@ class Price(commands.Cog):
                 print(",".join(genes["story_id"].to_list()))
                 
         return genes
-
-    @commands.command(aliases=["prices"])
-    @commands.has_role(config['ROLES']['SCHOLAR'])
-    async def price(self, ctx, *input):
-        """Request pricing advace using marketplace API
-
-        Usage: `!price <axie_id>`
-        Use this command to request information about good prices to sell your axie for.
-        """
-        if len(input) == 1:
-            axie_id = input[0]
-        else:
-            raise commands.UserInputError()
-        
-        price1, id1, price2, id2, price3, id3, price4, id4 = await self.get_axie_info(axie_id)
-        
-        e = discord.Embed(title=f"Recommended price for selling axie #{axie_id}", description="", color=0x00FFFF, url=f"https://www.axieinfinity.com/axie/{axie_id}/")
-        
-        if id1 != 0:
-            e.add_field(name="Class, Breedcount, Abilities", value=f"${price1} \nhttps://www.axieinfinity.com/axie/{id1}/", inline=False)
-        if id2 != 0:
-            e.add_field(name="+ Stats", value=f"${price2} \nhttps://www.axieinfinity.com/axie/{id2}/", inline=False)
-        if id3 != 0:
-            e.add_field(name="+ R1 (abilities)", value=f"${price3} \nhttps://www.axieinfinity.com/axie/{id3}/", inline=False)
-        if id4 != 0:
-            e.add_field(name="+ R1 (all)", value=f"${price4} \nhttps://www.axieinfinity.com/axie/{id4}/", inline=False)
-        
-        await ctx.send(embed=e)
     
 def setup(bot):
     bot.add_cog(Price(bot))
