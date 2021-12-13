@@ -20,77 +20,78 @@ class Price(commands.Cog):
     async def get_axie_info(self, axie_id):
         
         # Get all the info
-        classes, parts1, parts2, breedCount, hp, speed, skill, morale = await self.formatted_axie_info(axie_id)
-       
-        # 1st stage: breedcount, class, parts
-        response1 = await self.get_first_price(classes, breedCount, parts1)
         try:
-            price1 = response1.head(1)['auction'].tolist()[0]['currentPriceUSD']
-            id1 = response1.head(1)['id'].tolist()[0]
+            classes, parts1, parts2, breedCount, hp, speed, skill, morale = await self.formatted_axie_info(axie_id)
         except Exception:
             return 0, 0, 0, 0, 0, 0, 0, 0
+       
+        # Start with simple prices
+        # 1: Price is based on abilities, class and breedcount
+        price1, id1 = await self.simple_prices(1, classes, breedCount, parts1, hp, speed, skill, morale)
+        # 2: Price is also based on the stats
+        price2, id2 = await self.simple_prices(2, classes, breedCount, parts1, hp, speed, skill, morale)
         
-        # 2nd stage: +stats
-        response2 = await self.get_second_price(0, classes, breedCount, parts2, hp, speed, skill, morale)
-        try:
-            price2 = response2.head(1)['auction'].tolist()[0]['currentPriceUSD']
-            id2 = response2.head(1)['id'].tolist()[0]
-        except Exception:
-            return price1, id1, 0, 0, 0, 0, 0, 0
-        
-        # Get this axie's genes
-        axie_genes = await self.get_axie_genes(axie_id)
-                        
-        # Search for perfect R1 and R2, using same data from response2
-        genes = await self.get_axie_genes(",".join(response2['id'].tolist()))
-            
-        # 3rd stage: + r1 (abilities)
-        response3 = self.r1_abilities(axie_genes, genes)
-        
-        start = 0
-        while response3.empty and not genes.empty:
-            start += 100
-            response2 = await self.get_second_price(start, classes, breedCount, parts2, hp, speed, skill, morale)
-            genes = await self.get_axie_genes(",".join(response2['id'].tolist()))
-            response3 = self.r1_abilities(axie_genes, genes)
-        
-        try:
-            # Get matching id from the response
-            id3 = response3.head(1)['story_id'].tolist()[0]
-            
-            # Lookup this id in response2
-            response3_axie = response2.loc[response2['id'] == id3]
-            price3 = response3_axie['auction'].tolist()[0]['currentPriceUSD']
-
-        except Exception:
-            return price1, id1, price2, id2, 0, 0, 0, 0
-        
-        # 4th stage: + r1 (all)
-        # Reset local vars
-        start = 0
-        response2 = await self.get_second_price(start, classes, breedCount, parts2, hp, speed, skill, morale)
-        genes = await self.get_axie_genes(",".join(response2['id'].tolist()))
-        response4 = self.r1_all(axie_genes, genes)
-        
-        while response4.empty and not genes.empty:
-            start += 100
-            response2 = await self.get_second_price(start, classes, breedCount, parts2, hp, speed, skill, morale)
-            genes = await self.get_axie_genes(",".join(response2['id'].tolist()))
-            response4 = self.r1_all(axie_genes, genes)
-            
-        
-        try:
-            # Get matching id from the response
-            id4 = response4.head(1)['story_id'].tolist()[0]
-            
-            # Lookup this id in response2
-            response4_axie = response2.loc[response2['id'] == id4]
-            price4 = response4_axie['auction'].tolist()[0]['currentPriceUSD']
-            
-        except Exception:
-            return price1, id1, price2, id2, price3, id3, 0, 0
-        
+        # Get more advanced price indicators
+        # 3: Price is also based on r1 genes of abilities
+        price3, id3 = await self.gene_prices(3, axie_id, classes, breedCount, parts1, hp, speed, skill, morale)
+        # 4: Price is also based on all R1 genes
+        price4, id4 = await self.gene_prices(4, axie_id, classes, breedCount, parts2, hp, speed, skill, morale)
+                
         return price1, id1, price2, id2, price3, id3, price4, id4
+    
+    async def simple_prices(self, price:int, classes, breedCount, parts, hp, speed, skill, morale):
+        try: 
+            if price == 1:
+                response = await self.get_old_listings(classes, breedCount, parts)
+                return response.head(1)['auction'].tolist()[0]['currentPriceUSD'], response.head(1)['id'].tolist()[0]
+            if price == 2:
+                response = await self.get_old_listings(classes, breedCount, parts, hp, speed, skill, morale)
+                return response.head(1)['auction'].tolist()[0]['currentPriceUSD'], response.head(1)['id'].tolist()[0]
+        except Exception:
+            return 0, 0
+    
+    async def gene_prices(self, price:int, axie_id, classes, breedCount, parts, hp, speed, skill, morale):
+        
+        try:
+            # Get this axie's genes
+            axie_genes = await self.get_axie_genes(axie_id)
+            
+            start = 0
+            
+            # Get dataframe of axies
+            listings = await self.get_old_listings(classes, breedCount, parts, hp, speed, skill, morale, start)
+            genes = await self.get_axie_genes(",".join(listings['id'].tolist()))
+            
+            # Get the response
+            if price == 3:
+                response = self.r1_abilities(axie_genes, genes)
+            if price == 4:
+                response = self.r1_all(axie_genes, genes)                
+            
+            while response.empty and not genes.empty:
+                start += 100
+                
+                listings = await self.get_old_listings(classes, breedCount, parts, hp, speed, skill, morale, start)
+                genes = await self.get_axie_genes(",".join(listings['id'].tolist()))
+                
+                # Get genes corresponding with axies matching these parts and stats
+                if price == 3:
+                    response = self.r1_abilities(axie_genes, genes)
+                if price == 4:
+                    response = self.r1_all(axie_genes, genes)
+                    
+            # Get matching id from the response
+            id = response.head(1)['story_id'].tolist()[0]
+            
+            # Lookup this id in response2
+            response_axie = listings.loc[listings['id'] == id]
+            price = response_axie['auction'].tolist()[0]['currentPriceUSD']
+
+            return price, id
+        
+        except Exception as e:
+            #print(e)
+            return 0, 0
     
     def r1_abilities(self, axie_genes, genes):
         
@@ -109,7 +110,6 @@ class Price(commands.Cog):
                          (genes["back r1"] ==(axie_genes["back r1"].tolist()[0])) &
                          (genes["tail r1"] == (axie_genes["tail r1"].tolist()[0])) 
                          ]
-        
     
     async def formatted_axie_info(self, axie_id):
         
@@ -138,30 +138,15 @@ class Price(commands.Cog):
             breedCount = [0]
             
         return classes, parts1, parts2, breedCount, hp, speed, skill, morale
-    
-    async def get_first_price(self, classes, breedCount, parts1):
-        try:
-            return await api_old_listings(
-                0,
-                classes,
-                breedCount,
-                parts1,
-                [27,61],
-                [27,61],
-                [27,61],
-                [27,61],
-            )
-        except Exception:
-            return pd.DataFrame({})
             
-    async def get_second_price(self, start, classes, breedCount, parts2, hp, speed, skill, morale):
+    async def get_old_listings(self, classes, breedCount, parts, hp=[27,61], speed=[27,61], skill=[27,61], morale=[27,61], start=0):
         
         try:
             return await api_old_listings(
                 start,
                 classes,
                 breedCount,
-                parts2,
+                parts,
                 hp,
                 speed,
                 skill,
@@ -212,7 +197,7 @@ class Price(commands.Cog):
         
         price1, id1, price2, id2, price3, id3, price4, id4 = await self.get_axie_info(axie_id)
         
-        e = discord.Embed(title=f"Prices for axie #{axie_id}", description="", color=0x00FFFF, url=f"https://www.axieinfinity.com/axie/{axie_id}/")
+        e = discord.Embed(title=f"Recommended price for selling axie #{axie_id}", description="", color=0x00FFFF, url=f"https://www.axieinfinity.com/axie/{axie_id}/")
         
         if id1 != 0:
             e.add_field(name="Class, Breedcount, Abilities", value=f"${price1} \nhttps://www.axieinfinity.com/axie/{id1}/", inline=False)
