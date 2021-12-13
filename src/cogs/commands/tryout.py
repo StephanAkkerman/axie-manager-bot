@@ -51,7 +51,7 @@ class Tryout(commands.Cog):
                 # Decide the amount of tryouts per group
                 try:
                     group_amount = len(roles) if len(input) == 0 else int(input[0])
-                except:
+                except Exception:
                     raise commands.UserInputError()
                 group_size = math.ceil(len(tryouts) / group_amount)
                 groups = roles[:group_amount]

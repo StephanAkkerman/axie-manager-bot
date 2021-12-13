@@ -38,7 +38,7 @@ class Scholar(commands.Cog):
                         int(id[3:-1]) if "!" in id else int(id[2:-1])
                         for id in list(input[5:])
                     ]
-                except:
+                except Exception:
                     raise commands.MemberNotFound(
                         (id[3:-1]) if "!" in id else int(id[2:-1])
                         for id in list(input[5:])

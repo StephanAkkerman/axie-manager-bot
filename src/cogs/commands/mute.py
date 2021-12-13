@@ -27,12 +27,12 @@ class Mute(commands.Cog):
                 user_id = (
                     int(input[0][3:-1]) if "!" in input[0] else int(input[0][2:-1])
                 )
-            except:
+            except Exception:
                 raise commands.UserNotFound("")
 
             try:
                 user = ctx.guild.get_member(user_id)
-            except:
+            except Exception:
                 raise commands.UserNotFound(user_id)
 
             if not user:
@@ -81,12 +81,12 @@ class Mute(commands.Cog):
                 user_id = (
                     int(input[0][3:-1]) if "!" in input[0] else int(input[0][2:-1])
                 )
-            except:
+            except Exception:
                 raise commands.UserNotFound("")
 
             try:
                 user = ctx.guild.get_member(user_id)
-            except:
+            except Exception:
                 raise commands.UserNotFound(user_id)
 
             role = discord.utils.get(ctx.guild.roles, name="[mute]")

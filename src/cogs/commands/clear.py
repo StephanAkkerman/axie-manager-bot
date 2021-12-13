@@ -23,14 +23,14 @@ class Clear(commands.Cog):
         if len(input) == 1:
             try:
                 await ctx.channel.purge(limit=int(input[0]) + 1)
-            except:
+            except Exception:
                 raise commands.UserInputError()
 
         # Clear x amount of messages from user from channel
         elif len(input) == 2:
             try:
                 user = self.bot.get_user(int(input[1][3:-1]))
-            except:
+            except Exception:
                 raise commands.UserNotFound(input[1][3:-1])
 
             if not user:

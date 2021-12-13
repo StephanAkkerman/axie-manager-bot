@@ -31,7 +31,7 @@ class Announce(commands.Cog):
             channel = discord.utils.get(
                 self.bot.get_all_channels(), id=int(input[0][2:-1])
             )
-        except:
+        except Exception:
             raise commands.ChannelNotFound(input[0][2:-1])
 
         if not channel:

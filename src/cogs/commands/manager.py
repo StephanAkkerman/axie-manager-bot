@@ -38,7 +38,7 @@ class Misc(commands.Cog):
                 for m in ctx.guild.members
                 if m.display_name in roles and "Manager" in [r.name for r in m.roles]
             ]
-        except:
+        except Exception:
             raise commands.UserNotFound("")
 
         if not managers:
