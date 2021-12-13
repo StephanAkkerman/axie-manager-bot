@@ -11,7 +11,7 @@ import discord
 from discord.ext import commands
 
 # Local dependencies
-from alerts.api import api_old_listings, api_axie_details, api_genes
+from alerts.api import api_old_listings, api_axie_details, api_genes, api_eth_price
 from config import config
 
 class Price(commands.Cog):
@@ -31,18 +31,22 @@ class Price(commands.Cog):
         else:
             raise commands.UserInputError()
         
+        await ctx.send("Searching for comparable prices for this axie...")
+        
         price1, id1, price2, id2, price3, id3, price4, id4 = await self.get_axie_info(axie_id)
+        
+        eth_price = await api_eth_price()
         
         e = discord.Embed(title=f"Recommended price for selling axie #{axie_id}", description="", color=0x00FFFF, url=f"https://www.axieinfinity.com/axie/{axie_id}/")
         
         if id1 != 0:
-            e.add_field(name="Class, Breedcount, Abilities", value=f"${price1} \nhttps://www.axieinfinity.com/axie/{id1}/", inline=False)
+            e.add_field(name="Class, Breedcount, Abilities", value=f"[${price1} / Ξ{round(float(price1)/float(eth_price),3)}](https://www.axieinfinity.com/axie/{id1}/)", inline=False)
         if id2 != 0:
-            e.add_field(name="+ Stats", value=f"${price2} \nhttps://www.axieinfinity.com/axie/{id2}/", inline=False)
+            e.add_field(name="+ Stats", value=f"[${price2} / Ξ{round(float(price2)/float(eth_price),3)}](https://www.axieinfinity.com/axie/{id2}/)", inline=False)
         if id3 != 0:
-            e.add_field(name="+ R1 (abilities)", value=f"${price3} \nhttps://www.axieinfinity.com/axie/{id3}/", inline=False)
+            e.add_field(name="+ R1 (abilities)", value=f"[${price3} / Ξ{round(float(price3)/float(eth_price),3)}](https://www.axieinfinity.com/axie/{id3}/)", inline=False)
         if id4 != 0:
-            e.add_field(name="+ R1 (all)", value=f"${price4} \nhttps://www.axieinfinity.com/axie/{id4}/", inline=False)
+            e.add_field(name="+ R1 (all)", value=f"[${price4} / Ξ{round(float(price4)/float(eth_price),3)}](https://www.axieinfinity.com/axie/{id4}/)", inline=False)
         
         await ctx.send(embed=e)
         

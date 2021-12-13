@@ -140,3 +140,20 @@ async def api_owner_axies(address):
         ) as r:
             response = await r.json()
             return pd.DataFrame(response["data"]["axies"]["results"])
+
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+async def api_eth_price():
+    """
+    Gets the current ethereum exchange rate 
+    """
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            "https://graphql-gateway.axieinfinity.com/graphql",
+            json={
+                "query": "query NewEthExchangeRate {\n  exchangeRate {\n    eth {\n      usd\n      __typename\n    }\n    __typename\n  }\n}\n",
+                "operationName": "NewEthExchangeRate",
+            },
+        ) as r:
+            response = await r.json()
+            return response["data"]["exchangeRate"]["eth"]["usd"]

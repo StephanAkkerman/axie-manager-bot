@@ -33,8 +33,9 @@ EMOJIS:
   # This emoji is used by LEADERBOARD and PRICES
   SLP: slp
 
-  # This emoji is used by PRICES
+  # These emojis are used by PRICES
   AXS: axs
+  ETH: eth
 
 # If people use the ✅ emoji as reaction under a bot message send in the welcome channel they will get the 'verified' role
 # Make a bot message using the !announce <channel> command
@@ -98,6 +99,8 @@ COMMANDS:
   # !encrypt msg: Encrypts a message using your personal fernet key
   ENCRYPT:
     ENABLED: True
+
+    # Copy here your fernet key that you get after executing `python src/key_generator.py`
     KEY: Your Fernet Key
 
   # !issue command for adding issues to github

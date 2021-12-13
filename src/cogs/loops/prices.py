@@ -71,6 +71,7 @@ class Prices(commands.Cog):
         # Get SLP and AXS 
         slp = float(price_df.loc[price_df['symbol'] == 'SLPUSDT']['price'].tolist()[0])
         axs = float(price_df.loc[price_df['symbol'] == 'AXSUSDT']['price'].tolist()[0])
+        eth = float(price_df.loc[price_df['symbol'] == 'ETHUSDT']['price'].tolist()[0])
         
         # Get floor price
         floor_price = await self.get_floor_price()
@@ -85,9 +86,8 @@ class Prices(commands.Cog):
         )
         
         e = discord.Embed(
-            title="Price overview",
+            title="",
             description="",
-            url = "https://marketplace.axieinfinity.com/axie/",
             color=0x00FFFF,
         )
         
@@ -100,6 +100,7 @@ class Prices(commands.Cog):
         
         slp_emoji = discord.utils.get(guild.emojis, name=config['EMOJIS']['SLP'])
         axs_emoji = discord.utils.get(guild.emojis, name=config['EMOJIS']['AXS'])
+        eth_emoji = discord.utils.get(guild.emojis, name=config['EMOJIS']['ETH'])
         
         e.add_field(
             name=f"SLP {slp_emoji}", value=f"${round(slp,4)}", inline=False,
@@ -108,7 +109,10 @@ class Prices(commands.Cog):
             name=f"AXS {axs_emoji}", value=f"${round(axs,3)}", inline=False,
         )
         e.add_field(
-            name="Average Floor price", value=f"${round(floor_price,2)}", inline=False,
+            name=f"ETH {eth_emoji}", value=f"${round(eth,3)}", inline=False,
+        )
+        e.add_field(
+            name="Mean Floor Price", value=f"${round(floor_price,2)}", inline=False,
         )
         
         await channel.send(embed=e)
