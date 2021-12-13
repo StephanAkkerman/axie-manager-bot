@@ -83,6 +83,7 @@ class Announce(commands.Cog):
             e.remove_field(index=0)
             e.timestamp = datetime.datetime.utcnow()
             e.set_footer(text="This is an official announcement by the Axie Managers")
+            await preview_msg.delete()
             await create_msg.delete()
             await msg.delete()
             await ctx.send(f"Anouncement made in {input[0]}!")
