@@ -40,9 +40,9 @@ class Axie_alert(commands.Cog):
         self.clear_send.start()
         self.clear_new.start()
 
-    @loop(hours=5)
+    @loop(hours=3)
     async def clear_send(self):
-        """Clears the send list every 5 hours"""
+        """Clears the send list every 3 hours"""
         self.send = []
 
     @loop(hours=1)
