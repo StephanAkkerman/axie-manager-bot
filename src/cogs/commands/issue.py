@@ -15,7 +15,7 @@ gh_token = config['COMMANDS']['ISSUE']['TOKEN']
 
 # Initialize GH client and repo
 g = Github(gh_token)
-repo = g.get_repo("StephanAkkerman/Axie_Manager_Bot")
+repo = g.get_repo(config['COMMANDS']['ISSUE']['REPO'])
 labels = repo.get_labels()
 
 # Get the emojis and lists of them
@@ -109,32 +109,40 @@ class Issue(commands.Cog):
             and str(x.emoji) != "\N{CROSS MARK}"
             and str(x.emoji) != "\N{WHITE HEAVY CHECK MARK}"
         ]
+        
+        # Delete clutter
+        await ctx.message.delete()
+        await create_issue.delete()
+        await msg.delete()
+        await preview_msg.delete()
 
         # If check marked is clicked create the issue
         if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
-            await create_issue.delete()
-            await msg.delete()
-            await make_issue(title, msg.content, reacted_labels, ctx.author)
-            await ctx.send(f"Issue succesfully created!")
-            # Maybe add link to issue to reply
+            make_issue(title, msg.content, reacted_labels, ctx.author)
+            await ctx.send(f"Issue succesfully created! \n{get_issue_url()}") 
+            
         elif reaction[0].emoji == "\N{CROSS MARK}":
-            await create_issue.delete()
-            await msg.delete()
-            await preview_msg.delete()
             await ctx.send(
                 f"Make a new issue using `!issue <title>` and follow the instructions."
             )
 
+def get_issue_url():
+    """ Returns the url of the new issue """
+    
+    new_issue = repo.get_issues(state='open')[0]
+    
+    return f"https://github.com/{config['COMMANDS']['ISSUE']['REPO']}/issues/{new_issue.number}"
 
-async def make_issue(t, b, l, author):
+def make_issue(t, b, l, author):
 
-    b += f"\nRequested by {author} using the !issue command"
+    b += f"\nRequested by {author}"
+
+    real_labels = []
 
     # Get text of emoji
     if l != []:
         demoji = [emoji.demojize(emo) for emo in l]
 
-        real_labels = []
         # Lookup in dict
         for d in demoji:
             label = label_dict[emoji_dict[d]]
