@@ -1,5 +1,6 @@
 ##> Imports
 import traceback
+import re
 
 # > 3rd Party Dependencies
 import discord
@@ -29,25 +30,36 @@ class Scholar(commands.Cog):
         """
 
         if len(input) >= 5:
-            new_scholar = discord.utils.get(ctx.guild.members, name=input[0])
+            # Get index of <address>
+            address_index = [idx for idx, s in enumerate(input) if 'ronin:' in s][0]
+            
+            # Works for names with spaces as well
+            scholar = " ".join(input[:address_index])
+            new_scholar = discord.utils.get(ctx.guild.members, name=scholar)
+            
+            # Try this before the if
+            try:
+                scholar_roles = new_scholar.roles
+            except AttributeError:
+                raise commands.UserNotFound(input[0])
 
-            if "Verified" in [r.name for r in new_scholar.roles]:
+            if "Verified" in [r.name for r in scholar_roles]:
                 # Get managers info
                 try:
                     manager_ids = [
                         int(id[3:-1]) if "!" in id else int(id[2:-1])
-                        for id in list(input[5:])
+                        for id in list(input[address_index+4:])
                     ]
                 except Exception:
                     raise commands.MemberNotFound(
                         (id[3:-1]) if "!" in id else int(id[2:-1])
-                        for id in list(input[5:])
+                        for id in list(input[address_index+4:])
                     )
 
                 if not manager_ids:
                     raise commands.MemberNotFound(
                         (id[3:-1]) if "!" in id else int(id[2:-1])
-                        for id in list(input[5:])
+                        for id in list(input[address_index+4:])
                     )
 
                 managers = [m for m in ctx.guild.members if m.id in manager_ids]
@@ -58,11 +70,11 @@ class Scholar(commands.Cog):
                 )
                 e.add_field(name="Scholar Name", value=new_scholar.name, inline=True)
                 e.add_field(
-                    name="Scholar Share", value=f"{float(input[2])*100}%", inline=True
+                    name="Scholar Share", value=f"{float(input[address_index+1])*100}%", inline=True
                 )
-                e.add_field(name="Address", value=input[1], inline=True)
-                e.add_field(name="Payout Address", value=input[3], inline=True)
-                e.add_field(name="Encrypted key", value=input[4], inline=True)
+                e.add_field(name="Address", value=input[address_index], inline=True)
+                e.add_field(name="Payout Address", value=input[address_index+2], inline=True)
+                e.add_field(name="Encrypted key", value=input[address_index+3], inline=True)
                 e.add_field(
                     name="Manager(s)",
                     value="\n".join(manager.display_name for manager in managers),
