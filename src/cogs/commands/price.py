@@ -38,6 +38,7 @@ class Price(commands.Cog):
         eth_price = await api_eth_price()
         
         e = discord.Embed(title=f"Recommended price for selling axie #{axie_id}", description="", color=0x00FFFF, url=f"https://www.axieinfinity.com/axie/{axie_id}/")
+        e.set_foot(text=f"[Link to axie.tech pricing](https://www.axie.tech/axie-pricing/{axie_id})")
         
         if id1 != 0:
             e.add_field(name="Class, Breedcount, Abilities", value=f"[${price1} / Ξ{round(float(price1)/float(eth_price),3)}](https://www.axieinfinity.com/axie/{id1}/)", inline=False)
