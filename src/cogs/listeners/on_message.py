@@ -12,9 +12,10 @@ class On_message(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        # Delete all messages in login channel that are not !qr
         try:
             if not isinstance(message.channel, discord.channel.DMChannel):
-                if message.channel.name == "🤖┃login":
+                if message.channel.name == config['COMMANDS']['QR']['CHANNEL']:
                     if message.content != "!qr":
                         await message.delete()
 
@@ -23,7 +24,6 @@ class On_message(commands.Cog):
             await channel.send(
                 f"Unhandled error in {message.channel.mention}. User **{message.author.name}#{message.author.discriminator}** caused an error in a message listener. ```{e}```"
             )
-
 
 def setup(bot):
     bot.add_cog(On_message(bot))
