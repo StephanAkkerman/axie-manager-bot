@@ -157,3 +157,37 @@ async def api_eth_price():
         ) as r:
             response = await r.json()
             return response["data"]["exchangeRate"]["eth"]["usd"]
+        
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+async def api_missions(ronin, token):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            "https://game-api.axie.technology/missions/" + ronin,
+            headers={
+                "Authorization": "Bearer " + token
+            },
+        ) as r:
+            response = await r.json()
+            if response == {}:
+                return None
+            elif response['success']:
+                return response['items'][0]['missions']
+            else:
+                raise Exception("Stupid Missions API")
+
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+async def api_player(ronin, token):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            "https://game-api.axie.technology/player/" + ronin,
+            headers={
+                "Authorization": "Bearer " + token
+            },
+        ) as r:
+            response = await r.json()
+            if response == {}:
+                return None
+            elif response['success']:
+                return response['player_stat']
+            else:
+                raise Exception("Stupid Player API")

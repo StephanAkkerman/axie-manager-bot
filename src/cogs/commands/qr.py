@@ -1,6 +1,5 @@
 ##> Imports
 # > Standard library
-from discord.ext.commands.core import has_role
 import requests
 import json
 import os
@@ -18,6 +17,7 @@ import gspread_dataframe as gd
 # > Discord imports
 import discord
 from discord.ext import commands
+from discord.ext.commands.core import has_role
 
 # > Local files
 from cogs.commands.encrypt import fernet
