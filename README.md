@@ -102,7 +102,7 @@ After follow the instructions above, last things you need to do is this:
 Because no one likes to go through the process of making all the new channels, roles, and spreadsheets themselves I have written a script to do it for you.
 To run it you need to have followed the steps above, so you should have installed the dependencies, made the bot, and gave it access to your preferred Google Drive folder. If you have done all that you can execute the following code:
 ```
-python src/setup.py
+$ python src/setup.py
 ```
 This will also rename `config_example.yaml` to just `config.yaml` so you do not need to worry about renaming that as well. After that is done you are ready for deploying the bot.
 
