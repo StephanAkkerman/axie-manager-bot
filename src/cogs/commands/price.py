@@ -20,7 +20,7 @@ class Price(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=["prices"])
-    @commands.has_role(config["ROLES"]["SCHOLAR"])
+    @commands.has_role(config["ROLES"]["MANAGER"])
     async def price(self, ctx, *input):
         """Request pricing advace using marketplace API
 
