@@ -132,7 +132,7 @@ async def on_ready():
     # Maybe automate this process
     channels = [
         config["WELCOME_CHANNEL"],
-        config["ERROR"]['CHANNEL'],
+        config["ERROR"]["CHANNEL"],
         config["LOOPS"]["AXIE_ALERT"]["CHANNEL"],
         config["LOOPS"]["AXIE_TRADES"]["CHANNEL"],
         config["LOOPS"]["CLEAN_CHANNEL"]["CHANNEL"],
@@ -155,7 +155,7 @@ async def on_ready():
     os.rename("config_example.yaml", "config.yaml")
 
     # Print this to the console
-    print("In config.yaml add this behind COMMANDS: ENCRYPT: KEY: (line 103)")
+    print("In config.yaml add this behind KEY: (line 103)")
     print(str(Fernet.generate_key())[2:-2])
     print()
     print("After doing that, close this screen and start the bot with the command:")

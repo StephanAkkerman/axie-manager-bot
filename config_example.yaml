@@ -31,7 +31,7 @@ ERROR:
     ENABLED: True
     CHANNEL: 🐞┃bot-errors
 
-# Please add the custom emojis for SLP and AXS
+# Please add the custom emojis for SLP and AXS, and specify the names of the emojis below
 EMOJIS:
   # This emoji is used by LEADERBOARD and PRICES
   SLP: slp
