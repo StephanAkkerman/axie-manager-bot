@@ -7,7 +7,7 @@ from discord.ext import commands
 from config import config
 
 
-class Misc(commands.Cog):
+class Manager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -74,4 +74,4 @@ class Misc(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Misc(bot))
+    bot.add_cog(Manager(bot))
