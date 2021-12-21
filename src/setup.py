@@ -123,6 +123,7 @@ async def on_ready():
         config["ROLES"]["TRYOUT"],
         config["ROLES"]["SCHOLAR"],
         config["ROLES"]["MANAGER"],
+        config["ROLES"]["MUTE"],
     ]:
         if get(guild.roles, name=role) is None:
             await guild.create_role(name=role)
@@ -131,6 +132,7 @@ async def on_ready():
     # Maybe automate this process
     channels = [
         config["WELCOME_CHANNEL"],
+        config["ERROR"]['CHANNEL'],
         config["LOOPS"]["AXIE_ALERT"]["CHANNEL"],
         config["LOOPS"]["AXIE_TRADES"]["CHANNEL"],
         config["LOOPS"]["CLEAN_CHANNEL"]["CHANNEL"],

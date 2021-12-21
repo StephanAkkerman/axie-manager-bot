@@ -39,7 +39,7 @@ class Mute(commands.Cog):
             if not user:
                 raise commands.UserNotFound(user_id)
 
-            role = discord.utils.get(ctx.guild.roles, name="[mute]")
+            role = discord.utils.get(ctx.guild.roles, name=config["ROLES"]["MUTE"])
             await user.add_roles(role)
             await ctx.send(f"User **{user.display_name}** has been muted.")
         else:
@@ -92,7 +92,7 @@ class Mute(commands.Cog):
             except Exception:
                 raise commands.UserNotFound(user_id)
 
-            role = discord.utils.get(ctx.guild.roles, name="[mute]")
+            role = discord.utils.get(ctx.guild.roles, name=config["ROLES"]["MUTE"])
             await user.remove_roles(role)
             await ctx.send(f"User **{user.display_name}** has been unmuted.")
         else:

@@ -20,6 +20,9 @@ ROLES:
   SCHOLAR: Scholar
   MANAGER: Manager
 
+  # Used for the !mute and !unmute command
+  MUTE: '[mute]'
+
 # The name of the manager, used as footer in messages
 MANAGER_NAME: Axie Manager
 
