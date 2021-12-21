@@ -106,8 +106,12 @@ $ python src/setup.py
 ```
 This will also rename `config_example.yaml` to just `config.yaml` so you do not need to worry about renaming that as well. After that is done you are ready for deploying the bot.
 
+### Scholars
+As you might have noticed the bot created a spreadsheet called Scholars. This spreadsheet functions as a database of your scholars. You can fill the values in by using the `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>` command or by adding it manually to the sheet. The picture below shows how the values should look like.
+![scholars](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/scholars.png)
+
 ### Alerts
-As you might have noticed the bot created a spreadsheet called Axie Alerts. This spreadsheet specifies the Axies that should be alerted in the server, for instance if they have a low price or good genes. Below an example is shown of how you can fill in this spreadsheet.
+As you might have noticed the bot also created a spreadsheet called Axie Alerts. This spreadsheet specifies the Axies that should be alerted in the server, for instance if they have a low price or good genes. Below an example is shown of how you can fill in this spreadsheet.
 ![builds](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/builds.png)
 
 Example of an alert that the bot automatically sends:\
@@ -117,6 +121,8 @@ Example of an alert that the bot automatically sends:\
 - Clone the repository and install dependencies as specified [above](#dependencies).
 - Follow the steps mentioned in [setup](#setup).
 - Run `$ python src/main.py`
-- Add your scholars using the `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>` command. 
-- Give your users their dedicated roles.
+- Copy the private key of the scholar you want to add to the database.
+- Encrypt it by sending a private message to the bot using `!encrypt <private_key>` and use this in the step below.
+- Add a scholar using the `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>` command. 
+- Give your server users their dedicated roles.
 - See the results.
