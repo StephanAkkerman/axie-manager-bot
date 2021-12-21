@@ -22,7 +22,7 @@ This bot was made with configurability in mind, meaning that every feature liste
 - `!mute` / `!unmute`: Mute and unmute specific users. Usage `!mute <@user>`, this gives a user the 'mute' role.
 - `!mydata`: Scholar can request their up to date data, consisting of: in game slp, MMR, rank, payout day, and the number of days untill payout day.
 - `!price`: Request suggested prices for selling your axie. Usage `!price <axie ID>`, gives maximum 4 different prices based on different criteria.
-- `!scholar`: Adds a scholar to the database of scholars. Usage `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`. See the example [below](#spreadsheet) of how the values should look like.
+- `!scholar`: Adds a scholar to the database of scholars. Usage `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>`. See the example [below](#spreadsheet) of how the values should look like.
 - `!tryout`: Start tryouts, divides users with role 'tryout' in specific channels. More about this [below](#tryouts).
 - `!qr`: Scholars can request their QR-code in a dedicated channel. The bot will send them a private message containing their QR-code for login.
 
@@ -70,36 +70,53 @@ $ pip install <package>
 
 ## Setup
 ### Making a Discord bot
-- Setup your own Discord bot, following this [tutorial](https://realpython.com/how-to-make-a-discord-bot-python/).
+This part is about creating the Discord bot, setting up the basics, and inviting it to your server. For the first part you can watch this [video (watch until 2:20)](https://www.youtube.com/watch?v=Pbq7vPsHDtc).
+
+Or follow these written instructions:
+- Setup your own Discord bot, following this [written tutorial](https://realpython.com/how-to-make-a-discord-bot-python/) or this 
 - Give the bot admin rights and all permissions possible, since this is the easiest way to set it up.
 - Invite the bot to your server.
+
+Then you need to add the custom emojis to the server (can be skipped).
 - Download the custom emoji pictures [here](https://github.com/StephanAkkerman/Axie_Manager_Bot/tree/main/img/emojis).
 - Add them to your server ([instructions](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis)).
+
+Last you need to fill in the important information in `config_example.yaml`, so the bot knows which server it should be connected to.
 - Open `config_example.yaml` 
 - Write your bot token behind `TOKEN:` (line 2)
 - Write your server name behind `GUILD_NAME:` (line 3)
 - If you changed the custom emoji names, change them in the file too (line 37, 40, 41).
 
-Optional:\
-Make a nice avatar for the bot.
-
 ### Spreadsheet
-This part needs to be done and is a bit technical, so follow the steps carefully.
+This part needs to be done and is a bit technical, so follow the steps carefully. Or follow the instructions from this (starts from 1:58) [video](https://youtu.be/6zeDGeGGHx4?t=118)
 
-- Give the bot access to the folder where you want to have the spreadsheets by following these [instructions](https://docs.gspread.org/en/latest/oauth2.html#for-bots-using-service-account).
-- Save your authentication.json file that you got from the above instructions in the same folder as you saved the files for this bot.
-- Make a new folder in your Google Drive and share it with the email provided in the `authentication.json` file. This email is shown after `"client_email":`.
+If you prefer written instructions follow the instructions below:
+- Enable API access for the new project [instructions](https://docs.gspread.org/en/latest/oauth2.html#enable-api-access-for-a-project).
+- Creating the `authentication.json file` [instructions](https://docs.gspread.org/en/latest/oauth2.html#for-bots-using-service-account).
+
+After follow the instructions above, last things you need to do is this:
+- Save your `authentication.json` file in the same folder as you saved the files for this bot.
+- Make a new folder in your Google Drive and share it (by right clicking on it and pressing share) with the email provided in the `authentication.json` file, give this email editor rights. The email is shown after `"client_email":`, on line 6. The email should look like: `servicename@projectname.iam.gserviceaccount.com`. 
 
 ### Make the roles, channels, and spreadsheets
-Because no one likes to go through the progress of making all the new channels, roles, and spreadsheets themselves I have written a script to do it for you.
+Because no one likes to go through the process of making all the new channels, roles, and spreadsheets themselves I have written a script to do it for you.
 To run it you need to have followed the steps above, so you should have installed the dependencies, made the bot, and gave it access to your preferred Google Drive folder. If you have done all that you can execute the following code:
 ```
 python src/setup.py
 ```
 This will also rename `config_example.yaml` to just `config.yaml` so you do not need to worry about renaming that as well. After that is done you are ready for deploying the bot.
 
+### Alerts
+As you might have noticed the bot created a spreadsheet called Axie Alerts. This spreadsheet specifies the Axies that should be alerted in the server, for instance if they have a low price or good genes. Below an example is shown of how you can fill in this spreadsheet.
+![builds](https://github.com/[username]/[reponame]/blob/[branch]/img/builds.png?raw=true)
+
+Example of an alert that the bot automatically sends:
+![alert](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/alert.png)
+
 ## How to run
 - Clone the repository and install dependencies as specified [above](#dependencies).
-- Follow the steps mentioned in [setup](#setup)
+- Follow the steps mentioned in [setup](#setup).
 - Run `$ python src/main.py`
-- See result
+- Add your scholars using the `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>` command. 
+- Give your users their dedicated roles.
+- See the results.
