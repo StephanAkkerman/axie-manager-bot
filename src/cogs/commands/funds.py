@@ -15,6 +15,7 @@ from config import config
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
 
+
 class Funds(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -27,7 +28,7 @@ class Funds(commands.Cog):
         Usage: `!funds <ronin address>`
         Replaces or adds you to the funds spreadsheet.
         """
-        
+
         if len(input) == 1:
             ronin_address = input[0]
         else:
@@ -37,28 +38,30 @@ class Funds(commands.Cog):
         funds = (
             gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
         )
-        
+
         try:
-            old_address = funds.loc[
-                funds["Manager"] == ctx.message.author.name
-            ]["Funds Address"]
+            old_address = funds.loc[funds["Manager"] == ctx.message.author.name][
+                "Funds Address"
+            ]
         except:
             raise commands.UserNotFound(ctx.message.author.name)
-        
+
         if not old_address.empty:
             # Update the funds
-            funds.loc[funds["Manager"] == ctx.message.author.name, "Funds Address"] = ronin_address
-            
+            funds.loc[
+                funds["Manager"] == ctx.message.author.name, "Funds Address"
+            ] = ronin_address
+
         else:
             # Write manager + address to the sheet
-            new = {"Manager" : ctx.message.author.name, "Funds Address" : ronin_address}
-            
+            new = {"Manager": ctx.message.author.name, "Funds Address": ronin_address}
+
             funds = funds.append(new, ignore_index=True)
-            
+
         # Update the worksheet
         print(funds)
         gd.set_with_dataframe(ws, funds, include_index=False)
-    
+
     @funds.error
     async def price_error(self, ctx, error):
         if isinstance(error, commands.UserInputError):
@@ -76,7 +79,7 @@ class Funds(commands.Cog):
                 f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
                 \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""
             )
-        
+
+
 def setup(bot):
     bot.add_cog(Funds(bot))
-    

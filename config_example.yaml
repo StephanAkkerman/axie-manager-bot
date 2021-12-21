@@ -102,10 +102,13 @@ COMMANDS:
     # Copy here your fernet key that you get after executing `python src/setup.py`
     KEY: Your Fernet Key
 
+  # !funds <ronin address>: Adds your funds address to the spreadsheet
+  FUNDS: True
+
   # !issue command for adding issues to github
-  # Needs a GitHub token, but without any access
+  # Needs a GitHub token, but one without any access (because it is used to create new issues)
   ISSUE:
-    ENABLED: True
+    ENABLED: False
     TOKEN: Your GitHub token
     REPO: StephanAkkerman/Axie_Manager_Bot
 

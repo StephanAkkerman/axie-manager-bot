@@ -1,10 +1,19 @@
 ##> Imports
+import traceback
+
+# 3rd party dependencies
+import gspread
+import gspread_dataframe as gd
+
 # > Discord dependencies
 import discord
 from discord.ext import commands
 
 # Local dependencies
 from config import config
+
+# Login using the .json file
+gc = gspread.service_account(filename="authentication.json")
 
 
 class Manager(commands.Cog):
@@ -20,35 +29,34 @@ class Manager(commands.Cog):
         With this command you can find out who your manager is! Please, do not message them in this channel but send a DM.
         """
 
-        roles = [
-            r.name
-            for r in ctx.author.roles
-            if r.name
-            in [
-                "Akkie100",
-                "BreakDownzPvp",
-                "MrJuggler",
-                "unheil",
-                "Joepermans",
-                "ManDerMannen",
-            ]
-        ]
+        # Open Scholars spreadsheet
+        ws = gc.open("Scholars").worksheet("Scholars")
+        scholar_info = (
+            gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
+        )
+
         try:
-            managers = [
-                m.display_name
-                for m in ctx.guild.members
-                if m.display_name in roles and "Manager" in [r.name for r in m.roles]
+            manager = scholar_info.loc[
+                scholar_info["Scholar Name"] == ctx.message.author.name
+            ]["Manager"].str.split(", ")
+        except:
+            raise commands.UserNotFound(ctx.message.author.name)
+
+        if not manager.empty:
+            # Use , to separate the names
+            disc_manager = [
+                user.name
+                for user in self.bot.get_all_members()
+                if user.name in manager.tolist()[0]
             ]
-        except Exception:
-            raise commands.UserNotFound("")
+        else:
+            raise commands.UserNotFound(ctx.message.author.name)
 
-        if not managers:
+        if disc_manager == []:
             raise commands.UserNotFound("")
-
-        managernames = " and ".join(managers)
 
         await ctx.reply(
-            f"Your manager{' is**' if len(managers) == 1 else 's are**'} {managernames}**! If you want to ask them something, please message them _privately_."
+            f"Your manager{' is**' if len(disc_manager) == 1 else 's are**'} {','.join(disc_manager)}**! If you want to ask them something, please message them _privately_."
         )
 
     @manager.error
@@ -69,7 +77,8 @@ class Manager(commands.Cog):
                 ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
             )
             await channel.send(
-                f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
+                f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
+                \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""
             )
 
 
