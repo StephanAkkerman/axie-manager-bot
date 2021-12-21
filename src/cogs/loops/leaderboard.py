@@ -30,7 +30,7 @@ class Leaderboard(commands.Cog):
     @loop(hours=4)
     async def leaderboard(self):
         """Print the current leaderboard in dedicated leaderboard channel"""
-        
+
         # Get the guild
         guild = discord.utils.get(
             self.bot.guilds,
@@ -75,15 +75,15 @@ class Leaderboard(commands.Cog):
 
         # Convert all columns to string
         df = df.astype(str)
-        
+
         # Get top player based on avg SLP
         top_slp = slp["name"].tolist()[0]
 
         # Add emojis
         names = df["name"].tolist()
-        
-        slp_emoji = discord.utils.get(guild.emojis, name=config['EMOJIS']['SLP'])
-        
+
+        slp_emoji = discord.utils.get(guild.emojis, name=config["EMOJIS"]["SLP"])
+
         names[names.index(top_slp)] = f"{slp_emoji} {names[names.index(top_slp)]}"
         names[0] = "🥇" + names[0]
         names[1] = "🥈" + names[1]

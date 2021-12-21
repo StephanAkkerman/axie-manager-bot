@@ -1,11 +1,13 @@
 ##> Imports
 import traceback
+
 # > Discord dependencies
 import discord
 from discord.ext import commands
 
 # Local dependencies
 from config import config
+
 
 class Help(commands.Cog):
     def __init__(self, bot):
@@ -82,7 +84,7 @@ class Help(commands.Cog):
         else:
             raise commands.UserInputError()
 
-        e.set_author(name=config['MANAGER_NAME'])
+        e.set_author(name=config["MANAGER_NAME"])
         e.set_thumbnail(url=self.bot.user.avatar_url)
         await ctx.send(embed=e)
 
@@ -98,16 +100,18 @@ class Help(commands.Cog):
                 color=0x00FFFF,
                 description="This command could not be found... Try `!help` to list all available commands.",
             )
-            e.set_author(name=config['MANAGER_NAME'])
+            e.set_author(name=config["MANAGER_NAME"])
             e.set_thumbnail(url=self.bot.user.avatar_url)
             await ctx.send(embed=e)
         else:
             await ctx.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
+            )
             await channel.send(
-               f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
+                f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
                 \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""
             )
 

@@ -10,6 +10,8 @@ from discord.ext.tasks import loop
 
 # Local dependencies
 from config import config
+
+
 class Clean_channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -19,7 +21,7 @@ class Clean_channel(commands.Cog):
 
     @loop(hours=config["LOOPS"]["CLEAN_CHANNEL"]["HOURS"])
     async def clean_channel(self):
-        
+
         # Find discord channel
         channel = discord.utils.get(
             self.bot.get_all_channels(),
@@ -40,6 +42,7 @@ class Clean_channel(commands.Cog):
                 count += 1
 
         print(f"Removed {count} messages from 💎┃bot-alerts!")
+
 
 def setup(bot):
     bot.add_cog(Clean_channel(bot))

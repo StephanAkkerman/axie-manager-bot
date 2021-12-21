@@ -1,12 +1,12 @@
 DISCORD:
-  TOKEN: Your Discord bot Token
-  GUILD_NAME: The server name that the Discord bot should be connected to
+  TOKEN: Your discord bot token
+  GUILD_NAME: Your guild name
 
 # This will only be used if -test is added to startup
 # No need to fill this in unless you want to debug the bot
 DEBUG:
-  TOKEN: Empty
-  GUILD_NAME: Empty
+  TOKEN: Keep empty
+  GUILD_NAME: Keep empty
 
 # Default prefix for commands is !, can be changed to $, &, and others
 PREFIX: '!'
@@ -79,11 +79,10 @@ LOOPS:
     ENABLED: True
     CHANNEL: 📈┃price-updates
 
-# If ENABLED: True, the scholars will receive a warning if they are below MIN_SLP on average
+# If ENABLED: True, the bot will post a message before the daily reset tagging the scholars if did not yet did all the quests
   SLP_WARNING:
     ENABELD: True
-    DAYS: 14
-    MIN_SLP: 100
+    CHANNEL: ❌┃warnings
 
 ##################
 #### Commands ####
@@ -100,14 +99,14 @@ COMMANDS:
   ENCRYPT:
     ENABLED: True
 
-    # Copy here your fernet key that you get after executing `python src/key_generator.py`
+    # Copy here your fernet key that you get after executing `python src/setup.py`
     KEY: Your Fernet Key
 
   # !issue command for adding issues to github
   # Needs a GitHub token, but without any access
   ISSUE:
     ENABLED: True
-    TOKEN: GitHub token
+    TOKEN: Your GitHub token
     REPO: StephanAkkerman/Axie_Manager_Bot
 
   # !manager: This will show the scholar their manager info
@@ -118,6 +117,9 @@ COMMANDS:
 
   # !mydata command: Sends a scholar their next payday and many other personal information
   MYDATA: True  
+
+  # !price command: If you provide the axie id it will calculate the optimal prices to sell it for
+  PRICE: True
 
   # !scholar: This will add a scholar to the database
   SCHOLAR: True
@@ -159,3 +161,12 @@ LISTENERS:
   # If people react with a gem on a bot alert, the message will get deleted and they will get the message as a private message instead
   ON_RAW_REACTION_ADD:
     ENABLED: True
+
+  # Find the languages over here https://py-googletrans.readthedocs.io/en/latest/#googletrans-languages
+  TRANSLATE: 
+    ENABLED: True
+    # Language is the language that needs to be translated (default is Tagalog)
+    LANGUAGE: 'tl'
+    # Destination is the output language of the translation (default is English)
+    DESTINATION: 'en'
+    CHANNEL: 💬┃translations

@@ -6,37 +6,38 @@ from discord.ext import commands
 # Import local dependencies
 from config import config
 
+
 class On_raw_reaction_add(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, reaction):
-        
+
         # Ignore private messages
         if reaction.guild_id is None:
             return
-        
+
         try:
             # Load necessary variables
             channel = self.bot.get_channel(reaction.channel_id)
             guild = self.bot.get_guild(reaction.guild_id)
             if reaction.user_id != self.bot.user.id:
-                if channel.name == config['WELCOME_CHANNEL']:
+                if channel.name == config["WELCOME_CHANNEL"]:
                     await self.verification_check(reaction, channel, guild)
-                elif channel.name == config['LOOPS']['AXIE_ALERT']['CHANNEL']:
+                elif channel.name == config["LOOPS"]["AXIE_ALERT"]["CHANNEL"]:
                     await self.claim_axie(reaction, channel)
 
         except commands.CommandError as e:
             exception_channel = self.bot.get_channel(reaction.channel_id)
-            channel = discord.utils.get(guild.channels, name=config['ERROR'])
+            channel = discord.utils.get(guild.channels, name=config["ERROR"])
             await channel.send(
                 f"Unhandled error in {exception_channel.mention}. User **{reaction.member.name}#{reaction.member.discriminator}** caused an error by adding a reaction to a message. ```{e}```"
             )
 
     async def verification_check(self, reaction, channel, guild):
         original_msg = (await channel.history(oldest_first=True, limit=1).flatten())[0]
-        role = discord.utils.get(guild.roles, name=config['ROLES']['VERIFIED'])
+        role = discord.utils.get(guild.roles, name=config["ROLES"]["VERIFIED"])
 
         # Check if this is the original verification message
         if reaction.message_id == original_msg.id:

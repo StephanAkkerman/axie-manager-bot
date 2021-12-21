@@ -30,7 +30,9 @@ class Instagram(commands.Cog):
 
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                "https://www.instagram.com/" + config["LOOPS"]["INSTAGRAM"]["USERNAME"] + "/feed/?__a=1",
+                "https://www.instagram.com/"
+                + config["LOOPS"]["INSTAGRAM"]["USERNAME"]
+                + "/feed/?__a=1",
                 headers=headers,
             ) as r:
                 response = await r.json()
@@ -43,7 +45,9 @@ class Instagram(commands.Cog):
         """
 
         all_info = await self.get_last_post()
-        last_post = all_info["graphql"]["user"]["edge_owner_to_timeline_media"]["edges"][0]["node"]      
+        last_post = all_info["graphql"]["user"]["edge_owner_to_timeline_media"][
+            "edges"
+        ][0]["node"]
 
         # Set variables
         img_url = last_post["display_url"]
@@ -58,7 +62,7 @@ class Instagram(commands.Cog):
         acc_url = "https://www.instagram.com/" + username
         # Could use server pic url instead, this is not saved in last_post :(
         profile_pic = all_info["graphql"]["user"]["profile_pic_url_hd"]
-        
+
         # Send message in discord channel
         channel = discord.utils.get(
             self.bot.get_all_channels(),

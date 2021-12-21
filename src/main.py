@@ -13,9 +13,9 @@ from discord.ext import commands
 # Import local dependencies
 from config import config
 
-# Bot prefix is !
 bot = commands.Bot(command_prefix=config["PREFIX"], intents=discord.Intents.all())
 bot.remove_command("help")
+
 
 @bot.event
 async def on_ready():
@@ -29,30 +29,32 @@ async def on_ready():
     )
 
     # Load all loops
-    load_folder(config, 'loops')
+    load_folder(config, "loops")
 
     print(f"{bot.user} is connected to {guild.name} (id: {guild.id}) \n")
 
+
 def load_folder(config, foldername):
-    
+
     # Get enabled commands
-    enabled_commands = ['help.py']
+    enabled_commands = ["help.py"]
     for file in config[foldername.upper()]:
         if config[foldername.upper()][file]:
-            enabled_commands.append(file.lower() + '.py')
-    
+            enabled_commands.append(file.lower() + ".py")
+
     # Load all commands
     print(f"Loading {foldername} ...")
     for filename in os.listdir(f"./src/cogs/{foldername}"):
         if filename.endswith(".py") and filename in enabled_commands:
             print("Loading:", filename)
             bot.load_extension(f"cogs.{foldername}.{filename[:-3]}")
-            
+
     print()
 
+
 if __name__ == "__main__":
-    load_folder(config, 'commands')
-    load_folder(config, 'listeners')
+    load_folder(config, "commands")
+    load_folder(config, "listeners")
 
     TOKEN = (
         config["DEBUG"]["TOKEN"]

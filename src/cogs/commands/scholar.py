@@ -21,7 +21,7 @@ class Scholar(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role(config['ROLES']['MANAGER'])
+    @commands.has_role(config["ROLES"]["MANAGER"])
     async def scholar(self, ctx, *input):
         """Add a scholar
 
@@ -31,12 +31,12 @@ class Scholar(commands.Cog):
 
         if len(input) >= 5:
             # Get index of <address>
-            address_index = [idx for idx, s in enumerate(input) if 'ronin:' in s][0]
-            
+            address_index = [idx for idx, s in enumerate(input) if "ronin:" in s][0]
+
             # Works for names with spaces as well
             scholar = " ".join(input[:address_index])
             new_scholar = discord.utils.get(ctx.guild.members, name=scholar)
-            
+
             # Try this before the if
             try:
                 scholar_roles = new_scholar.roles
@@ -48,18 +48,18 @@ class Scholar(commands.Cog):
                 try:
                     manager_ids = [
                         int(id[3:-1]) if "!" in id else int(id[2:-1])
-                        for id in list(input[address_index+4:])
+                        for id in list(input[address_index + 4 :])
                     ]
                 except Exception:
                     raise commands.MemberNotFound(
                         (id[3:-1]) if "!" in id else int(id[2:-1])
-                        for id in list(input[address_index+4:])
+                        for id in list(input[address_index + 4 :])
                     )
 
                 if not manager_ids:
                     raise commands.MemberNotFound(
                         (id[3:-1]) if "!" in id else int(id[2:-1])
-                        for id in list(input[address_index+4:])
+                        for id in list(input[address_index + 4 :])
                     )
 
                 managers = [m for m in ctx.guild.members if m.id in manager_ids]
@@ -70,11 +70,17 @@ class Scholar(commands.Cog):
                 )
                 e.add_field(name="Scholar Name", value=new_scholar.name, inline=True)
                 e.add_field(
-                    name="Scholar Share", value=f"{float(input[address_index+1])*100}%", inline=True
+                    name="Scholar Share",
+                    value=f"{float(input[address_index+1])*100}%",
+                    inline=True,
                 )
                 e.add_field(name="Address", value=input[address_index], inline=True)
-                e.add_field(name="Payout Address", value=input[address_index+2], inline=True)
-                e.add_field(name="Encrypted key", value=input[address_index+3], inline=True)
+                e.add_field(
+                    name="Payout Address", value=input[address_index + 2], inline=True
+                )
+                e.add_field(
+                    name="Encrypted key", value=input[address_index + 3], inline=True
+                )
                 e.add_field(
                     name="Manager(s)",
                     value="\n".join(manager.display_name for manager in managers),
@@ -193,7 +199,9 @@ class Scholar(commands.Cog):
             await ctx.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
+            )
             await channel.send(
                 f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
                 \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""

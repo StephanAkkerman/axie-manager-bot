@@ -6,12 +6,13 @@ from discord.ext import commands
 # Local dependencies
 from config import config
 
+
 class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role(config['ROLES']['SCHOLAR'])
+    @commands.has_role(config["ROLES"]["SCHOLAR"])
     async def manager(self, ctx):
         """Find out who your manager is
 
@@ -64,7 +65,9 @@ class Misc(commands.Cog):
             await ctx.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
+            )
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )

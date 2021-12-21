@@ -11,11 +11,11 @@ from discord.ext import commands
 from config import config
 
 # Get the access token
-gh_token = config['COMMANDS']['ISSUE']['TOKEN']
+gh_token = config["COMMANDS"]["ISSUE"]["TOKEN"]
 
 # Initialize GH client and repo
 g = Github(gh_token)
-repo = g.get_repo(config['COMMANDS']['ISSUE']['REPO'])
+repo = g.get_repo(config["COMMANDS"]["ISSUE"]["REPO"])
 labels = repo.get_labels()
 
 # Get the emojis and lists of them
@@ -38,7 +38,7 @@ class Issue(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=["idea"])
-    @commands.has_role(config['ROLES']['MANAGER'])
+    @commands.has_role(config["ROLES"]["MANAGER"])
     async def issue(self, ctx, *input):
         """Create a new issue for the Axie Manager Discord bot
 
@@ -109,7 +109,7 @@ class Issue(commands.Cog):
             and str(x.emoji) != "\N{CROSS MARK}"
             and str(x.emoji) != "\N{WHITE HEAVY CHECK MARK}"
         ]
-        
+
         # Delete clutter
         await ctx.message.delete()
         await create_issue.delete()
@@ -119,19 +119,21 @@ class Issue(commands.Cog):
         # If check marked is clicked create the issue
         if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
             make_issue(title, msg.content, reacted_labels, ctx.author)
-            await ctx.send(f"Issue succesfully created! \n{get_issue_url()}") 
-            
+            await ctx.send(f"Issue succesfully created! \n{get_issue_url()}")
+
         elif reaction[0].emoji == "\N{CROSS MARK}":
             await ctx.send(
                 f"Make a new issue using `!issue <title>` and follow the instructions."
             )
 
+
 def get_issue_url():
     """ Returns the url of the new issue """
-    
-    new_issue = repo.get_issues(state='open')[0]
-    
+
+    new_issue = repo.get_issues(state="open")[0]
+
     return f"https://github.com/{config['COMMANDS']['ISSUE']['REPO']}/issues/{new_issue.number}"
+
 
 def make_issue(t, b, l, author):
 

@@ -31,7 +31,7 @@ class QR(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=["code", "login", " qr"])
-    @commands.has_role(config['ROLES']['SCHOLAR'])
+    @commands.has_role(config["ROLES"]["SCHOLAR"])
     async def qr(self, ctx):
         """Request your personal QR code
 
@@ -41,7 +41,7 @@ class QR(commands.Cog):
         """
 
         # If the user writes !qr in the correct channel
-        if ctx.channel.name == config['COMMANDS']['QR']['CHANNEL']:
+        if ctx.channel.name == config["COMMANDS"]["QR"]["CHANNEL"]:
 
             # Delete this message, to remove clutter
             await ctx.message.delete()
@@ -111,13 +111,17 @@ class QR(commands.Cog):
                 f"Sorry, you cannot use this command yet, since you are not a scholar."
             )
         elif isinstance(error, commands.ChannelNotFound):
-            channel = discord.utils.get(ctx.guild.channels, name=config['COMMANDS']['QR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["COMMANDS"]["QR"]["CHANNEL"]
+            )
             channel_id = channel.id
             await ctx.message.author.send(
                 f"You used this command in the wrong channel. You can use it in the <#{channel_id}> channel."
             )
         elif isinstance(error, commands.MemberNotFound):
-            print("This user was not found in the database : " + ctx.message.author.name)
+            print(
+                "This user was not found in the database : " + ctx.message.author.name
+            )
             print("Current time : ", datetime.now().strftime("%H:%M:%S"))
             await ctx.message.author.send(
                 f"Sorry, your Discord name could not be found in our database. Please contact a manager."
@@ -126,14 +130,18 @@ class QR(commands.Cog):
             await ctx.message.author.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
+            )
             await channel.send(
                 f"""Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command.
                 \nUser message: `{ctx.message.content}` ```{traceback.format_exc()}```"""
             )
 
         # Delete this message, to remove clutter
-        login_channel = discord.utils.get(ctx.guild.channels, name=config['COMMANDS']['QR']['CHANNEL'])
+        login_channel = discord.utils.get(
+            ctx.guild.channels, name=config["COMMANDS"]["QR"]["CHANNEL"]
+        )
         if login_channel != ctx.channel:
             await ctx.message.delete()
 

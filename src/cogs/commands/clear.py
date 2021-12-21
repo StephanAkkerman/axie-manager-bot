@@ -6,12 +6,13 @@ from discord.ext import commands
 # Local dependencies
 from config import config
 
+
 class Clear(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot    
-    
+        self.bot = bot
+
     @commands.command(aliases=["purge", "remove", "delete"])
-    @commands.has_role(config['ROLES']['MANAGER'])
+    @commands.has_role(config["ROLES"]["MANAGER"])
     async def clear(self, ctx, *input):
         """Clear an amount of messages [from a user if specified]
 
@@ -73,10 +74,13 @@ class Clear(commands.Cog):
             await ctx.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
+            )
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )
-            
+
+
 def setup(bot):
     bot.add_cog(Clear(bot))

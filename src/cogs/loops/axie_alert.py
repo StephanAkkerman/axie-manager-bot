@@ -24,6 +24,7 @@ from alerts.genes import get_genes
 from alerts.api import api_new_listings, api_old_listings, api_axie_details
 from config import config
 
+
 class Axie_alert(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -49,9 +50,9 @@ class Axie_alert(commands.Cog):
     async def new_builds(self):
         """Gets the new builds every hour"""
         self.specifications = get_builds()
-        
+
     @commands.command()
-    @commands.has_role(config['ROLES']['MANAGER'])
+    @commands.has_role(config["ROLES"]["MANAGER"])
     async def refresh(self, ctx):
         """Refreshes the builds used for alerts
 

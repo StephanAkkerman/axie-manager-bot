@@ -18,12 +18,13 @@ from config import config
 # Login using the .json file
 gc = gspread.service_account(filename="authentication.json")
 
+
 class ScholarData(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command(aliases=["mystats", "stats", "data"])
-    @commands.has_role(config['ROLES']['SCHOLAR'])
+    @commands.has_role(config["ROLES"]["SCHOLAR"])
     async def mydata(self, ctx):
         """Request information on your Axie Infinity scholarship account
 
@@ -72,10 +73,14 @@ class ScholarData(commands.Cog):
                 name="Rank", value=df["rank"].tolist()[0], inline=False,
             )
 
-            payout_date = (datetime.now().replace(day=1) + timedelta(days=14)).replace(day=14)
+            payout_date = (datetime.now().replace(day=1) + timedelta(days=14)).replace(
+                day=14
+            )
             if datetime.now() > payout_date:
                 # Get next month
-                payout_date = (datetime.now().replace(day=1) + timedelta(days=32)).replace(day=14)
+                payout_date = (
+                    datetime.now().replace(day=1) + timedelta(days=32)
+                ).replace(day=14)
 
             e.add_field(
                 name="Next Payout Date",
@@ -119,7 +124,9 @@ class ScholarData(commands.Cog):
             await ctx.message.author.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
+            )
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )

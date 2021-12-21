@@ -9,12 +9,13 @@ from discord.ext import commands
 # Local dependencies
 from config import config
 
+
 class Announce(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    @commands.has_role(config['ROLES']['MANAGER'])
+    @commands.has_role(config["ROLES"]["MANAGER"])
     async def announce(self, ctx, *input):
         """Make an announcement to a channel
 
@@ -58,7 +59,7 @@ class Announce(commands.Cog):
         )
 
         e.add_field(name="Channel", value=input[0], inline=False)
-        e.set_author(name=config['MANAGER_NAME'])
+        e.set_author(name=config["MANAGER_NAME"])
         e.set_thumbnail(url=self.bot.user.avatar_url)
         e.set_footer(
             text="This is a preview. Please confirm that all info is correct. Channel field will not be visible in the final message."
@@ -114,10 +115,13 @@ class Announce(commands.Cog):
             await ctx.send(
                 f"Something went wrong when invoking the _{ctx.command.name}_ command... The managers have been notified of this problem."
             )
-            channel = discord.utils.get(ctx.guild.channels, name=config['ERROR']['CHANNEL'])
+            channel = discord.utils.get(
+                ctx.guild.channels, name=config["ERROR"]["CHANNEL"]
+            )
             await channel.send(
                 f"Unhandled error in {ctx.message.channel.mention}. Exception caused by **{ctx.message.author.name}#{ctx.message.author.discriminator}** while invoking the _{ctx.command.name}_ command. \nUser message: `{ctx.message.content}` ```{error}```"
             )
-            
+
+
 def setup(bot):
     bot.add_cog(Announce(bot))
