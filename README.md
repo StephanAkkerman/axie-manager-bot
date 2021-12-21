@@ -9,7 +9,7 @@ This is a Discord bot written in Python, with the purpose of helping our guild m
 The purpose of this bot is that it can be used for guilds with multiple scholars and different managers, who each have their own scholars and wallets.
 
 ## Features
-This bot was made with configurability in mind, meaning that every feature can be turned on or off, and be changed easily. If you do want a feature, just turn it off, all automatization works for your custom roles and channels, so be sure to check out the settings in config_example.yaml and change them to your liking!
+This bot was made with configurability in mind, meaning that every feature listed below can be turned on or off, and be changed easily. If you do not want a feature, just turn it off, all automation and listeners works for your custom roles and channels, so be sure to check out the settings in config_example.yaml and change them to your liking!
 
 ### Commands
 - `!announce`: Make announcements, using the bot as message sender. Usage `!announce <#channel>`, followed by a next `<text>`.
@@ -24,7 +24,7 @@ This bot was made with configurability in mind, meaning that every feature can b
 - `!price`: Request suggested prices for selling your axie. Usage `!price <axie ID>`, gives maximum 4 different prices based on different criteria.
 - `!scholar`: Adds a scholar to the database of scholars. Usage `!scholar <scholar_discord_id> <address> <split> <payout_address> <encrypted_key> <[manager]>`. See the example [below](#spreadsheet) of how the values should look like.
 - `!tryout`: Start tryouts, divides users with role 'tryout' in specific channels. More about this [below](#tryouts).
-- `!qr`: Scholars can request their QR-code in the specified channel, by default in '🤖┃login' channel. The bot will send them a private message containing their QR-code for login.
+- `!qr`: Scholars can request their QR-code in a dedicated channel. The bot will send them a private message containing their QR-code for login.
 
 ### Automation
 In config_example.yaml this is also called 'Loops', you can customize each channel that these automated messages will get send in.
@@ -38,7 +38,7 @@ In config_example.yaml this is also called 'Loops', you can customize each chann
 - SLP Warning: 1 hour before the daily reset scholars get mentioned if they have not yet completed all quests or are below 800 MMR.
 
 ### Listeners
-This section is about the other type of automation, which is based on events. Just like the other sections these also have tons of customizability.
+This section is about the other type of automation, which is based on events. 
 
 - On Command: If a user uses a bot command it will get shown in the console.
 - On Member Join: If a new user joins the server they will get a specific role, disabled by default.
@@ -73,33 +73,30 @@ $ pip install <package>
 - Setup your own Discord bot, following this [tutorial](https://realpython.com/how-to-make-a-discord-bot-python/).
 - Give the bot admin rights and all permissions possible, since this is the easiest way to set it up.
 - Invite the bot to your server.
-- Write down the token of the bot, as this will be used later.
+- Download the custom emoji pictures [here](https://github.com/StephanAkkerman/Axie_Manager_Bot/tree/main/img/emojis).
+- Add them to your server ([instructions](https://support.discord.com/hc/en-us/articles/360036479811-Custom-Emojis)).
+- Open `config_example.yaml` 
+- Write your bot token behind `TOKEN:` (line 2)
+- Write your server name behind `GUILD_NAME:` (line 3)
+- If you changed the custom emoji names, change them in the file too (line 37, 40, 41).
 
 Optional:\
 Make a nice avatar for the bot.
 
 ### Spreadsheet
-This part needs to be done, otherwise more than half of the functions of this bot will not work. This spreadsheet will serve as a simple database that everyone manager can access. 
-- Go to Google Drive and make a new spreadsheet named 'Scholars'.
-- Name the worksheet also 'Scholars', please do not deviate from this.
-- Make a table that looks like this:
-![Scholars](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/scholars.png)
-- Fill in the values manually or using the `!scholar` command.
+This part needs to be done and is a bit technical, so follow the steps carefully.
+
 - Give the bot access to the folder where you want to have the spreadsheets by following these [instructions](https://docs.gspread.org/en/latest/oauth2.html#for-bots-using-service-account).
-- Save your authentication.json file that you got from the above instructions.
+- Save your authentication.json file that you got from the above instructions in the same folder as you saved the files for this bot.
+- Make a new folder in your Google Drive and share it with the email provided in the `authentication.json` file. This email is shown after `"client_email":`.
 
-Note:\
-Share your Scholar spreadsheet with the email provided in the .json file. This email is shown after `"client_email":`.
-
-### Alerts
-For this part we are using Google Spreadsheets again, so that every manager can easily make adjustments to it.
-- Make a new spreadsheet named 'Axie Builds' and name the worksheet 'main'.
-- Make a table that looks like this:
-![Builds](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/builds.png)
-- Filling in a discord name will tag that Discord user if an alert for that build happens.
-
-Note:\
-These are old builds in the table, search for a axie build that works well with the currenta meta.
+### Make the roles, channels, and spreadsheets
+Because no one likes to go through the progress of making all the new channels, roles, and spreadsheets themselves I have written a script to do it for you.
+To run it you need to have followed the steps above, so you should have installed the dependencies, made the bot, and gave it access to your preferred Google Drive folder. If you have done all that you can execute the following code:
+```
+python src/setup.py
+```
+This will also rename `config_example.yaml` to just `config.yaml` so you do not need to worry about renaming that as well. After that is done you are ready for deploying the bot.
 
 ## How to run
 - Clone the repository and install dependencies as specified [above](#dependencies).
