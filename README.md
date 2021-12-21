@@ -108,7 +108,7 @@ This will also rename `config_example.yaml` to just `config.yaml` so you do not 
 
 ### Alerts
 As you might have noticed the bot created a spreadsheet called Axie Alerts. This spreadsheet specifies the Axies that should be alerted in the server, for instance if they have a low price or good genes. Below an example is shown of how you can fill in this spreadsheet.
-![builds](https://github.com/[username]/[reponame]/blob/[branch]/img/builds.png?raw=true)
+![builds](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/builds.png)
 
 Example of an alert that the bot automatically sends:
 ![alert](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/alert.png)
