@@ -40,7 +40,11 @@ def load_folder(config, foldername):
     enabled_commands = ["help.py"]
     for file in config[foldername.upper()]:
         if config[foldername.upper()][file]:
-            enabled_commands.append(file.lower() + ".py")
+            if not type(config[foldername.upper()][file]) == bool:
+                if config[foldername.upper()][file]["ENABLED"]:
+                    enabled_commands.append(file.lower() + ".py")
+            else:
+                enabled_commands.append(file.lower() + ".py")
 
     # Load all commands
     print(f"Loading {foldername} ...")

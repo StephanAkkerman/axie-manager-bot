@@ -84,7 +84,7 @@ LOOPS:
 
 # If ENABLED: True, the bot will post a message before the daily reset tagging the scholars if did not yet did all the quests
   SLP_WARNING:
-    ENABELD: True
+    ENABLED: True
     CHANNEL: ❌┃warnings
 
 ##################
@@ -103,7 +103,8 @@ COMMANDS:
     ENABLED: True
 
     # Copy here your fernet key that you get after executing `python src/setup.py`
-    KEY: Your Fernet Key
+    # Or leave the old one here, but I would not suggest that for safety reasons
+    KEY: VS8rLHVcDZEantARsKDrFKeg6BfJghNp0R8YyDSnbCw=
 
   # !funds <ronin address>: Adds your funds address to the spreadsheet
   FUNDS: True
