@@ -110,6 +110,7 @@ def create_axie_builds_sheet():
 
 @bot.event
 async def on_ready():
+    
     guild = get(
         bot.guilds,
         name=config["DEBUG"]["GUILD_NAME"]
@@ -156,7 +157,7 @@ async def on_ready():
 
     # Print this to the console
     print("In config.yaml add this behind KEY: (line 103)")
-    print(str(Fernet.generate_key())[2:-2])
+    print(str(Fernet.generate_key())[2:-1])
     print()
     print("After doing that, close this screen and start the bot with the command:")
     print("python src/main.py")
@@ -187,7 +188,7 @@ if __name__ == "__main__":
 
     # Main event loop
     try:
-        print("Trying..")
+        print("Trying...")
         bot.loop.run_until_complete(bot.run(TOKEN))
     except KeyboardInterrupt:
         print("Caught interrupt signal.")
