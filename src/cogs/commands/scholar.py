@@ -108,7 +108,7 @@ class Scholar(commands.Cog):
 
                 if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
                     # Add the "Scholar" role
-                    scholar_role = discord.utils.get(ctx.guild.roles, name="Scholar")
+                    scholar_role = discord.utils.get(ctx.guild.roles, name=config["ROLES"]["SCHOLAR"])
                     await new_scholar.add_roles(scholar_role)
 
                     # Add the manager roles
@@ -168,7 +168,7 @@ class Scholar(commands.Cog):
                 elif reaction[0].emoji == "\N{CROSS MARK}":
                     await confirm_msg.delete()
                     await ctx.send(
-                        f"Cancelled addition of new scholar. To add a new scholar, use `!scholar <scholar> <address> <split> <payout_address> <[manager]>` or see `!help scholar`."
+                        f"Cancelled addition of new scholar. To add a new scholar, use `!scholar <scholar name> <address> <split> <payout_address> <[manager]>` or see `!help scholar`."
                     )
 
             else:
