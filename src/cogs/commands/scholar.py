@@ -43,7 +43,7 @@ class Scholar(commands.Cog):
             except AttributeError:
                 raise commands.UserNotFound(input[0])
 
-            if "Verified" in [r.name for r in scholar_roles]:
+            if config["ROLES"]["VERIFIED"] in [r.name for r in scholar_roles]:
                 # Get managers info
                 try:
                     manager_ids = [
@@ -189,7 +189,7 @@ class Scholar(commands.Cog):
             )
         elif isinstance(error, commands.UserNotFound):
             await ctx.send(
-                f"Sorry, the new scholar is not yet verified. Ask them to verify themselves first."
+                f"Sorry, the new scholar does not yet have the role {config['ROLES']['VERIFIED']}. Ask them to verify themselves first."
             )
         elif isinstance(error, commands.UserInputError):
             await ctx.send(
