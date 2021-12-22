@@ -99,7 +99,12 @@ If you prefer written instructions follow the instructions below:
 
 After follow the instructions above, last things you need to do is this:
 - Save your `authentication.json` file in the same folder as you saved the files for this bot.
-- Make a new folder in your Google Drive and share it (by right clicking on it and pressing share) with the email provided in the `authentication.json` file, give this email editor rights. The email is shown after `"client_email":`, on line 6. The email should look like: `servicename@projectname.iam.gserviceaccount.com`. 
+- Open `authentication.json` and copy the email behind `"client_email":`
+![auth](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/authentication.png)
+- Open Google Drive and go to the folder that you want the bot to make the spreadsheets in, right click on that folder and press share
+![drive1](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/drive.png)
+- Share the folder with the client email out of `authentication.json`
+![drive2](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/drive2.png)
 
 ### Make the roles, channels, and spreadsheets
 Because no one likes to go through the process of making all the new channels, roles, and spreadsheets themselves I have written a script to do it for you.
@@ -107,7 +112,9 @@ To run it you need to have followed the steps above, so you should have installe
 ```
 $ python src/setup.py
 ```
-This will also rename `config_example.yaml` to just `config.yaml` so you do not need to worry about renaming that as well. After that is done you are ready for deploying the bot.
+This will also rename `config_example.yaml` to just `config.yaml` so you do not need to worry about renaming that as well. The result will look like this:
+![setup](https://github.com/StephanAkkerman/Axie_Manager_Bot/blob/main/img/setup.png)
+So as the last step for the setup you need to copy your Fernet key to `config.yaml` line 107, and after that is done you are ready for deploying the bot. 
 
 ### Scholars
 As you might have noticed the bot created a spreadsheet called Scholars. This spreadsheet functions as a database of your scholars. You can fill the values in by using the `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>` command or by adding it manually to the sheet. The picture below shows how the values should look like.
@@ -127,5 +134,6 @@ Example of an alert that the bot automatically sends:\
 - Copy the private key of the scholar you want to add to the database.
 - Encrypt it by sending a private message to the bot using `!encrypt <private_key>` and use this in the step below.
 - Add a scholar using the `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>` command. 
+- Add your funds address using `!funds <ronin_address>` so it can track your buys and sells.
 - Give your server users their dedicated roles.
 - See the results.
