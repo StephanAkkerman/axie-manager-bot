@@ -8,6 +8,9 @@
 This is a Discord bot written in Python, with the purpose of helping our guild manage the scholars in our Discord server.
 The purpose of this bot is that it can be used for guilds with multiple scholars and different managers, who each have their own scholars and wallets.
 
+## Important
+To run this bot you need to host it yourself, meaning that you should have something that functions as a server. I use my Raspberry PI for this, but there are many other options available for hosting a Discord bot, such as virtual private servers provided by Google, Amazon, Microsoft, and more.
+
 ## Features
 This bot was made with configurability in mind, meaning that every feature listed below can be turned on or off, and be changed easily. If you do not want a feature, just turn it off, all automation and listeners works for your custom roles and channels, so be sure to check out the settings in config_example.yaml and change them to your liking!
 
@@ -22,7 +25,7 @@ This bot was made with configurability in mind, meaning that every feature liste
 - `!mute` / `!unmute`: Mute and unmute specific users. Usage `!mute <@user>`, this gives a user the 'mute' role.
 - `!mydata`: Scholar can request their up to date data, consisting of: in game slp, MMR, rank, payout day, and the number of days untill payout day.
 - `!price`: Request suggested prices for selling your axie. Usage `!price <axie ID>`, gives maximum 4 different prices based on different criteria.
-- `!scholar`: Adds a scholar to the database of scholars. Usage `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>`. See the example [below](#spreadsheet) of how the values should look like.
+- `!scholar`: Adds a scholar to the database of scholars. Usage `!scholar <scholar_discord_name> <address> <split> <payout_address> <encrypted_key> <[manager]>`. See the example [below](#scholars) of how the values should look like.
 - `!tryout`: Start tryouts, divides users with role 'tryout' in specific channels. More about this [below](#tryouts).
 - `!qr`: Scholars can request their QR-code in a dedicated channel. The bot will send them a private message containing their QR-code for login.
 
