@@ -156,7 +156,7 @@ async def on_ready():
     os.rename("config_example.yaml", "config.yaml")
 
     # Print this to the console
-    print("In config.yaml add this behind KEY: (line 103)")
+    print("In config.yaml add this behind KEY: (line 107)")
     print(str(Fernet.generate_key())[2:-1])
     print()
     print("After doing that, close this screen and start the bot with the command:")
