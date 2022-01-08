@@ -51,20 +51,20 @@ class Axie_alert(commands.Cog):
         """Gets the new builds every hour"""
         self.specifications = get_builds()
 
+    @loop(seconds=120)
+    async def clear_new(self):
+        """Clears the new list every 2 minutes"""
+        self.new = []
+
     @commands.command()
     @commands.has_role(config["ROLES"]["MANAGER"])
     async def refresh(self, ctx):
         """Refreshes the builds used for alerts
 
-        Usage: `!refresh` 
+        Usage: `!refresh`
         """
         self.specifications = get_builds()
         await ctx.send(f"Succesfully refreshed axie builds!")
-
-    @loop(seconds=120)
-    async def clear_new(self):
-        """Clears the new list every 2 minutes"""
-        self.new = []
 
     async def send_alert(self, axie_df, build):
         """

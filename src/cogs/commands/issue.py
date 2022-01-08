@@ -65,7 +65,11 @@ class Issue(commands.Cog):
         )
 
         # Create Discord embed from msg
-        e = discord.Embed(title=title, description=msg.content, color=0x00FFFF,)
+        e = discord.Embed(
+            title=title,
+            description=msg.content,
+            color=0x00FFFF,
+        )
 
         # Comine disc emoji + label name
         field_labels = [m + " " + n for m, n in zip(disc_emojis, label_text)]
@@ -128,7 +132,7 @@ class Issue(commands.Cog):
 
 
 def get_issue_url():
-    """ Returns the url of the new issue """
+    """Returns the url of the new issue"""
 
     new_issue = repo.get_issues(state="open")[0]
 

@@ -83,7 +83,11 @@ class Prices(commands.Cog):
             name=config["LOOPS"]["PRICES"]["CHANNEL"],
         )
 
-        e = discord.Embed(title="", description="", color=0x00FFFF,)
+        e = discord.Embed(
+            title="",
+            description="",
+            color=0x00FFFF,
+        )
 
         guild = discord.utils.get(
             self.bot.guilds,
@@ -97,16 +101,24 @@ class Prices(commands.Cog):
         eth_emoji = discord.utils.get(guild.emojis, name=config["EMOJIS"]["ETH"])
 
         e.add_field(
-            name=f"SLP {slp_emoji}", value=f"${round(slp,4)}", inline=False,
+            name=f"SLP {slp_emoji}",
+            value=f"${round(slp,4)}",
+            inline=False,
         )
         e.add_field(
-            name=f"AXS {axs_emoji}", value=f"${round(axs,3)}", inline=False,
+            name=f"AXS {axs_emoji}",
+            value=f"${round(axs,3)}",
+            inline=False,
         )
         e.add_field(
-            name=f"ETH {eth_emoji}", value=f"${round(eth,3)}", inline=False,
+            name=f"ETH {eth_emoji}",
+            value=f"${round(eth,3)}",
+            inline=False,
         )
         e.add_field(
-            name="Mean Floor Price", value=f"${round(floor_price,2)}", inline=False,
+            name="Mean Floor Price",
+            value=f"${round(floor_price,2)}",
+            inline=False,
         )
 
         await channel.send(embed=e)

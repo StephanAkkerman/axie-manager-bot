@@ -13,7 +13,7 @@ class On_member_join(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        """ Gives new users the role Tryout """
+        """Gives new users the role Tryout"""
         role = discord.utils.get(
             member.guild.roles, name=config["LISTENERS"]["ON_MEMBER_JOIN"]["ROLE"]
         )

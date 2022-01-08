@@ -102,18 +102,28 @@ class Leaderboard(commands.Cog):
             name=config["LOOPS"]["LEADERBOARD"]["CHANNEL"],
         )
 
-        e = discord.Embed(title="Leaderboard", description="", color=0x00FFFF,)
-
-        e.add_field(
-            name="Scholar", value=scholars, inline=True,
+        e = discord.Embed(
+            title="Leaderboard",
+            description="",
+            color=0x00FFFF,
         )
 
         e.add_field(
-            name="MMR", value=mmr, inline=True,
+            name="Scholar",
+            value=scholars,
+            inline=True,
         )
 
         e.add_field(
-            name="Average SLP", value=avg_slp, inline=True,
+            name="MMR",
+            value=mmr,
+            inline=True,
+        )
+
+        e.add_field(
+            name="Average SLP",
+            value=avg_slp,
+            inline=True,
         )
 
         e.set_footer(text=f"Updated on {latest_update}")

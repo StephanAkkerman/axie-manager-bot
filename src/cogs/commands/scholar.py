@@ -108,7 +108,9 @@ class Scholar(commands.Cog):
 
                 if reaction[0].emoji == "\N{WHITE HEAVY CHECK MARK}":
                     # Add the "Scholar" role
-                    scholar_role = discord.utils.get(ctx.guild.roles, name=config["ROLES"]["SCHOLAR"])
+                    scholar_role = discord.utils.get(
+                        ctx.guild.roles, name=config["ROLES"]["SCHOLAR"]
+                    )
                     await new_scholar.add_roles(scholar_role)
 
                     # Add the manager roles

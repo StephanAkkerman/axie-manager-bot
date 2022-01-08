@@ -268,7 +268,14 @@ class Price(commands.Cog):
 
         try:
             return await api_old_listings(
-                start, classes, breedCount, parts, hp, speed, skill, morale,
+                start,
+                classes,
+                breedCount,
+                parts,
+                hp,
+                speed,
+                skill,
+                morale,
             )
         except Exception:
             return pd.DataFrame({})

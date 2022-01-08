@@ -145,7 +145,7 @@ async def api_owner_axies(address):
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_eth_price():
     """
-    Gets the current ethereum exchange rate 
+    Gets the current ethereum exchange rate
     """
 
     async with aiohttp.ClientSession() as session:

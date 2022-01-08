@@ -110,7 +110,7 @@ def create_axie_builds_sheet():
 
 @bot.event
 async def on_ready():
-    
+
     guild = get(
         bot.guilds,
         name=config["DEBUG"]["GUILD_NAME"]

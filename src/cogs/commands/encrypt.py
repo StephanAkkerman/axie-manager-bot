@@ -19,7 +19,7 @@ class Encrypt(commands.Cog):
     @commands.command()
     @commands.dm_only()
     async def encrypt(self, ctx, *input):
-        """Encrypt message using your personal fernet key, via a direct message 
+        """Encrypt message using your personal fernet key, via a direct message
 
         Usage: `!encrypt <message>`
         Send an encrypted message to a user using your personal fernet key.

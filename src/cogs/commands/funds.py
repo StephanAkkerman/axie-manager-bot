@@ -23,8 +23,8 @@ class Funds(commands.Cog):
     @commands.command()
     @commands.has_role(config["ROLES"]["MANAGER"])
     async def funds(self, ctx, *input):
-        """ Update or add your funds ronin address
-        
+        """Update or add your funds ronin address
+
         Usage: `!funds <ronin address>`
         Replaces or adds you to the funds spreadsheet.
         """

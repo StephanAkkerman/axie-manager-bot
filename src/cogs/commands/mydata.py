@@ -54,7 +54,9 @@ class ScholarData(commands.Cog):
             ).dt.strftime("Updated on: %Y-%m-%d, %H:%M:%S UTC (+8h for PHT)")
 
             e = discord.Embed(
-                title="Your in-game data", description="", color=0x00FFFF,
+                title="Your in-game data",
+                description="",
+                color=0x00FFFF,
             )
 
             e.set_author(name="Axie Manager", icon_url=self.bot.user.avatar_url)
@@ -66,11 +68,15 @@ class ScholarData(commands.Cog):
             )
 
             e.add_field(
-                name="MMR", value=df["mmr"].tolist()[0], inline=False,
+                name="MMR",
+                value=df["mmr"].tolist()[0],
+                inline=False,
             )
 
             e.add_field(
-                name="Rank", value=df["rank"].tolist()[0], inline=False,
+                name="Rank",
+                value=df["rank"].tolist()[0],
+                inline=False,
             )
 
             payout_date = (datetime.now().replace(day=1) + timedelta(days=14)).replace(
