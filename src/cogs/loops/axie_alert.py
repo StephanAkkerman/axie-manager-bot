@@ -212,10 +212,11 @@ class Axie_alert(commands.Cog):
                             for user in self.bot.get_all_members()
                             if user.name in build["Discord Name"]
                         ]
-                        mentions = ""
-                        for user in users:
-                            mentions += f"<@{user.id}> "
-                        await channel.send(mentions)
+                        if users:
+                            mentions = ""
+                            for user in users:
+                                mentions += f"<@{user.id}> "
+                            await channel.send(mentions)
 
     @loop(seconds=10)
     async def new_listings(self):
