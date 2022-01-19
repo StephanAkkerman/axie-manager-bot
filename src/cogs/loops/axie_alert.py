@@ -179,6 +179,11 @@ class Axie_alert(commands.Cog):
                     e.add_field(name="D", value=d, inline=True)
                     e.add_field(name=r1_title, value=r1, inline=True)
                     e.add_field(name=r2_title, value=r2, inline=True)
+                    
+                    e.set_footer(
+                        text=f"Listing started at: {start_time}\nListing ending at: {end_time}"
+                    )
+
 
                     # Create cropped image for thumbnail
                     try:
@@ -191,14 +196,13 @@ class Axie_alert(commands.Cog):
 
                         file = discord.File(temp, filename="a.png")
                         e.set_thumbnail(url="attachment://a.png")
+                        
+                        msg = await channel.send(file=file, embed=e)
+                        
                     except Exception:
+                        msg = await channel.send(embed=e)
                         pass
-
-                    e.set_footer(
-                        text=f"Listing started at: {start_time}\nListing ending at: {end_time}"
-                    )
-
-                    msg = await channel.send(file=file, embed=e)
+                    
                     await msg.add_reaction("\N{GEM STONE}")
 
                     self.send.append(row["id"])
