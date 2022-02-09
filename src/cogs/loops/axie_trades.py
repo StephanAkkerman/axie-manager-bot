@@ -175,13 +175,13 @@ class Axie_trades(commands.Cog):
             temp = BytesIO()
             img_cropped.save(temp, img.format)
             temp.seek(0)
+            file = discord.File(temp, filename="a.png")
+            e.set_thumbnail(url="attachment://a.png")
+            await channel.send(file=file, embed=e)
         except Exception:
             pass
 
-        file = discord.File(temp, filename="a.png")
-        e.set_thumbnail(url="attachment://a.png")
-
-        await channel.send(file=file, embed=e)
+        await channel.send(embed=e)
 
     async def get_genes(self, id):
         """Takes axie id and returns its genes"""

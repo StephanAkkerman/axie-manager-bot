@@ -34,6 +34,9 @@ def get_builds():
     ws = gc.open("Axie Builds").worksheet("main")
     builds = gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
 
+    if builds.iloc[1].empty:
+        return None
+
     # Make class and parts a list
     # Split class at , + space
     builds["Class"] = builds["Class"].str.split(", ")

@@ -89,30 +89,30 @@ class Slp_warning(commands.Cog):
             for mission_dict in missions:
                 if mission_dict["progress"] < mission_dict["total"]:
                     add_to_list = True
-                    if mission_dict["name"] == "Check in":
-                        not_done.append(
-                            ":x: You have not yet claimed the daily check in reward."
-                        )
-                    elif mission_dict["name"] == "PvE":
-                        not_done.append(
-                            f":x: You currenlty only played {mission_dict['progress']}/{mission_dict['total']} PvE games."
-                        )
-                    elif mission_dict["name"] == "PvP":
+                    #if mission_dict["name"] == "Check in":
+                    #    not_done.append(
+                    #        ":x: You have not yet claimed the daily check in reward."
+                    #    )
+                    #elif mission_dict["name"] == "PvE":
+                    #    not_done.append(
+                    #        f":x: You currenlty only played {mission_dict['progress']}/{mission_dict['total']} PvE games."
+                    #    )
+                    if mission_dict["name"] == "PvP":
                         not_done.append(
                             f":x: You currenlty only played {mission_dict['progress']}/{mission_dict['total']} PvP games."
                         )
 
-            if player_info["remaining_energy"] > 15:
+            if player_info["remaining_energy"] == 20:
                 not_done.append(
                     f":x: You have {player_info['remaining_energy']} energy remaining."
                 )
                 add_to_list = True
 
-            if player_info["pve_slp_gained_last_day"] < 50:
-                not_done.append(
-                    f":x: You only have {player_info['pve_slp_gained_last_day']}/50 adventure SLP completed."
-                )
-                add_to_list = True
+            #if player_info["pve_slp_gained_last_day"] < 50:
+            #    not_done.append(
+            #        f":x: You only have {player_info['pve_slp_gained_last_day']}/50 adventure SLP completed."
+            #    )
+            #    add_to_list = True
 
             if row["MMR"] < 800:
                 not_done.append(
