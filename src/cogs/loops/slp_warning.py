@@ -114,9 +114,9 @@ class Slp_warning(commands.Cog):
             #    )
             #    add_to_list = True
 
-            if row["MMR"] < 800:
+            if row["MMR"] < 1000:
                 not_done.append(
-                    f":x: You are only at {row['MMR']} MMR in arena. <800 = no SLP."
+                    f":x: You are at {row['MMR']} MMR in arena. <1000 = 1 SLP per win."
                 )
                 add_to_list = True
 
