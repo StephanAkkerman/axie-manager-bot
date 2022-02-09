@@ -34,18 +34,18 @@ def get_builds():
     ws = gc.open("Axie Builds").worksheet("main")
     builds = gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
 
-    if builds.iloc[1].empty:
-        return None
-
     # Make class and parts a list
     # Split class at , + space
-    builds["Class"] = builds["Class"].str.split(", ")
+    try:
+        builds["Class"] = builds["Class"].str.split(", ")
 
-    builds["Parts"] = builds["Parts (Axie ID)"].apply(get_parts, args=("Names",))
+        builds["Parts"] = builds["Parts (Axie ID)"].apply(get_parts, args=("Names",))
 
-    builds["Part Ids"] = builds["Parts (Axie ID)"].apply(get_parts, args=("Ids",))
+        builds["Part Ids"] = builds["Parts (Axie ID)"].apply(get_parts, args=("Ids",))
 
-    builds["Discord Name"] = builds["Discord Name"].str.split(", ")
+        builds["Discord Name"] = builds["Discord Name"].str.split(", ")
+    except Exception:
+        return {}
 
     # Convert it to list of dictionaries
     return builds.to_dict(orient="records")

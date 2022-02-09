@@ -68,8 +68,7 @@ class Leaderboard(commands.Cog):
         df.loc[df["since_last_claim"] < 1, "since_last_claim"] = 1
         df["avg_slp"] = df["in_game_slp"] / df["since_last_claim"]
         df = df.astype({"avg_slp": int})
-        df = df.sort_values(by=["mmr", "avg_slp"], ascending=False)
-        slp = df.sort_values(by=["avg_slp"], ascending=False)
+        df = df.sort_values(by=["avg_slp", "mmr"], ascending=False)
 
         latest_update = df["cache_last_updated"].max().strftime("%m/%d/%Y, %H:%M:%S")
 
@@ -77,7 +76,7 @@ class Leaderboard(commands.Cog):
         df = df.astype(str)
 
         # Get top player based on avg SLP
-        top_slp = slp["name"].tolist()[0]
+        top_slp = df["name"].tolist()[0]
 
         # Add emojis
         names = df["name"].tolist()
