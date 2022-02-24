@@ -103,7 +103,7 @@ class Slp_warning(commands.Cog):
                     )
 
             if player_info != None:
-                if player_info["remaining_energy"] == 20:
+                if player_info["remaining_energy"] > 15:
                     not_done.append(
                         f":x: You have {player_info['remaining_energy']} energy remaining."
                     )
