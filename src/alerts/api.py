@@ -173,8 +173,20 @@ async def api_missions(ronin, token):
             elif response["success"]:
                 return response["items"][0]["missions"]
             else:
-                raise Exception("Stupid Missions API")
-
+                raise Exception()
+            
+@retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
+async def api_PVP(ronin):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            "https://game-api.axie.technology/logs/pvp/" + ronin) as r:
+            response = await r.json()
+            if response == {}:
+                return None
+            elif response["battles"]:
+                return response["battles"]
+            else:
+                raise Exception()
 
 @retry(stop=stop_after_attempt(12), wait=wait_fixed(5))
 async def api_player(ronin, token):
@@ -189,4 +201,4 @@ async def api_player(ronin, token):
             elif response["success"]:
                 return response["player_stat"]
             else:
-                raise Exception("Stupid Player API")
+                raise Exception()

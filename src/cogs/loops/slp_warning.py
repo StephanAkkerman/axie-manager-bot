@@ -5,8 +5,6 @@ from datetime import datetime, timedelta, time
 import sys
 
 # > 3rd party dependencies
-from dateutil.relativedelta import relativedelta
-from discord import player
 import gspread
 import gspread_dataframe as gd
 import pandas as pd
@@ -19,7 +17,7 @@ from discord.ext.tasks import loop
 # > Local dependencies
 from cogs.commands.encrypt import fernet
 from cogs.commands.qr import getRawMessage, getSignMessage, submitSignature
-from alerts.api import api_missions, api_player, api_game_api
+from alerts.api import api_PVP, api_player, api_game_api
 from config import config
 
 gc = gspread.service_account(filename="authentication.json")
@@ -31,10 +29,10 @@ WHEN = time(hour=23, minute=0, second=0)
 class Slp_warning(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+        
         # Start loops
         self.background_task.start()
-
+        
     async def slp_warning(self):
 
         # Open Scholars worksheet
@@ -77,42 +75,38 @@ class Slp_warning(commands.Cog):
 
             # Skip accounts that return nothing
             try:
-                missions = await api_missions(address, accessToken)
+                pvp_data = await api_PVP(address)
+            except Exception as e:
+                print(f"Could not get PVP data for scholar: {scholar}")
+                pvp_data = None
+            
+            try:
                 player_info = await api_player(address, accessToken)
-            except Exception:
-                print(f"Could not get slp warning data for scholar: {scholar}")
-                continue
+            except Exception as e:
+                print(f"Could not get player_info data for scholar: {scholar}")
+                player_info = None
 
             # Keep track of missions that are not yet done
             add_to_list = False
             not_done = []
-            for mission_dict in missions:
-                if mission_dict["progress"] < mission_dict["total"]:
-                    add_to_list = True
-                    #if mission_dict["name"] == "Check in":
-                    #    not_done.append(
-                    #        ":x: You have not yet claimed the daily check in reward."
-                    #    )
-                    #elif mission_dict["name"] == "PvE":
-                    #    not_done.append(
-                    #        f":x: You currenlty only played {mission_dict['progress']}/{mission_dict['total']} PvE games."
-                    #    )
-                    if mission_dict["name"] == "PvP":
-                        not_done.append(
-                            f":x: You currenlty only played {mission_dict['progress']}/{mission_dict['total']} PvP games."
-                        )
+            
+            if pvp_data != None:
+                pvp = pd.DataFrame(pvp_data)
+                
+                # Get the battles in the last 24h
+                pvp['game_started'] = pd.to_datetime(pvp['game_started'])
+                battles_today = pvp[pvp['game_started'] > (datetime.now() - timedelta(days=1))]
+                
+                if len(battles_today) < 5:
+                    not_done.append(
+                        f":x: You have played only {len(battles_today)} PVP games today."
+                    )
 
-            if player_info["remaining_energy"] == 20:
-                not_done.append(
-                    f":x: You have {player_info['remaining_energy']} energy remaining."
-                )
-                add_to_list = True
-
-            #if player_info["pve_slp_gained_last_day"] < 50:
-            #    not_done.append(
-            #        f":x: You only have {player_info['pve_slp_gained_last_day']}/50 adventure SLP completed."
-            #    )
-            #    add_to_list = True
+            if player_info != None:
+                if player_info["remaining_energy"] == 20:
+                    not_done.append(
+                        f":x: You have {player_info['remaining_energy']} energy remaining."
+                    )
 
             if row["MMR"] < 1000:
                 not_done.append(
