@@ -51,7 +51,7 @@ class Axie_trades(commands.Cog):
             owned_axies["Manager"] = address_df.loc[address_df["Address"] == address][
                 "Manager"
             ].tolist()[0]
-            df = df.append(owned_axies)
+            df = pd.concat([df, owned_axies], ignore_index=True)
 
         # If axie_ids is empty
         if self.axie_db.empty:
@@ -241,7 +241,7 @@ class Axie_trades(commands.Cog):
         funds = funds.rename(columns={"Funds Address": "Address"})
 
         # Merge the dataframes
-        addresses = scholars.append(funds).reset_index(drop=True)
+        addresses = pd.concat([scholars, funds], ignore_index=True)
 
         # Replace ronin: with 0x for API
         addresses["Address"] = addresses["Address"].str.replace("ronin:", "0x")

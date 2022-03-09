@@ -157,7 +157,7 @@ def getRawMessage():
     }
     # Send the request
     r = requests.post(
-        "https://axieinfinity.com/graphql-server-v2/graphql",
+        "https://graphql-gateway.axieinfinity.com/graphql",
         headers={
             "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
         },
@@ -200,12 +200,6 @@ def submitSignature(signedMessage, message, accountAddress):
 
     signature = signedMessage["signature"].hex()
 
-    # This is necessary according to discord guy
-    if signature[-2:] == "1c":
-        signature = signature[:-2] + "01"
-    elif signature[-2:] == "1b":
-        signature = signature[:-2] + "00"
-
     # Remplace in that example to the actual signed message
     requestBody["variables"]["input"]["signature"] = signature
     # Remplace in that example to the actual raw message
@@ -214,12 +208,13 @@ def submitSignature(signedMessage, message, accountAddress):
     requestBody["variables"]["input"]["owner"] = accountAddress
     # Send the request
     r = requests.post(
-        "https://axieinfinity.com/graphql-server-v2/graphql",
+        "https://graphql-gateway.axieinfinity.com/graphql",
         headers={
             "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36",
         },
         json=requestBody,
     )
+    
     # Load the data into json format
     json_data = json.loads(r.text)
 
