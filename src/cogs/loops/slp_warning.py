@@ -31,8 +31,6 @@ class Slp_warning(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
-        self.slp_warning.start()
-        
         # Start loops
         self.background_task.start()
         
