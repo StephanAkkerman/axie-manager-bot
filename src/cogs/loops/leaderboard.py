@@ -55,13 +55,17 @@ class Leaderboard(commands.Cog):
         df = await api_game_api(together)
 
         # Only these columns are important
-        df = df[["name", "mmr", "in_game_slp", "last_claim", "cache_last_updated"]]
+        df = df[["mmr", "in_game_slp", "last_claim", "cache_last_updated"]]
 
         # Delete all the NaN values
         df = df.dropna()
+        
+        # Use the sheet's names
+        scholar_info.set_index("Address", inplace=True)
+        scholar_info["name"] = scholar_info["Scholar Name"].dropna()
 
         # Process the data
-        df["name"] = df["name"].str.split("|").str[-1]
+        df['name'] = scholar_info["name"]
         df["last_claim"] = pd.to_datetime(df["last_claim"], unit="s")
         df["since_last_claim"] = (datetime.now() - df["last_claim"]).dt.days
         df["cache_last_updated"] = pd.to_datetime(df["cache_last_updated"], unit="ms")

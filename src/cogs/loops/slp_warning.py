@@ -1,6 +1,7 @@
 ##> Imports
 # > Standard libraries
 import asyncio
+from cmath import nan
 from datetime import datetime, timedelta, time
 import sys
 
@@ -30,9 +31,12 @@ class Slp_warning(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         
+        self.slp_warning.start()
+        
         # Start loops
         self.background_task.start()
         
+    @loop(hours=1)
     async def slp_warning(self):
 
         # Open Scholars worksheet
@@ -61,17 +65,10 @@ class Slp_warning(commands.Cog):
             scholar = row["Scholar Name"]
             address = row["Address"]
             private_key = row["Info"]
-
-            # Get a message from AxieInfinty
-            rawMessage = getRawMessage()
-
-            # Sign that message with accountPrivateKey
-            signedMessage = getSignMessage(rawMessage, private_key)
-
-            # Get an accessToken by submitting the signature to AxieInfinty
-            accessToken = submitSignature(
-                signedMessage, rawMessage, address.replace("ronin:", "0x")
-            )
+            
+            if str(scholar) == 'nan':
+                print("Nan value found, skipping...")
+                continue
 
             # Skip accounts that return nothing
             try:
@@ -81,6 +78,17 @@ class Slp_warning(commands.Cog):
                 pvp_data = None
             
             try:
+                # Get a message from AxieInfinty
+                rawMessage = getRawMessage()
+
+                # Sign that message with accountPrivateKey
+                signedMessage = getSignMessage(rawMessage, private_key)
+
+                # Get an accessToken by submitting the signature to AxieInfinty
+                accessToken = submitSignature(
+                    signedMessage, rawMessage, address.replace("ronin:", "0x")
+                )
+                
                 player_info = await api_player(address, accessToken)
             except Exception as e:
                 print(f"Could not get player_info data for scholar: {scholar}")
@@ -103,9 +111,9 @@ class Slp_warning(commands.Cog):
                     )
 
             if player_info != None:
-                if player_info["remaining_energy"] > 15:
+                if player_info["energy"]["remaining"] > 15:
                     not_done.append(
-                        f":x: You have {player_info['remaining_energy']} energy remaining."
+                        f":x: You have {player_info['energy']['remaining']} energy remaining."
                     )
 
             if row["MMR"] < 1000:

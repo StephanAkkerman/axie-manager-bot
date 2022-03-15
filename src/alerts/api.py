@@ -199,6 +199,6 @@ async def api_player(ronin, token):
             if response == {}:
                 return None
             elif response["success"]:
-                return response["player_stat"]
+                return response
             else:
                 raise Exception()
