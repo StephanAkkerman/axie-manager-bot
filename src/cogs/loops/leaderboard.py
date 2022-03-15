@@ -44,6 +44,9 @@ class Leaderboard(commands.Cog):
         scholar_info = (
             gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
         )
+        
+        # Drops scholars without name
+        scholar_info = scholar_info[scholar_info['Scholar Name'].notna()]
 
         # Replace ronin: with 0x for API
         scholar_info["Address"] = scholar_info["Address"].str.replace("ronin:", "0x")
