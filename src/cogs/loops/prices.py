@@ -72,7 +72,7 @@ class Prices(commands.Cog):
         eth = float(price_df.loc[price_df["symbol"] == "ETHUSDT"]["price"].tolist()[0])
 
         # Get floor price
-        floor_price = await self.get_floor_price()
+        #floor_price = await self.get_floor_price()
 
         # Get channel for price updates
         channel = discord.utils.get(
@@ -115,11 +115,11 @@ class Prices(commands.Cog):
             value=f"${round(eth,3)}",
             inline=False,
         )
-        e.add_field(
-            name="Mean Floor Price",
-            value=f"${round(floor_price,2)}",
-            inline=False,
-        )
+        #e.add_field(
+        #    name="Mean Floor Price",
+        #    value=f"${round(floor_price,2)}",
+        #    inline=False,
+        #)
 
         await channel.send(embed=e)
 

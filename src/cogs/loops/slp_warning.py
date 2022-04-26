@@ -32,7 +32,8 @@ class Slp_warning(commands.Cog):
         self.bot = bot
         
         # Start loops
-        self.background_task.start()
+        #self.background_task.start()
+        self.slp_warning.start()
         
     @loop(hours=1)
     async def slp_warning(self):
@@ -42,6 +43,9 @@ class Slp_warning(commands.Cog):
 
         # Convert to DataFrames
         df = gd.get_as_dataframe(ws).dropna(axis=0, how="all").dropna(axis=1, how="all")
+        
+        # Drop all rows with NaN
+        df.dropna(subset=['Scholar Name', 'Address', 'Info'], inplace=True)
 
         # discordID's encrypted privateKey from the sheets, as a string
         df["Info"] = df["Info"].str[2:-1]
@@ -74,7 +78,7 @@ class Slp_warning(commands.Cog):
             except Exception as e:
                 print(f"Could not get PVP data for scholar: {scholar}")
                 pvp_data = None
-            
+                
             try:
                 # Get a message from AxieInfinty
                 rawMessage = getRawMessage()
@@ -107,12 +111,14 @@ class Slp_warning(commands.Cog):
                     not_done.append(
                         f":x: You have played only {len(battles_today)} PVP games today."
                     )
+                    add_to_list = True
 
             if player_info != None:
                 if player_info["energy"]["remaining"] > 15:
                     not_done.append(
                         f":x: You have {player_info['energy']['remaining']} energy remaining."
                     )
+                    add_to_list = True
 
             if row["MMR"] < 1000:
                 not_done.append(
