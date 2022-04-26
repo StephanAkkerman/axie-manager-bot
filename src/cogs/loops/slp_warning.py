@@ -32,10 +32,9 @@ class Slp_warning(commands.Cog):
         self.bot = bot
         
         # Start loops
-        #self.background_task.start()
-        self.slp_warning.start()
+        self.background_task.start()
         
-    @loop(hours=1)
+    #@loop(hours=1)
     async def slp_warning(self):
 
         # Open Scholars worksheet
