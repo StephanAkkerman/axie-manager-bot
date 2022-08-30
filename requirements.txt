@@ -1,10 +1,10 @@
 pandas==1.2.4
 gspread==4.0.1
-eth_account==0.5.6
+eth_account==0.5.9
 discord.py==1.7.3
 gspread_dataframe==3.2.1
 emoji==1.6.1
-eth_account==0.5.6
+eth_account==0.5.9
 gspread==4.0.1
 tenacity==8.0.1
 requests==2.22.0
