@@ -7,7 +7,7 @@ emoji==1.6.1
 eth_account==0.5.9
 gspread==4.0.1
 tenacity==8.0.1
-requests==2.22.0
+requests==2.31.0
 web3==5.24.0
 gspread_dataframe==3.2.1
 numpy==1.22.0
