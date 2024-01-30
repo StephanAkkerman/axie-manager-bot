@@ -12,7 +12,7 @@ web3==5.24.0
 gspread_dataframe==3.2.1
 numpy==1.22.0
 cryptography==41.0.6
-aiohttp==3.9.0
+aiohttp==3.9.2
 discord==1.7.3
 Pillow==10.2.0
 PyGithub==1.55
