@@ -11,7 +11,7 @@ requests==2.32.0
 web3==5.24.0
 gspread_dataframe==3.2.1
 numpy==1.22.0
-cryptography==43.0.1
+cryptography==44.0.1
 aiohttp==3.10.11
 discord==1.7.3
 Pillow==10.3.0
